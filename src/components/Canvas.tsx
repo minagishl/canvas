@@ -113,6 +113,8 @@ export const Canvas = () => {
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
 
+    const isShiftPressed = e.shiftKey; // Get Shift key status
+
     if (selectedTool === "select" && startPoint) {
       const dx = e.clientX - startPoint.x;
       const dy = e.clientY - startPoint.y;
@@ -123,7 +125,8 @@ export const Canvas = () => {
       const preview = createPreviewObject(
         selectedTool,
         startPoint,
-        currentPoint
+        currentPoint,
+        isShiftPressed
       );
       setPreviewObject(preview);
     }
@@ -131,6 +134,8 @@ export const Canvas = () => {
 
   const handleMouseUp = (e: React.MouseEvent) => {
     if (!isDragging) return;
+
+    const isShiftPressed = e.shiftKey; // Get Shift key status
 
     if (selectedTool === "select") {
       setIsDragging(false);
@@ -144,17 +149,12 @@ export const Canvas = () => {
       }
 
       const endPoint = getCanvasPoint(e);
-      const width = Math.abs(endPoint.x - startPoint.x);
-      const height = Math.abs(endPoint.y - startPoint.y);
-
-      if (width < 5 || height < 5) {
-        setIsDragging(false);
-        setStartPoint(null);
-        setPreviewObject(null);
-        return;
-      }
-
-      const newObject = createPreviewObject(selectedTool, startPoint, endPoint);
+      const newObject = createPreviewObject(
+        selectedTool,
+        startPoint,
+        endPoint,
+        isShiftPressed
+      );
       addObject(newObject);
       setIsDragging(false);
       setStartPoint(null);

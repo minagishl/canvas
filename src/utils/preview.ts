@@ -3,10 +3,23 @@ import { CanvasObject, Point, ToolType } from "../types/canvas";
 export const createPreviewObject = (
   tool: ToolType,
   startPoint: Point,
-  endPoint: Point
+  endPoint: Point,
+  isShiftPressed: boolean
 ): CanvasObject => {
-  const width = Math.abs(endPoint.x - startPoint.x);
-  const height = Math.abs(endPoint.y - startPoint.y);
+  let width = Math.abs(endPoint.x - startPoint.x);
+  let height = Math.abs(endPoint.y - startPoint.y);
+
+  if (isShiftPressed) {
+    if (tool === "rectangle") {
+      const size = Math.min(width, height);
+      width = size;
+      height = size;
+    } else if (tool === "circle") {
+      const diameter = Math.min(width, height);
+      width = diameter;
+      height = diameter;
+    }
+  }
 
   return {
     id: Math.random().toString(36).substr(2, 9),
