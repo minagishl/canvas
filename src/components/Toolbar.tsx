@@ -7,6 +7,7 @@ import {
   Image as ImageIcon,
   ZoomIn,
   ZoomOut,
+  MoreHorizontal,
 } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 import { ToolType } from "../types/canvas";
@@ -46,6 +47,13 @@ export function Toolbar(): React.ReactElement {
           <Tool.icon className="w-5 h-5" />
         </button>
       ))}
+      <button
+        key="more"
+        className="p-2 rounded-md transition-colors hover:bg-gray-100"
+        title="More"
+      >
+        <MoreHorizontal className="w-5 h-5" />
+      </button>
       <div className="w-px h-6 bg-gray-200 mx-2" />
       <button
         onClick={handleZoomOut}
