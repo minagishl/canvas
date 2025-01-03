@@ -19,8 +19,6 @@ export const Canvas = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
-  const [editingTextId, setEditingTextId] = useState<string | null>(null);
-  const [editingText, setEditingText] = useState<string>("");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -37,11 +35,12 @@ export const Canvas = () => {
     ctx.translate(offset.x, offset.y);
     ctx.scale(scale, scale);
 
-    // Draw grid
     drawGrid(ctx, canvas.width, canvas.height);
 
-    // Draw existing objects
-    objects.forEach((object) => drawObject(ctx, object, scale));
+    // Drawing objects other than text
+    objects
+      .filter((obj) => obj.type !== "text")
+      .forEach((object) => drawObject(ctx, object, scale));
 
     // Draw preview object
     if (previewObject && selectedTool !== "select") {
@@ -183,53 +182,8 @@ export const Canvas = () => {
     };
   }, [handleWheel]);
 
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left - offset.x) / scale;
-    const y = (e.clientY - rect.top - offset.y) / scale;
-
-    const clickedObject = objects.find(
-      (obj) =>
-        obj.type === "text" &&
-        x >= obj.position.x &&
-        x <= obj.position.x + obj.width &&
-        y >= obj.position.y &&
-        y <= obj.position.y + obj.height
-    );
-
-    if (clickedObject) {
-      setEditingTextId(clickedObject.id);
-      setEditingText(clickedObject.text || "");
-    }
-  };
-
-  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const updatedText = e.target.value;
-    setEditingText(updatedText);
-
-    if (editingTextId) {
-      const updatedObjects = objects.map((obj) =>
-        obj.id === editingTextId ? { ...obj, text: updatedText } : obj
-      );
-      setObjects(updatedObjects);
-    }
-  };
-
-  const handleTextSubmit = () => {
-    if (editingTextId) {
-      const updatedObjects = objects.map((obj) =>
-        obj.id === editingTextId ? { ...obj, text: editingText } : obj
-      );
-      setObjects(updatedObjects);
-      setEditingTextId(null);
-      setEditingText("");
-    }
-  };
-
   return (
-    <>
+    <div className="relative w-full h-full">
       <canvas
         ref={canvasRef}
         className={`absolute inset-0 ${
@@ -245,36 +199,37 @@ export const Canvas = () => {
           setStartPoint(null);
           setPreviewObject(null);
         }}
-        onDoubleClick={handleDoubleClick}
       />
-      {editingTextId &&
-        (() => {
-          const editingObject = objects.find((obj) => obj.id === editingTextId);
-          if (!editingObject) return null;
 
-          const style: React.CSSProperties = {
-            position: "absolute",
-            top: editingObject.position.y * scale + offset.y,
-            left: editingObject.position.x * scale + offset.x,
-            fontSize: `${16 * scale}px`,
-            color: editingObject.fill,
-            background: "transparent",
-            border: "1px solid #ccc",
-            outline: "none",
-            transform: `translate(-50%, -50%)`,
-          };
-
-          return (
-            <input
-              type="text"
-              value={editingText}
-              onChange={handleTextChange}
-              onBlur={handleTextSubmit}
-              style={style}
-              autoFocus
-            />
-          );
-        })()}
-    </>
+      {objects
+        .filter((obj) => obj.type === "text")
+        .map((textObj) => (
+          <div
+            key={textObj.id}
+            contentEditable
+            suppressContentEditableWarning
+            className="absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md"
+            style={{
+              top: textObj.position.y * scale + offset.y,
+              left: textObj.position.x * scale + offset.x,
+              transform: "translate(-50%, -50%)",
+              fontSize: `${16 * scale}px`,
+              paddingRight: `${2 * scale}px`,
+              paddingLeft: `${2 * scale}px`,
+              color: textObj.fill,
+              pointerEvents: "auto",
+            }}
+            onBlur={(e) => {
+              const updatedText = e.currentTarget.textContent || "";
+              const updatedObjects = objects.map((obj) =>
+                obj.id === textObj.id ? { ...obj, text: updatedText } : obj
+              );
+              setObjects(updatedObjects);
+            }}
+          >
+            {textObj.text}
+          </div>
+        ))}
+    </div>
   );
 };
