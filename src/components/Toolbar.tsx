@@ -27,7 +27,7 @@ export function Toolbar(): React.ReactElement {
   }
 
   function handleZoomOut(): void {
-    setScale((prev) => Math.max(prev - 0.1, 0.5));
+    setScale((prev) => Math.max(prev - 0.1, 0.7));
   }
 
   return (
