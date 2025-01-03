@@ -298,7 +298,8 @@ export const Canvas = () => {
               paddingRight: `${2 * scale}px`,
               paddingLeft: `${2 * scale}px`,
               color: textObj.fill,
-              pointerEvents: "auto",
+              // Disable pointer events when isDragging is true
+              pointerEvents: isDragging ? "none" : "auto",
             }}
             onBlur={(e) => {
               const updatedText = e.currentTarget.textContent || "";
