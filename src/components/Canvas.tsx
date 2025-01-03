@@ -19,7 +19,9 @@ export const Canvas = () => {
     setSelectedObjectId,
   } = useCanvasContext();
   const [isDragging, setIsDragging] = useState(false);
+  const [isPanning, setIsPanning] = useState(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
+  const [panStart, setPanStart] = useState<Point | null>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
   const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 });
 
@@ -138,6 +140,9 @@ export const Canvas = () => {
         });
       } else {
         setSelectedObjectId(null);
+        // Start panning
+        setIsPanning(true);
+        setPanStart({ x: e.clientX, y: e.clientY });
       }
     } else {
       setStartPoint(point);
@@ -146,43 +151,57 @@ export const Canvas = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
+    if (isDragging) {
+      if (selectedTool === "select" && selectedObjectId && startPoint) {
+        const currentPoint = getCanvasPoint(e);
+        const newX = currentPoint.x - dragOffset.x;
+        const newY = currentPoint.y - dragOffset.y;
 
-    const isShiftPressed = e.shiftKey; // Get Shift key status
-
-    if (selectedTool === "select" && selectedObjectId && startPoint) {
-      const currentPoint = getCanvasPoint(e);
-      const newX = currentPoint.x - dragOffset.x;
-      const newY = currentPoint.y - dragOffset.y;
-
-      const updatedObjects = objects.map((obj) =>
-        obj.id === selectedObjectId
-          ? { ...obj, position: { x: newX, y: newY } }
-          : obj
-      );
-      setObjects(updatedObjects);
-    } else if (startPoint) {
-      const currentPoint = getCanvasPoint(e);
-      const preview = createPreviewObject(
-        selectedTool,
-        startPoint,
-        currentPoint,
-        isShiftPressed
-      );
-      setPreviewObject(preview);
+        const updatedObjects = objects.map((obj) =>
+          obj.id === selectedObjectId
+            ? { ...obj, position: { x: newX, y: newY } }
+            : obj
+        );
+        setObjects(updatedObjects);
+      } else if (startPoint) {
+        const isShiftPressed = e.shiftKey; // Get Shift key status
+        const currentPoint = getCanvasPoint(e);
+        const preview = createPreviewObject(
+          selectedTool,
+          startPoint,
+          currentPoint,
+          isShiftPressed
+        );
+        setPreviewObject(preview);
+      }
+    } else if (isPanning && panStart) {
+      // Panning
+      const deltaX = e.clientX - panStart.x;
+      const deltaY = e.clientY - panStart.y;
+      setOffset({
+        x: offset.x + deltaX,
+        y: offset.y + deltaY,
+      });
+      setPanStart({ x: e.clientX, y: e.clientY });
     }
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-
-    const isShiftPressed = e.shiftKey; // Get Shift key status
-
-    if (selectedTool === "select") {
+    if (isDragging) {
       setIsDragging(false);
       setStartPoint(null);
       setDragOffset({ x: 0, y: 0 });
-    } else {
+    }
+
+    if (isPanning) {
+      // Stop panning
+      setIsPanning(false);
+      setPanStart(null);
+    }
+
+    const isShiftPressed = e.shiftKey; // Get Shift key status
+
+    if (selectedTool !== "select" && !isPanning) {
       if (!startPoint) {
         setIsDragging(false);
         setStartPoint(null);
@@ -256,7 +275,8 @@ export const Canvas = () => {
           setIsDragging(false);
           setStartPoint(null);
           setPreviewObject(null);
-          setDragOffset({ x: 0, y: 0 });
+          setIsPanning(false);
+          setPanStart(null);
         }}
       />
 
