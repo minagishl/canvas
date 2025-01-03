@@ -128,7 +128,7 @@ export const Canvas = () => {
     (e: WheelEvent) => {
       e.preventDefault();
       const delta = -e.deltaY / 500;
-      setScale((prev) => Math.min(Math.max(prev + delta, 0.5), 2));
+      setScale((prev) => Math.min(Math.max(prev + delta, 0.7), 2));
     },
     [setScale]
   );
