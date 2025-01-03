@@ -27,6 +27,7 @@ export const Canvas = () => {
   const [panStart, setPanStart] = useState<Point | null>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
   const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 });
+  const [imageCache, setImageCache] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -122,10 +123,9 @@ export const Canvas = () => {
   const handleMouseDown = (e: React.MouseEvent) => {
     const point = getCanvasPoint(e);
     if (selectedTool === "select") {
-      // Get the clicked object
+      // Find selection in all objects
       const clickedObject = objects.find(
         (obj) =>
-          obj.type !== "text" &&
           point.x >= obj.position.x &&
           point.x <= obj.position.x + obj.width &&
           point.y >= obj.position.y &&
@@ -133,6 +133,7 @@ export const Canvas = () => {
       );
 
       if (clickedObject) {
+        e.preventDefault(); // Prevent text selection
         setSelectedObjectId(clickedObject.id);
         setIsDragging(true);
         setStartPoint(point);
@@ -142,7 +143,6 @@ export const Canvas = () => {
         });
       } else {
         setSelectedObjectId(null);
-        // Start panning
         setIsPanning(true);
         setPanStart({ x: e.clientX, y: e.clientY });
       }
@@ -217,6 +217,7 @@ export const Canvas = () => {
         const point = getCanvasPoint(e);
         setImagePosition(point);
         fileInputRef.current?.click();
+        setSelectedTool("select");
         return;
       }
 
@@ -275,38 +276,84 @@ export const Canvas = () => {
     const file = e.target.files?.[0];
     if (!file || !imagePosition) return;
 
-    // Convert file to base64
     const reader = new FileReader();
     reader.onload = (event) => {
       const imageData = event.target?.result as string;
 
-      // Get image size
       const img = new Image();
       img.onload = () => {
-        // Calculate appropriate size while preserving aspect ratio
+        // Image resizing process
+        const canvas = document.createElement("canvas");
         const maxSize = 300;
         const ratio = Math.min(maxSize / img.width, maxSize / img.height);
         const width = img.width * ratio;
         const height = img.height * ratio;
 
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const resizedImageData = canvas.toDataURL("image/jpeg", 0.8);
+
+        // Save to cache
+        const id = Math.random().toString(36).substr(2, 9);
+        setImageCache((prev) => ({ ...prev, [id]: resizedImageData }));
+
         const imageObject: CanvasObject = {
-          id: Math.random().toString(36).substr(2, 9),
+          id,
           type: "image",
           position: imagePosition,
           width,
           height,
           fill: "transparent",
-          imageData,
+          imageData: resizedImageData,
         };
 
         addObject(imageObject);
         setImagePosition(null);
-        setSelectedTool("select");
       };
       img.src = imageData;
     };
     reader.readAsDataURL(file);
   };
+
+  const ImageObject = React.memo(
+    ({
+      obj,
+      commonStyles,
+    }: {
+      obj: CanvasObject & { type: "image" };
+      commonStyles: React.CSSProperties;
+    }) => (
+      <div
+        key={obj.id}
+        className={`absolute select-none pointer-events-none ${
+          obj.id === selectedObjectId ? "border-2 border-blue-500" : ""
+        }`}
+        style={{
+          ...commonStyles,
+          width: obj.width * scale,
+          height: obj.height * scale,
+          willChange: "transform",
+        }}
+        onMouseDown={(e) => {
+          if (selectedTool === "select") {
+            handleMouseDown(e);
+          }
+        }}
+      >
+        <img
+          src={imageCache[obj.id] || obj.imageData}
+          alt="canvas object"
+          className="w-full h-full object-contain"
+          draggable={false}
+          loading="lazy"
+        />
+      </div>
+    )
+  );
 
   return (
     <div className="relative w-full h-full">
@@ -340,58 +387,58 @@ export const Canvas = () => {
       {objects
         .filter((obj) => obj.type === "text" || obj.type === "image")
         .map((obj) => {
+          const commonStyles: React.CSSProperties = {
+            position: "absolute" as const,
+            top: obj.position.y * scale + offset.y,
+            left: obj.position.x * scale + offset.x,
+            transform: "translate(-50%, -50%)",
+            cursor: selectedTool === "select" ? "move" : "default",
+            pointerEvents:
+              isDragging && obj.id !== selectedObjectId ? "none" : "auto",
+          };
+
+          if (obj.type === "image") {
+            return (
+              <ImageObject
+                key={obj.id}
+                obj={obj as CanvasObject & { type: "image" }}
+                commonStyles={commonStyles}
+              />
+            );
+          }
+
           if (obj.type === "text") {
             return (
               <div
                 key={obj.id}
-                contentEditable
+                contentEditable={selectedTool !== "select"}
                 suppressContentEditableWarning
                 className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
-                  obj.id === selectedObjectId ? "border-blue-500" : ""
+                  obj.id === selectedObjectId ? "border-2 border-blue-500" : ""
                 }`}
                 style={{
-                  top: obj.position.y * scale + offset.y,
-                  left: obj.position.x * scale + offset.x,
-                  transform: "translate(-50%, -50%)",
+                  ...commonStyles,
                   fontSize: `${16 * scale}px`,
                   paddingRight: `${2 * scale}px`,
                   paddingLeft: `${2 * scale}px`,
                   color: obj.fill,
-                  pointerEvents: isDragging ? "none" : "auto",
+                }}
+                onMouseDown={(e) => {
+                  if (selectedTool === "select") {
+                    handleMouseDown(e);
+                  }
                 }}
                 onBlur={(e) => {
-                  const updatedText = e.currentTarget.textContent || "";
-                  const updatedObjects = objects.map((o) =>
-                    o.id === obj.id ? { ...o, text: updatedText } : o
-                  );
-                  setObjects(updatedObjects);
+                  if (selectedTool !== "select") {
+                    const updatedText = e.currentTarget.textContent || "";
+                    const updatedObjects = objects.map((o) =>
+                      o.id === obj.id ? { ...o, text: updatedText } : o
+                    );
+                    setObjects(updatedObjects);
+                  }
                 }}
               >
                 {obj.text}
-              </div>
-            );
-          } else if (obj.type === "image" && obj.imageData) {
-            return (
-              <div
-                key={obj.id}
-                className={`absolute ${
-                  obj.id === selectedObjectId ? "border-2 border-blue-500" : ""
-                }`}
-                style={{
-                  top: obj.position.y * scale + offset.y,
-                  left: obj.position.x * scale + offset.x,
-                  width: obj.width * scale,
-                  height: obj.height * scale,
-                  transform: "translate(-50%, -50%)",
-                  pointerEvents: isDragging ? "none" : "auto",
-                }}
-              >
-                <img
-                  src={obj.imageData}
-                  alt="canvas object"
-                  className="w-full h-full object-contain"
-                  draggable={false}
-                />
               </div>
             );
           }
