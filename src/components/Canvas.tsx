@@ -15,10 +15,13 @@ export const Canvas = () => {
     addObject,
     selectedTool,
     setObjects,
+    selectedObjectId,
+    setSelectedObjectId,
   } = useCanvasContext();
   const [isDragging, setIsDragging] = useState(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
+  const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -38,9 +41,20 @@ export const Canvas = () => {
     drawGrid(ctx, canvas.width, canvas.height);
 
     // Drawing objects other than text
-    objects
-      .filter((obj) => obj.type !== "text")
-      .forEach((object) => drawObject(ctx, object, scale));
+    objects.forEach((object) => {
+      drawObject(ctx, object, scale);
+      if (object.id === selectedObjectId) {
+        // Highlight selected objects
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 2 / scale;
+        ctx.strokeRect(
+          object.position.x,
+          object.position.y,
+          object.width,
+          object.height
+        );
+      }
+    });
 
     // Draw preview object
     if (previewObject && selectedTool !== "select") {
@@ -51,7 +65,7 @@ export const Canvas = () => {
 
     ctx.restore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scale, offset, objects, previewObject, selectedTool]);
+  }, [scale, offset, objects, previewObject, selectedTool, selectedObjectId]);
 
   const drawGrid = (
     ctx: CanvasRenderingContext2D,
@@ -102,8 +116,27 @@ export const Canvas = () => {
   const handleMouseDown = (e: React.MouseEvent) => {
     const point = getCanvasPoint(e);
     if (selectedTool === "select") {
-      setStartPoint({ x: e.clientX, y: e.clientY });
-      setIsDragging(true);
+      // Get the clicked object
+      const clickedObject = objects.find(
+        (obj) =>
+          obj.type !== "text" &&
+          point.x >= obj.position.x &&
+          point.x <= obj.position.x + obj.width &&
+          point.y >= obj.position.y &&
+          point.y <= obj.position.y + obj.height
+      );
+
+      if (clickedObject) {
+        setSelectedObjectId(clickedObject.id);
+        setIsDragging(true);
+        setStartPoint(point);
+        setDragOffset({
+          x: point.x - clickedObject.position.x,
+          y: point.y - clickedObject.position.y,
+        });
+      } else {
+        setSelectedObjectId(null);
+      }
     } else {
       setStartPoint(point);
       setIsDragging(true);
@@ -115,11 +148,17 @@ export const Canvas = () => {
 
     const isShiftPressed = e.shiftKey; // Get Shift key status
 
-    if (selectedTool === "select" && startPoint) {
-      const dx = e.clientX - startPoint.x;
-      const dy = e.clientY - startPoint.y;
-      setOffset({ x: offset.x + dx, y: offset.y + dy });
-      setStartPoint({ x: e.clientX, y: e.clientY });
+    if (selectedTool === "select" && selectedObjectId && startPoint) {
+      const currentPoint = getCanvasPoint(e);
+      const newX = currentPoint.x - dragOffset.x;
+      const newY = currentPoint.y - dragOffset.y;
+
+      const updatedObjects = objects.map((obj) =>
+        obj.id === selectedObjectId
+          ? { ...obj, position: { x: newX, y: newY } }
+          : obj
+      );
+      setObjects(updatedObjects);
     } else if (startPoint) {
       const currentPoint = getCanvasPoint(e);
       const preview = createPreviewObject(
@@ -140,6 +179,7 @@ export const Canvas = () => {
     if (selectedTool === "select") {
       setIsDragging(false);
       setStartPoint(null);
+      setDragOffset({ x: 0, y: 0 });
     } else {
       if (!startPoint) {
         setIsDragging(false);
@@ -214,6 +254,7 @@ export const Canvas = () => {
           setIsDragging(false);
           setStartPoint(null);
           setPreviewObject(null);
+          setDragOffset({ x: 0, y: 0 });
         }}
       />
 
@@ -224,7 +265,9 @@ export const Canvas = () => {
             key={textObj.id}
             contentEditable
             suppressContentEditableWarning
-            className="absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md"
+            className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
+              textObj.id === selectedObjectId ? "border-blue-500" : ""
+            }`}
             style={{
               top: textObj.position.y * scale + offset.y,
               left: textObj.position.x * scale + offset.x,

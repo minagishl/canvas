@@ -11,6 +11,8 @@ interface CanvasContextType {
   selectedTool: ToolType;
   setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>;
   setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>;
+  selectedObjectId: string | null;
+  setSelectedObjectId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const CanvasContext = createContext<CanvasContextType | null>(null);
@@ -22,6 +24,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
   const [offset, setOffset] = useState<Point>({ x: 0, y: 0 });
   const [objects, setObjects] = useState<CanvasObject[]>([]);
   const [selectedTool, setSelectedTool] = useState<ToolType>("select");
+  const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
 
   const addObject = (object: CanvasObject) => {
     setObjects((prev) => [...prev, object]);
@@ -39,6 +42,8 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
         selectedTool,
         setSelectedTool,
         setObjects,
+        selectedObjectId,
+        setSelectedObjectId,
       }}
     >
       {children}
