@@ -47,11 +47,10 @@ export const Canvas = () => {
 
     // Drawing objects other than text
     objects
-      .filter((obj) => obj.type !== "text")
+      .filter((obj) => obj.type !== "text" && obj.type !== "image")
       .forEach((object) => {
         drawObject(ctx, object, scale);
         if (object.id === selectedObjectId) {
-          // Highlight selected objects
           ctx.strokeStyle = "blue";
           ctx.lineWidth = 2 / scale;
           ctx.strokeRect(
@@ -339,37 +338,65 @@ export const Canvas = () => {
       />
 
       {objects
-        .filter((obj) => obj.type === "text")
-        .map((textObj) => (
-          <div
-            key={textObj.id}
-            contentEditable
-            suppressContentEditableWarning
-            className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
-              textObj.id === selectedObjectId ? "border-blue-500" : ""
-            }`}
-            style={{
-              top: textObj.position.y * scale + offset.y,
-              left: textObj.position.x * scale + offset.x,
-              transform: "translate(-50%, -50%)",
-              fontSize: `${16 * scale}px`,
-              paddingRight: `${2 * scale}px`,
-              paddingLeft: `${2 * scale}px`,
-              color: textObj.fill,
-              // Disable pointer events when isDragging is true
-              pointerEvents: isDragging ? "none" : "auto",
-            }}
-            onBlur={(e) => {
-              const updatedText = e.currentTarget.textContent || "";
-              const updatedObjects = objects.map((obj) =>
-                obj.id === textObj.id ? { ...obj, text: updatedText } : obj
-              );
-              setObjects(updatedObjects);
-            }}
-          >
-            {textObj.text}
-          </div>
-        ))}
+        .filter((obj) => obj.type === "text" || obj.type === "image")
+        .map((obj) => {
+          if (obj.type === "text") {
+            return (
+              <div
+                key={obj.id}
+                contentEditable
+                suppressContentEditableWarning
+                className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
+                  obj.id === selectedObjectId ? "border-blue-500" : ""
+                }`}
+                style={{
+                  top: obj.position.y * scale + offset.y,
+                  left: obj.position.x * scale + offset.x,
+                  transform: "translate(-50%, -50%)",
+                  fontSize: `${16 * scale}px`,
+                  paddingRight: `${2 * scale}px`,
+                  paddingLeft: `${2 * scale}px`,
+                  color: obj.fill,
+                  pointerEvents: isDragging ? "none" : "auto",
+                }}
+                onBlur={(e) => {
+                  const updatedText = e.currentTarget.textContent || "";
+                  const updatedObjects = objects.map((o) =>
+                    o.id === obj.id ? { ...o, text: updatedText } : o
+                  );
+                  setObjects(updatedObjects);
+                }}
+              >
+                {obj.text}
+              </div>
+            );
+          } else if (obj.type === "image" && obj.imageData) {
+            return (
+              <div
+                key={obj.id}
+                className={`absolute ${
+                  obj.id === selectedObjectId ? "border-2 border-blue-500" : ""
+                }`}
+                style={{
+                  top: obj.position.y * scale + offset.y,
+                  left: obj.position.x * scale + offset.x,
+                  width: obj.width * scale,
+                  height: obj.height * scale,
+                  transform: "translate(-50%, -50%)",
+                  pointerEvents: isDragging ? "none" : "auto",
+                }}
+              >
+                <img
+                  src={obj.imageData}
+                  alt="canvas object"
+                  className="w-full h-full object-contain"
+                  draggable={false}
+                />
+              </div>
+            );
+          }
+          return null;
+        })}
     </div>
   );
 };
