@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 import { drawObject } from "../utils/canvas";
 import { Point, CanvasObject } from "../types/canvas";
@@ -6,7 +6,7 @@ import { createPreviewObject } from "../utils/preview";
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { scale, offset, objects, addObject, selectedTool } =
+  const { scale, setScale, offset, objects, addObject, selectedTool } =
     useCanvasContext();
   const [isDragging, setIsDragging] = useState(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
@@ -119,6 +119,26 @@ export const Canvas = () => {
     setStartPoint(null);
     setPreviewObject(null);
   };
+
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      e.preventDefault();
+      const delta = -e.deltaY / 500;
+      setScale((prev) => Math.min(Math.max(prev + delta, 0.5), 2));
+    },
+    [setScale]
+  );
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    canvas.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      canvas.removeEventListener("wheel", handleWheel);
+    };
+  }, [handleWheel]);
 
   return (
     <canvas
