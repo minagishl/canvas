@@ -206,7 +206,15 @@ export const Canvas = () => {
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingText(e.target.value);
+    const updatedText = e.target.value;
+    setEditingText(updatedText);
+
+    if (editingTextId) {
+      const updatedObjects = objects.map((obj) =>
+        obj.id === editingTextId ? { ...obj, text: updatedText } : obj
+      );
+      setObjects(updatedObjects);
+    }
   };
 
   const handleTextSubmit = () => {
@@ -239,19 +247,34 @@ export const Canvas = () => {
         }}
         onDoubleClick={handleDoubleClick}
       />
-      {editingTextId && (
-        <input
-          type="text"
-          value={editingText}
-          onChange={handleTextChange}
-          onBlur={handleTextSubmit}
-          style={{
+      {editingTextId &&
+        (() => {
+          const editingObject = objects.find((obj) => obj.id === editingTextId);
+          if (!editingObject) return null;
+
+          const style: React.CSSProperties = {
             position: "absolute",
-            top: 400,
-            left: 400,
-          }}
-        />
-      )}
+            top: editingObject.position.y * scale + offset.y,
+            left: editingObject.position.x * scale + offset.x,
+            fontSize: `${16 * scale}px`,
+            color: editingObject.fill,
+            background: "transparent",
+            border: "1px solid #ccc",
+            outline: "none",
+            transform: `translate(-50%, -50%)`,
+          };
+
+          return (
+            <input
+              type="text"
+              value={editingText}
+              onChange={handleTextChange}
+              onBlur={handleTextSubmit}
+              style={style}
+              autoFocus
+            />
+          );
+        })()}
     </>
   );
 };
