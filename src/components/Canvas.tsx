@@ -6,6 +6,7 @@ import { createPreviewObject } from "../utils/preview";
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     scale,
     setScale,
@@ -19,6 +20,7 @@ export const Canvas = () => {
     selectedObjectId,
     setSelectedObjectId,
   } = useCanvasContext();
+  const [imagePosition, setImagePosition] = useState<Point | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
@@ -164,7 +166,7 @@ export const Canvas = () => {
             : obj
         );
         setObjects(updatedObjects);
-      } else if (startPoint) {
+      } else if (startPoint && selectedTool !== "image") {
         const isShiftPressed = e.shiftKey; // Get Shift key status
         const currentPoint = getCanvasPoint(e);
         const preview = createPreviewObject(
@@ -207,6 +209,15 @@ export const Canvas = () => {
         setIsDragging(false);
         setStartPoint(null);
         setPreviewObject(null);
+        return;
+      }
+
+      if (selectedTool === "image") {
+        e.preventDefault();
+        e.stopPropagation();
+        const point = getCanvasPoint(e);
+        setImagePosition(point);
+        fileInputRef.current?.click();
         return;
       }
 
@@ -261,6 +272,43 @@ export const Canvas = () => {
     };
   }, [handleWheel]);
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !imagePosition) return;
+
+    // Convert file to base64
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageData = event.target?.result as string;
+
+      // Get image size
+      const img = new Image();
+      img.onload = () => {
+        // Calculate appropriate size while preserving aspect ratio
+        const maxSize = 300;
+        const ratio = Math.min(maxSize / img.width, maxSize / img.height);
+        const width = img.width * ratio;
+        const height = img.height * ratio;
+
+        const imageObject: CanvasObject = {
+          id: Math.random().toString(36).substr(2, 9),
+          type: "image",
+          position: imagePosition,
+          width,
+          height,
+          fill: "transparent",
+          imageData,
+        };
+
+        addObject(imageObject);
+        setImagePosition(null);
+        setSelectedTool("select");
+      };
+      img.src = imageData;
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="relative w-full h-full">
       <canvas
@@ -280,6 +328,14 @@ export const Canvas = () => {
           setIsPanning(false);
           setPanStart(null);
         }}
+      />
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        accept="image/*"
+        onChange={handleFileChange}
       />
 
       {objects

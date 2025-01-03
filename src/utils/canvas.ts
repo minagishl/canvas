@@ -35,5 +35,19 @@ export const drawObject = (
         ctx.fillText(object.text, object.position.x, object.position.y + 16);
       }
       break;
+    case "image":
+      if (object.imageData) {
+        const img = new Image();
+        img.src = object.imageData;
+        img.onload = () => {
+          ctx.drawImage(
+            img,
+            object.position.x,
+            object.position.y,
+            object.width,
+            object.height
+          );
+        };
+      }
   }
 };
