@@ -14,6 +14,7 @@ export const Canvas = () => {
     objects,
     addObject,
     selectedTool,
+    setSelectedTool,
     setObjects,
     selectedObjectId,
     setSelectedObjectId,
@@ -217,6 +218,7 @@ export const Canvas = () => {
         isShiftPressed
       );
       addObject(newObject);
+      setSelectedTool("select");
       setIsDragging(false);
       setStartPoint(null);
       setPreviewObject(null);
