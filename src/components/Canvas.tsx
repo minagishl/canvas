@@ -35,13 +35,15 @@ export const Canvas = () => {
 
     // Draw preview object
     if (previewObject) {
+      if (selectedTool === "select") return;
+
       ctx.globalAlpha = 0.6;
       drawObject(ctx, previewObject, scale);
       ctx.globalAlpha = 1;
     }
 
     ctx.restore();
-  }, [scale, offset, objects, previewObject]);
+  }, [scale, offset, objects, previewObject, selectedTool]);
 
   const drawGrid = (
     ctx: CanvasRenderingContext2D,
