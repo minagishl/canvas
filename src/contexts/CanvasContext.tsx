@@ -10,6 +10,7 @@ interface CanvasContextType {
   addObject: (object: CanvasObject) => void;
   selectedTool: ToolType;
   setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>;
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>;
 }
 
 const CanvasContext = createContext<CanvasContextType | null>(null);
@@ -37,6 +38,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
         addObject,
         selectedTool,
         setSelectedTool,
+        setObjects,
       }}
     >
       {children}

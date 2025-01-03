@@ -14,10 +14,13 @@ export const Canvas = () => {
     objects,
     addObject,
     selectedTool,
+    setObjects,
   } = useCanvasContext();
   const [isDragging, setIsDragging] = useState(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
+  const [editingTextId, setEditingTextId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState<string>("");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -180,22 +183,75 @@ export const Canvas = () => {
     };
   }, [handleWheel]);
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left - offset.x) / scale;
+    const y = (e.clientY - rect.top - offset.y) / scale;
+
+    const clickedObject = objects.find(
+      (obj) =>
+        obj.type === "text" &&
+        x >= obj.position.x &&
+        x <= obj.position.x + obj.width &&
+        y >= obj.position.y &&
+        y <= obj.position.y + obj.height
+    );
+
+    if (clickedObject) {
+      setEditingTextId(clickedObject.id);
+      setEditingText(clickedObject.text || "");
+    }
+  };
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingText(e.target.value);
+  };
+
+  const handleTextSubmit = () => {
+    if (editingTextId) {
+      const updatedObjects = objects.map((obj) =>
+        obj.id === editingTextId ? { ...obj, text: editingText } : obj
+      );
+      setObjects(updatedObjects);
+      setEditingTextId(null);
+      setEditingText("");
+    }
+  };
+
   return (
-    <canvas
-      ref={canvasRef}
-      className={`absolute inset-0 ${
-        selectedTool === "select"
-          ? "cursor-grab active:cursor-grabbing"
-          : "cursor-crosshair"
-      }`}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={() => {
-        setIsDragging(false);
-        setStartPoint(null);
-        setPreviewObject(null);
-      }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        className={`absolute inset-0 ${
+          selectedTool === "select"
+            ? "cursor-grab active:cursor-grabbing"
+            : "cursor-crosshair"
+        }`}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={() => {
+          setIsDragging(false);
+          setStartPoint(null);
+          setPreviewObject(null);
+        }}
+        onDoubleClick={handleDoubleClick}
+      />
+      {editingTextId && (
+        <input
+          type="text"
+          value={editingText}
+          onChange={handleTextChange}
+          onBlur={handleTextSubmit}
+          style={{
+            position: "absolute",
+            top: 400,
+            left: 400,
+          }}
+        />
+      )}
+    </>
   );
 };
