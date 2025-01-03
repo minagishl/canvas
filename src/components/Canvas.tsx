@@ -166,9 +166,25 @@ export const Canvas = () => {
     (e: WheelEvent) => {
       e.preventDefault();
       const delta = -e.deltaY / 500;
-      setScale((prev) => Math.min(Math.max(prev + delta, 0.7), 2));
+      const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
+
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const worldX = (centerX - offset.x) / scale;
+      const worldY = (centerY - offset.y) / scale;
+
+      const newOffsetX = centerX - worldX * newScale;
+      const newOffsetY = centerY - worldY * newScale;
+
+      setScale(newScale);
+      setOffset({ x: newOffsetX, y: newOffsetY });
     },
-    [setScale]
+    [scale, offset, setScale, setOffset]
   );
 
   useEffect(() => {
