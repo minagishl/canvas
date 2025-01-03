@@ -28,21 +28,20 @@ export const Canvas = () => {
     ctx.scale(scale, scale);
 
     // Draw grid
-    drawGrid(ctx, canvas.width, canvas.height);
+    drawGrid(ctx, canvas.width / scale, canvas.height / scale);
 
     // Draw existing objects
     objects.forEach((object) => drawObject(ctx, object, scale));
 
     // Draw preview object
-    if (previewObject) {
-      if (selectedTool === "select") return;
-
+    if (previewObject && selectedTool !== "select") {
       ctx.globalAlpha = 0.6;
       drawObject(ctx, previewObject, scale);
       ctx.globalAlpha = 1;
     }
 
     ctx.restore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scale, offset, objects, previewObject, selectedTool]);
 
   const drawGrid = (
@@ -54,14 +53,19 @@ export const Canvas = () => {
     ctx.strokeStyle = "#e5e7eb";
     ctx.lineWidth = 0.5;
 
-    for (let x = 0; x < width; x += gridSize) {
+    const scaledGridSize = gridSize * scale;
+
+    const startX = -offset.x % scaledGridSize;
+    const startY = -offset.y % scaledGridSize;
+
+    for (let x = startX; x < width; x += scaledGridSize) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, height);
       ctx.stroke();
     }
 
-    for (let y = 0; y < height; y += gridSize) {
+    for (let y = startY; y < height; y += scaledGridSize) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(width, y);
