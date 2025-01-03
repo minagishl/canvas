@@ -112,7 +112,11 @@ export function Toolbar(): React.ReactElement {
               : "hover:bg-gray-100"
           } ${Tool.disabled && "opacity-50"}`}
           title={Tool.name}
-          onClick={() => setSelectedTool(Tool.name)}
+          onClick={() => {
+            if (!Tool.disabled) {
+              setSelectedTool(Tool.name);
+            }
+          }}
         >
           <Tool.icon className="w-5 h-5" />
         </button>
