@@ -12,12 +12,16 @@ import {
 import { useCanvasContext } from "../contexts/CanvasContext";
 import { ToolType } from "../types/canvas";
 
-const tools: { icon: typeof MousePointer2; name: ToolType }[] = [
-  { icon: MousePointer2, name: "select" },
-  { icon: Square, name: "rectangle" },
-  { icon: Circle, name: "circle" },
-  { icon: Type, name: "text" },
-  { icon: ImageIcon, name: "image" },
+const tools: {
+  icon: typeof MousePointer2;
+  name: ToolType;
+  disabled: boolean;
+}[] = [
+  { icon: MousePointer2, name: "select", disabled: false },
+  { icon: Square, name: "rectangle", disabled: false },
+  { icon: Circle, name: "circle", disabled: false },
+  { icon: Type, name: "text", disabled: false },
+  { icon: ImageIcon, name: "image", disabled: true },
 ];
 
 export function Toolbar(): React.ReactElement {
@@ -106,7 +110,7 @@ export function Toolbar(): React.ReactElement {
             selectedTool === Tool.name
               ? "bg-indigo-100 text-indigo-600"
               : "hover:bg-gray-100"
-          }`}
+          } ${Tool.disabled && "opacity-50"}`}
           title={Tool.name}
           onClick={() => setSelectedTool(Tool.name)}
         >
