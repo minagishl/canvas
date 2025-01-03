@@ -35,7 +35,7 @@ export const Canvas = () => {
     ctx.scale(scale, scale);
 
     // Draw grid
-    drawGrid(ctx, canvas.width / scale, canvas.height / scale);
+    drawGrid(ctx, canvas.width, canvas.height);
 
     // Draw existing objects
     objects.forEach((object) => drawObject(ctx, object, scale));
@@ -57,25 +57,31 @@ export const Canvas = () => {
     height: number
   ) => {
     const gridSize = 40;
+
+    // Calculate grid boundaries with buffer
+    const startX = Math.floor(-offset.x / scale / gridSize) * gridSize;
+    const startY = Math.floor(-offset.y / scale / gridSize) * gridSize;
+    const endX =
+      Math.ceil((width / scale - offset.x / scale) / gridSize) * gridSize;
+    const endY =
+      Math.ceil((height / scale - offset.y / scale) / gridSize) * gridSize;
+
     ctx.strokeStyle = "#e5e7eb";
     ctx.lineWidth = 0.5;
 
-    const scaledGridSize = gridSize * scale;
-
-    const startX = -offset.x % scaledGridSize;
-    const startY = -offset.y % scaledGridSize;
-
-    for (let x = startX; x < width; x += scaledGridSize) {
+    // Draw vertical lines
+    for (let x = startX; x <= endX; x += gridSize) {
       ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
+      ctx.moveTo(x, startY);
+      ctx.lineTo(x, endY);
       ctx.stroke();
     }
 
-    for (let y = startY; y < height; y += scaledGridSize) {
+    // Draw horizontal lines
+    for (let y = startY; y <= endY; y += gridSize) {
       ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
+      ctx.moveTo(startX, y);
+      ctx.lineTo(endX, y);
       ctx.stroke();
     }
   };
