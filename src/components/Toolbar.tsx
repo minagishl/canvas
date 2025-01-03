@@ -36,7 +36,7 @@ export function Toolbar(): React.ReactElement {
       {tools.map((Tool) => (
         <button
           key={Tool.name}
-          className={`p-2 rounded-md transition-colors ${
+          className={`p-2 rounded-md transition-colors cursor-pointer ${
             selectedTool === Tool.name
               ? "bg-indigo-100 text-indigo-600"
               : "hover:bg-gray-100"
@@ -49,7 +49,7 @@ export function Toolbar(): React.ReactElement {
       ))}
       <button
         key="more"
-        className="p-2 rounded-md transition-colors hover:bg-gray-100"
+        className="p-2 rounded-md transition-colors hover:bg-gray-100 cursor-pointer"
         title="More"
       >
         <MoreHorizontal className="w-5 h-5" />
