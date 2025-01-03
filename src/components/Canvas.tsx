@@ -41,20 +41,22 @@ export const Canvas = () => {
     drawGrid(ctx, canvas.width, canvas.height);
 
     // Drawing objects other than text
-    objects.forEach((object) => {
-      drawObject(ctx, object, scale);
-      if (object.id === selectedObjectId) {
-        // Highlight selected objects
-        ctx.strokeStyle = "blue";
-        ctx.lineWidth = 2 / scale;
-        ctx.strokeRect(
-          object.position.x,
-          object.position.y,
-          object.width,
-          object.height
-        );
-      }
-    });
+    objects
+      .filter((obj) => obj.type !== "text")
+      .forEach((object) => {
+        drawObject(ctx, object, scale);
+        if (object.id === selectedObjectId) {
+          // Highlight selected objects
+          ctx.strokeStyle = "blue";
+          ctx.lineWidth = 2 / scale;
+          ctx.strokeRect(
+            object.position.x,
+            object.position.y,
+            object.width,
+            object.height
+          );
+        }
+      });
 
     // Draw preview object
     if (previewObject && selectedTool !== "select") {
