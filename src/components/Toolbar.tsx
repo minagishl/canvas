@@ -104,22 +104,28 @@ export function Toolbar(): React.ReactElement {
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-lg p-2 flex items-center gap-2">
       {tools.map((Tool) => (
-        <button
-          key={Tool.name}
-          className={`p-2 rounded-md transition-colors cursor-pointer ${
-            selectedTool === Tool.name
-              ? "bg-indigo-100 text-indigo-600"
-              : "hover:bg-gray-100"
-          } ${Tool.disabled && "opacity-50"}`}
-          title={Tool.name}
-          onClick={() => {
-            if (!Tool.disabled) {
-              setSelectedTool(Tool.name);
-            }
-          }}
-        >
-          <Tool.icon className="w-5 h-5" />
-        </button>
+        <div key={Tool.name} className="relative group">
+          <button
+            className={`p-2 rounded-md transition-colors cursor-pointer ${
+              selectedTool === Tool.name
+                ? "bg-indigo-100 text-indigo-600"
+                : "hover:bg-gray-100"
+            } ${Tool.disabled && "opacity-50"}`}
+            title={Tool.name}
+            onClick={() => {
+              if (!Tool.disabled) {
+                setSelectedTool(Tool.name);
+              }
+            }}
+          >
+            <Tool.icon className="w-5 h-5" />
+          </button>
+          {Tool.disabled && (
+            <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+              <Popover name={Tool.name} />
+            </div>
+          )}
+        </div>
       ))}
       <button
         key="more"
@@ -145,6 +151,17 @@ export function Toolbar(): React.ReactElement {
       >
         <ZoomIn className="w-5 h-5" />
       </button>
+    </div>
+  );
+}
+
+// TODO: Need to work on design.
+function Popover({ name }: { name: string }): React.ReactElement {
+  return (
+    <div className="absolute bg-white p-2 rounded-xl shadow-md flex items-center justify-center left-1/2 -translate-x-1/2 top-4">
+      <div className="w-fit flex items-center justify-center rounded-md font-sans flex-col whitespace-nowrap">
+        <p>{name} is disabled</p>
+      </div>
     </div>
   );
 }
