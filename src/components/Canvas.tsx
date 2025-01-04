@@ -62,14 +62,46 @@ export const Canvas = () => {
       .forEach((object) => {
         drawObject(ctx, object);
         if (object.id === selectedObjectId) {
+          // Added selection border padding
+          const padding = 8 / scale;
           ctx.strokeStyle = "#4f46e5";
           ctx.lineWidth = 2 / scale;
+
+          // Drawing borders considering padding
           ctx.strokeRect(
-            object.position.x,
-            object.position.y,
-            object.width,
-            object.height
+            object.position.x - padding,
+            object.position.y - padding,
+            object.width + padding * 2,
+            object.height + padding * 2
           );
+
+          const handleSize = 8 / scale;
+          ctx.fillStyle = "#ffffff";
+          ctx.strokeStyle = "#4f46e5";
+          ctx.lineWidth = 1 / scale;
+
+          const corners = [
+            { x: object.position.x - padding, y: object.position.y - padding },
+            {
+              x: object.position.x + object.width + padding,
+              y: object.position.y - padding,
+            },
+            {
+              x: object.position.x - padding,
+              y: object.position.y + object.height + padding,
+            },
+            {
+              x: object.position.x + object.width + padding,
+              y: object.position.y + object.height + padding,
+            },
+          ];
+
+          corners.forEach((corner) => {
+            ctx.beginPath();
+            ctx.arc(corner.x, corner.y, handleSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+          });
         }
       });
 
