@@ -360,7 +360,6 @@ export const Canvas = () => {
           height,
           fill: "transparent",
           imageData: resizedImageData,
-          bold: false,
         };
 
         addObject(imageObject);

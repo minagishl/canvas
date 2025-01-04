@@ -35,17 +35,32 @@ export function Tooltip({
     });
   };
 
-  const handleBoldChange = () => {
+  const handleWeightChange = () => {
     if (!selectedObjectId) return;
 
     setObjects((prevObjects) => {
       const selectedObject = prevObjects.find(
         (obj) => obj.id === selectedObjectId
       );
-      if (!selectedObject || selectedObject.type !== "text") return prevObjects;
+      if (!selectedObject) return prevObjects;
+
+      const currentWeight = selectedObject.weight || 100;
+      const nextWeight =
+        currentWeight >= 900
+          ? 100
+          : ((currentWeight + 100) as
+              | 100
+              | 200
+              | 300
+              | 400
+              | 500
+              | 600
+              | 700
+              | 800
+              | 900);
 
       return prevObjects.map((obj) =>
-        obj.id === selectedObjectId ? { ...obj, bold: !obj.bold } : obj
+        obj.id === selectedObjectId ? { ...obj, weight: nextWeight } : obj
       );
     });
   };
@@ -106,7 +121,7 @@ export function Tooltip({
           </button>
           <button
             className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-            onClick={handleBoldChange}
+            onClick={handleWeightChange}
           >
             <Bold className="w-5 h-5" />
           </button>
