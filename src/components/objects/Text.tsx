@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { CanvasObject } from "../types/canvas";
+import { CanvasObject } from "../../types/canvas";
 
 interface TextObjectProps {
   obj: CanvasObject & { type: "text" };
