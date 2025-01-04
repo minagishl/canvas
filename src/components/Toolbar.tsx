@@ -102,7 +102,7 @@ export function Toolbar(): React.ReactElement {
   }, []);
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-lg p-2 flex items-center gap-2">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-lg p-2 flex items-center gap-2 select-none">
       {tools.map((Tool) => (
         <div key={Tool.name} className="relative group">
           <button
