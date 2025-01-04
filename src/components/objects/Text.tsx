@@ -51,7 +51,7 @@ export const TextObject = React.memo(
         data-object-id={obj.id}
         contentEditable={isEditing}
         suppressContentEditableWarning
-        className={`absolute hover:border-2 hover:border-indigo-600 ${
+        className={`absolute hover:border-2 hover:border-indigo-600 outline-none ${
           isSelected ? "border-2 border-indigo-600" : ""
         }`}
         style={{
