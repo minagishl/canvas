@@ -272,24 +272,35 @@ export const Canvas = () => {
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       e.preventDefault();
-      const delta = -e.deltaY / 500;
-      const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
 
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+      // Detect two-finger operation on MacBook touchpad
+      if (e.ctrlKey) {
+        // Pinch zoom
+        const delta = -e.deltaY / 500;
+        const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
 
-      const rect = canvas.getBoundingClientRect();
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+        const rect = canvasRef.current?.getBoundingClientRect();
+        if (!rect) return;
 
-      const worldX = (centerX - offset.x) / scale;
-      const worldY = (centerY - offset.y) / scale;
+        // Zoom in on the cursor position
+        const centerX = e.clientX;
+        const centerY = e.clientY;
 
-      const newOffsetX = centerX - worldX * newScale;
-      const newOffsetY = centerY - worldY * newScale;
+        const worldX = (centerX - offset.x) / scale;
+        const worldY = (centerY - offset.y) / scale;
 
-      setScale(newScale);
-      setOffset({ x: newOffsetX, y: newOffsetY });
+        const newOffsetX = centerX - worldX * newScale;
+        const newOffsetY = centerY - worldY * newScale;
+
+        setScale(newScale);
+        setOffset({ x: newOffsetX, y: newOffsetY });
+      } else {
+        // Pan operation with two fingers
+        setOffset((prev) => ({
+          x: prev.x - e.deltaX,
+          y: prev.y - e.deltaY,
+        }));
+      }
     },
     [scale, offset, setScale, setOffset]
   );
