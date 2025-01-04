@@ -586,7 +586,9 @@ export const Canvas = () => {
         onTouchEnd={handleTouchEnd}
       />
 
-      {selectedObjectId && <Tooltip position={tooltipPosition} />}
+      {selectedObjectId && (
+        <Tooltip position={tooltipPosition} isDragging={isDragging} />
+      )}
 
       <input
         type="file"
