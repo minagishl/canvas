@@ -3,7 +3,7 @@ import { useCanvasContext } from "../contexts/CanvasContext";
 import { drawObject } from "../utils/canvas";
 import { Point, CanvasObject } from "../types/canvas";
 import { createPreviewObject } from "../utils/preview";
-import { TextObject } from "./TextObject";
+import { TextObject } from "./objects/Text";
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
