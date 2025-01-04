@@ -90,7 +90,14 @@ export const TextObject = React.memo(
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.selectedTool === nextProps.selectedTool &&
       prevProps.obj.text === nextProps.obj.text &&
-      prevProps.obj.weight === nextProps.obj.weight
+      prevProps.obj.weight === nextProps.obj.weight &&
+      prevProps.isEditing === nextProps.isEditing &&
+      prevProps.isResizing === nextProps.isResizing &&
+      prevProps.onMouseDown === nextProps.onMouseDown &&
+      prevProps.onBlur === nextProps.onBlur &&
+      prevProps.onEditStart === nextProps.onEditStart &&
+      prevProps.onEditEnd === nextProps.onEditEnd &&
+      prevProps.obj.fill === nextProps.obj.fill
     );
   }
 );
