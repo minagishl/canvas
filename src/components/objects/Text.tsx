@@ -57,7 +57,7 @@ export const TextObject = React.memo(
         style={{
           left: 0,
           top: 0,
-          fontSize: `${16 * scale}px`,
+          fontSize: `${24 * scale}px`,
           paddingRight: `${4 * scale}px`,
           paddingLeft: `${4 * scale}px`,
           color: obj.fill,
