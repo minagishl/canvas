@@ -51,15 +51,15 @@ export const TextObject = React.memo(
         data-object-id={obj.id}
         contentEditable={isEditing}
         suppressContentEditableWarning
-        className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
-          isSelected ? "border-2 border-blue-500" : ""
+        className={`absolute hover:border-2 hover:border-indigo-600 ${
+          isSelected ? "border-2 border-indigo-600" : ""
         }`}
         style={{
           left: 0,
           top: 0,
           fontSize: `${16 * scale}px`,
-          paddingRight: `${2 * scale}px`,
-          paddingLeft: `${2 * scale}px`,
+          paddingRight: `${4 * scale}px`,
+          paddingLeft: `${4 * scale}px`,
           color: obj.fill,
           willChange: "transform",
           pointerEvents: isDragging ? "none" : "auto",

@@ -62,7 +62,7 @@ export const Canvas = () => {
       .forEach((object) => {
         drawObject(ctx, object);
         if (object.id === selectedObjectId) {
-          ctx.strokeStyle = "blue";
+          ctx.strokeStyle = "#4f46e5";
           ctx.lineWidth = 2 / scale;
           ctx.strokeRect(
             object.position.x,
