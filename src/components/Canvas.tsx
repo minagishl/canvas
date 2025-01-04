@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 import { drawObject } from "../utils/canvas";
-import { Point, CanvasObject } from "../types/canvas";
+import { Point, CanvasObject, ResizeHandle } from "../types/canvas";
 import { createPreviewObject } from "../utils/preview";
 import { TextObject } from "./objects/Text";
 import { ImageObject } from "./objects/Image";
@@ -29,6 +29,7 @@ export const Canvas = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [panStart, setPanStart] = useState<Point | null>(null);
+  const [resizing, setResizing] = useState<ResizeHandle>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
   const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 });
   const [imageCache, setImageCache] = useState<{ [key: string]: string }>({});
@@ -164,6 +165,48 @@ export const Canvas = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     const point = getCanvasPoint(e);
+
+    if (selectedTool === "select" && selectedObjectId) {
+      // Resize handle detection
+      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+      if (selectedObject) {
+        const handleSize = 8 / scale;
+        const padding = 8 / scale;
+
+        const handles = {
+          "top-left": {
+            x: selectedObject.position.x - padding,
+            y: selectedObject.position.y - padding,
+          },
+          "top-right": {
+            x: selectedObject.position.x + selectedObject.width + padding,
+            y: selectedObject.position.y - padding,
+          },
+          "bottom-left": {
+            x: selectedObject.position.x - padding,
+            y: selectedObject.position.y + selectedObject.height + padding,
+          },
+          "bottom-right": {
+            x: selectedObject.position.x + selectedObject.width + padding,
+            y: selectedObject.position.y + selectedObject.height + padding,
+          },
+        };
+
+        // Check the distance to each handle
+        for (const [handle, pos] of Object.entries(handles) as [
+          ResizeHandle,
+          Point
+        ][]) {
+          const distance = Math.hypot(point.x - pos.x, point.y - pos.y);
+          if (distance <= handleSize) {
+            setResizing(handle);
+            setStartPoint(point);
+            return;
+          }
+        }
+      }
+    }
+
     if (selectedTool === "select") {
       // Clicking on a text or image object
       const clickedHTMLObject = e.target as HTMLElement;
@@ -225,6 +268,86 @@ export const Canvas = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (resizing && selectedObjectId && startPoint) {
+      const currentPoint = getCanvasPoint(e);
+      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+
+      if (selectedObject) {
+        const dx = currentPoint.x - startPoint.x;
+        const dy = currentPoint.y - startPoint.y;
+
+        const newPosition = { ...selectedObject.position };
+        let newWidth = selectedObject.width;
+        let newHeight = selectedObject.height;
+
+        // Maintain aspect ratio when Shift key is pressed
+        if (e.shiftKey) {
+          const aspectRatio = selectedObject.width / selectedObject.height;
+
+          // Processing changes according to the position of the resizing handle
+          if (resizing === "bottom-right") {
+            const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+            newWidth = selectedObject.width + maxDelta * Math.sign(dx);
+            newHeight = newWidth / aspectRatio;
+          } else if (resizing === "bottom-left") {
+            const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+            newWidth = selectedObject.width - maxDelta * Math.sign(dx);
+            newHeight = newWidth / aspectRatio;
+            newPosition.x =
+              selectedObject.position.x + (selectedObject.width - newWidth);
+          } else if (resizing === "top-right") {
+            const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+            newWidth = selectedObject.width + maxDelta * Math.sign(dx);
+            newHeight = newWidth / aspectRatio;
+            newPosition.y =
+              selectedObject.position.y + (selectedObject.height - newHeight);
+          } else if (resizing === "top-left") {
+            const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+            newWidth = selectedObject.width - maxDelta * Math.sign(dx);
+            newHeight = newWidth / aspectRatio;
+            newPosition.x =
+              selectedObject.position.x + (selectedObject.width - newWidth);
+            newPosition.y =
+              selectedObject.position.y + (selectedObject.height - newHeight);
+          }
+        } else {
+          // Normal resizing process
+          if (resizing.includes("left")) {
+            newPosition.x = selectedObject.position.x + dx;
+            newWidth = selectedObject.width - dx;
+          }
+          if (resizing.includes("right")) {
+            newWidth = selectedObject.width + dx;
+          }
+          if (resizing.includes("top")) {
+            newPosition.y = selectedObject.position.y + dy;
+            newHeight = selectedObject.height - dy;
+          }
+          if (resizing.includes("bottom")) {
+            newHeight = selectedObject.height + dy;
+          }
+        }
+
+        // Minimum Size Limit
+        const minSize = 20;
+        if (newWidth >= minSize && newHeight >= minSize) {
+          const updatedObjects = objects.map((obj) =>
+            obj.id === selectedObjectId
+              ? {
+                  ...obj,
+                  position: newPosition,
+                  width: newWidth,
+                  height: newHeight,
+                }
+              : obj
+          );
+          setObjects(updatedObjects);
+          setStartPoint(currentPoint);
+        }
+      }
+      return;
+    }
+
     if (isDragging) {
       if (selectedTool === "select" && selectedObjectId && startPoint) {
         const currentPoint = getCanvasPoint(e);
@@ -261,6 +384,12 @@ export const Canvas = () => {
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
+    if (resizing) {
+      setResizing(null);
+      setStartPoint(null);
+      return;
+    }
+
     if (isDragging) {
       setIsDragging(false);
       setStartPoint(null);

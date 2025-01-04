@@ -16,3 +16,10 @@ export type CanvasObject = {
 };
 
 export type ToolType = "select" | "rectangle" | "circle" | "text" | "image";
+
+export type ResizeHandle =
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
+  | null;
