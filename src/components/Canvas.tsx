@@ -822,6 +822,7 @@ export const Canvas = () => {
                 offset={offset}
                 isSelected={obj.id === selectedObjectId}
                 isDragging={isDragging}
+                isResizing={resizing !== null}
                 isEditing={isEditing && obj.id === selectedObjectId}
                 selectedTool={selectedTool}
                 onMouseDown={(e) => {

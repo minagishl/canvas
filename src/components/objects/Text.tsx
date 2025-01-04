@@ -7,6 +7,7 @@ interface TextObjectProps {
   offset: { x: number; y: number };
   isSelected: boolean;
   isDragging: boolean;
+  isResizing: boolean;
   selectedTool: string;
   onMouseDown: (e: React.MouseEvent) => void;
   onBlur: (e: React.FocusEvent<HTMLDivElement>) => void;
@@ -22,6 +23,7 @@ export const TextObject = React.memo(
     offset,
     isSelected,
     isDragging,
+    isResizing,
     selectedTool,
     onMouseDown,
     onBlur,
@@ -62,7 +64,7 @@ export const TextObject = React.memo(
           paddingLeft: `${4 * scale}px`,
           color: obj.fill,
           willChange: "transform",
-          pointerEvents: isDragging ? "none" : "auto",
+          pointerEvents: isDragging ? "none" : isResizing ? "none" : "auto",
           cursor: selectedTool === "select" ? "move" : "default",
           fontWeight: obj.weight,
         }}
