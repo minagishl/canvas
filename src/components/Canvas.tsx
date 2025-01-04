@@ -125,23 +125,53 @@ export const Canvas = () => {
   const handleMouseDown = (e: React.MouseEvent) => {
     const point = getCanvasPoint(e);
     if (selectedTool === "select") {
-      // Find selection in all objects
-      const clickedObject = objects.find(
+      // Clicking on a text or image object
+      const clickedHTMLObject = e.target as HTMLElement;
+      const isHTMLObject =
+        clickedHTMLObject.tagName === "DIV" ||
+        clickedHTMLObject.tagName === "IMG";
+
+      if (isHTMLObject) {
+        // When an HTML element (text or image) is clicked
+        const objectId = clickedHTMLObject
+          .closest("[data-object-id]")
+          ?.getAttribute("data-object-id");
+        if (objectId) {
+          e.preventDefault(); // Prevent text selection
+          e.stopPropagation(); // Prevent event propagation to canvas
+          setSelectedObjectId(objectId);
+          setIsDragging(true);
+          setStartPoint(point);
+
+          const clickedObject = objects.find((obj) => obj.id === objectId);
+          if (clickedObject) {
+            setDragOffset({
+              x: point.x - clickedObject.position.x,
+              y: point.y - clickedObject.position.y,
+            });
+          }
+          return;
+        }
+      }
+
+      // When an object on the canvas is clicked
+      const clickedCanvasObject = objects.find(
         (obj) =>
+          obj.type !== "text" &&
+          obj.type !== "image" &&
           point.x >= obj.position.x &&
           point.x <= obj.position.x + obj.width &&
           point.y >= obj.position.y &&
           point.y <= obj.position.y + obj.height
       );
 
-      if (clickedObject) {
-        e.preventDefault(); // Prevent text selection
-        setSelectedObjectId(clickedObject.id);
+      if (clickedCanvasObject) {
+        setSelectedObjectId(clickedCanvasObject.id);
         setIsDragging(true);
         setStartPoint(point);
         setDragOffset({
-          x: point.x - clickedObject.position.x,
-          y: point.y - clickedObject.position.y,
+          x: point.x - clickedCanvasObject.position.x,
+          y: point.y - clickedCanvasObject.position.y,
         });
       } else {
         setSelectedObjectId(null);
@@ -564,6 +594,7 @@ export const Canvas = () => {
             return (
               <div
                 key={obj.id}
+                data-object-id={obj.id}
                 contentEditable={selectedTool !== "select"}
                 suppressContentEditableWarning
                 className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
