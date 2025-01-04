@@ -156,7 +156,6 @@ export function Toolbar(): React.ReactElement {
   );
 }
 
-// TODO: Need to work on design.
 function Popover({ name }: { name: string }): React.ReactElement {
   return (
     <div className="absolute bg-white rounded-md shadow-md flex items-center justify-center left-1/2 -translate-x-1/2 top-2">
