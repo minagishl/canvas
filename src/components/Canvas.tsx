@@ -570,7 +570,9 @@ export const Canvas = () => {
         ref={canvasRef}
         className={`absolute inset-0 ${
           selectedTool === "select"
-            ? "cursor-grab active:cursor-grabbing"
+            ? "cursor-default active:cursor-grabbing"
+            : selectedTool === "text" || selectedTool === "image"
+            ? "cursor-pointer"
             : "cursor-crosshair"
         }`}
         onMouseDown={handleMouseDown}
