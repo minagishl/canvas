@@ -9,7 +9,7 @@ interface ImageObjectProps {
   isDragging: boolean;
   selectedTool: string;
   imageCache: Record<string, string>;
-  handleMouseDown: (e: React.MouseEvent) => void;
+  handleMouseDown: (e: React.MouseEvent, handle?: string) => void;
 }
 
 export const ImageObject = React.memo(
@@ -44,7 +44,7 @@ export const ImageObject = React.memo(
         ref={elementRef}
         data-object-id={obj.id}
         className={`absolute select-none ${
-          isSelected ? "border-2 border-blue-500" : ""
+          isSelected ? "border-2 border-indigo-600" : ""
         }`}
         style={{
           left: 0,
@@ -55,19 +55,48 @@ export const ImageObject = React.memo(
           cursor: selectedTool === "select" ? "move" : "default",
           pointerEvents: isDragging ? "none" : "auto",
         }}
-        onMouseDown={(e) => {
-          if (selectedTool === "select") {
-            handleMouseDown(e);
-          }
-        }}
+        onMouseDown={(e) => handleMouseDown(e)}
       >
         <img
           src={imageCache[obj.id] || obj.imageData}
           alt="canvas object"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain pointer-events-none"
           draggable={false}
           loading="lazy"
         />
+        {isSelected && (
+          <>
+            <div className="absolute -inset-2.5 border-2 border-indigo-600 pointer-events-none" />
+            <div
+              className="absolute -left-3 -top-3 size-2 bg-white border border-indigo-600 rounded-full cursor-nw-resize"
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                handleMouseDown(e, "top-left");
+              }}
+            />
+            <div
+              className="absolute -right-3 -top-3 size-2 bg-white border border-indigo-600 rounded-full cursor-ne-resize"
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                handleMouseDown(e, "top-right");
+              }}
+            />
+            <div
+              className="absolute -left-3 -bottom-3 size-2 bg-white border border-indigo-600 rounded-full cursor-sw-resize"
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                handleMouseDown(e, "bottom-left");
+              }}
+            />
+            <div
+              className="absolute -right-3 -bottom-3 size-2 bg-white border border-indigo-600 rounded-full cursor-se-resize"
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                handleMouseDown(e, "bottom-right");
+              }}
+            />
+          </>
+        )}
       </div>
     );
   },
@@ -75,12 +104,15 @@ export const ImageObject = React.memo(
     return (
       prevProps.obj.position.x === nextProps.obj.position.x &&
       prevProps.obj.position.y === nextProps.obj.position.y &&
+      prevProps.obj.width === nextProps.obj.width &&
+      prevProps.obj.height === nextProps.obj.height &&
       prevProps.scale === nextProps.scale &&
       prevProps.offset.x === nextProps.offset.x &&
       prevProps.offset.y === nextProps.offset.y &&
       prevProps.isSelected === nextProps.isSelected &&
       prevProps.isDragging === nextProps.isDragging &&
-      prevProps.selectedTool === nextProps.selectedTool
+      prevProps.selectedTool === nextProps.selectedTool &&
+      prevProps.imageCache === nextProps.imageCache
     );
   }
 );

@@ -163,8 +163,18 @@ export const Canvas = () => {
     };
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (
+    e: React.MouseEvent,
+    resizeHandle?: ResizeHandle
+  ) => {
     const point = getCanvasPoint(e);
+
+    if (resizeHandle && selectedObjectId) {
+      // If the resize handle is clicked
+      setResizing(resizeHandle);
+      setStartPoint(point);
+      return;
+    }
 
     if (selectedTool === "select" && selectedObjectId) {
       // Resize handle detection
@@ -285,46 +295,63 @@ export const Canvas = () => {
           const aspectRatio = selectedObject.width / selectedObject.height;
 
           // Processing changes according to the position of the resizing handle
-          if (resizing === "bottom-right") {
-            const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-            newWidth = selectedObject.width + maxDelta * Math.sign(dx);
-            newHeight = newWidth / aspectRatio;
-          } else if (resizing === "bottom-left") {
-            const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-            newWidth = selectedObject.width - maxDelta * Math.sign(dx);
-            newHeight = newWidth / aspectRatio;
-            newPosition.x =
-              selectedObject.position.x + (selectedObject.width - newWidth);
-          } else if (resizing === "top-right") {
-            const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-            newWidth = selectedObject.width + maxDelta * Math.sign(dx);
-            newHeight = newWidth / aspectRatio;
-            newPosition.y =
-              selectedObject.position.y + (selectedObject.height - newHeight);
-          } else if (resizing === "top-left") {
-            const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-            newWidth = selectedObject.width - maxDelta * Math.sign(dx);
-            newHeight = newWidth / aspectRatio;
-            newPosition.x =
-              selectedObject.position.x + (selectedObject.width - newWidth);
-            newPosition.y =
-              selectedObject.position.y + (selectedObject.height - newHeight);
+          switch (resizing) {
+            case "bottom-right": {
+              const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+              newWidth = selectedObject.width + maxDelta * Math.sign(dx);
+              newHeight = newWidth / aspectRatio;
+              break;
+            }
+            case "bottom-left": {
+              const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+              newWidth = selectedObject.width - maxDelta * Math.sign(dx);
+              newHeight = newWidth / aspectRatio;
+              newPosition.x =
+                selectedObject.position.x + (selectedObject.width - newWidth);
+              break;
+            }
+            case "top-right": {
+              const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+              newWidth = selectedObject.width + maxDelta * Math.sign(dx);
+              newHeight = newWidth / aspectRatio;
+              newPosition.y =
+                selectedObject.position.y + (selectedObject.height - newHeight);
+              break;
+            }
+            case "top-left": {
+              const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+              newWidth = selectedObject.width - maxDelta * Math.sign(dx);
+              newHeight = newWidth / aspectRatio;
+              newPosition.x =
+                selectedObject.position.x + (selectedObject.width - newWidth);
+              newPosition.y =
+                selectedObject.position.y + (selectedObject.height - newHeight);
+              break;
+            }
           }
         } else {
           // Normal resizing process
-          if (resizing.includes("left")) {
-            newPosition.x = selectedObject.position.x + dx;
-            newWidth = selectedObject.width - dx;
-          }
-          if (resizing.includes("right")) {
-            newWidth = selectedObject.width + dx;
-          }
-          if (resizing.includes("top")) {
-            newPosition.y = selectedObject.position.y + dy;
-            newHeight = selectedObject.height - dy;
-          }
-          if (resizing.includes("bottom")) {
-            newHeight = selectedObject.height + dy;
+          switch (resizing) {
+            case "top-left":
+              newPosition.x = selectedObject.position.x + dx;
+              newPosition.y = selectedObject.position.y + dy;
+              newWidth = selectedObject.width - dx;
+              newHeight = selectedObject.height - dy;
+              break;
+            case "top-right":
+              newPosition.y = selectedObject.position.y + dy;
+              newWidth = selectedObject.width + dx;
+              newHeight = selectedObject.height - dy;
+              break;
+            case "bottom-left":
+              newPosition.x = selectedObject.position.x + dx;
+              newWidth = selectedObject.width - dx;
+              newHeight = selectedObject.height + dy;
+              break;
+            case "bottom-right":
+              newWidth = selectedObject.width + dx;
+              newHeight = selectedObject.height + dy;
+              break;
           }
         }
 
@@ -777,7 +804,7 @@ export const Canvas = () => {
                 offset={offset}
                 selectedTool={selectedTool}
                 imageCache={imageCache}
-                handleMouseDown={handleMouseDown}
+                handleMouseDown={(e) => handleMouseDown(e)}
               />
             );
           }
