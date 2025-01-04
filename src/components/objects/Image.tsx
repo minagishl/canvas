@@ -7,6 +7,7 @@ interface ImageObjectProps {
   offset: { x: number; y: number };
   isSelected: boolean;
   isDragging: boolean;
+  isResizing: boolean;
   selectedTool: string;
   imageCache: Record<string, string>;
   handleMouseDown: (e: React.MouseEvent, handle?: string) => void;
@@ -19,6 +20,7 @@ export const ImageObject = React.memo(
     offset,
     isSelected,
     isDragging,
+    isResizing,
     selectedTool,
     imageCache,
     handleMouseDown,
@@ -43,9 +45,7 @@ export const ImageObject = React.memo(
       <div
         ref={elementRef}
         data-object-id={obj.id}
-        className={`absolute select-none ${
-          isSelected ? "border-2 border-indigo-600" : ""
-        }`}
+        className="absolute select-none"
         style={{
           left: 0,
           top: 0,
@@ -53,7 +53,7 @@ export const ImageObject = React.memo(
           height: obj.height * scale,
           willChange: "transform",
           cursor: selectedTool === "select" ? "move" : "default",
-          pointerEvents: isDragging ? "none" : "auto",
+          pointerEvents: isDragging ? "none" : isResizing ? "none" : "auto",
         }}
         onMouseDown={(e) => handleMouseDown(e)}
       >

@@ -169,6 +169,7 @@ export const Canvas = () => {
   ) => {
     const point = getCanvasPoint(e);
 
+    console.log("resizeHandle", resizeHandle);
     if (resizeHandle && selectedObjectId) {
       // If the resize handle is clicked
       setResizing(resizeHandle);
@@ -800,11 +801,14 @@ export const Canvas = () => {
                 obj={obj as CanvasObject & { type: "image" }}
                 isSelected={obj.id === selectedObjectId}
                 isDragging={isDragging}
+                isResizing={resizing !== null}
                 scale={scale}
                 offset={offset}
                 selectedTool={selectedTool}
                 imageCache={imageCache}
-                handleMouseDown={(e) => handleMouseDown(e)}
+                handleMouseDown={(e, handle) =>
+                  handleMouseDown(e, handle as ResizeHandle)
+                }
               />
             );
           }
