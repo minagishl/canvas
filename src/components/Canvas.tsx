@@ -28,6 +28,8 @@ export const Canvas = () => {
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
   const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 });
   const [imageCache, setImageCache] = useState<{ [key: string]: string }>({});
+  const [touchStartTime, setTouchStartTime] = useState<number>(0);
+  const [lastTouchDistance, setLastTouchDistance] = useState<number>(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -355,6 +357,154 @@ export const Canvas = () => {
     )
   );
 
+  // Add touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    setTouchStartTime(Date.now());
+
+    if (e.touches.length === 2) {
+      // Start pinch gesture
+      const distance = getTouchDistance(e.touches);
+      setLastTouchDistance(distance);
+    } else if (e.touches.length === 1) {
+      const point = getTouchPoint(touch);
+      if (selectedTool === "select") {
+        const clickedObject = objects.find(
+          (obj) =>
+            point.x >= obj.position.x &&
+            point.x <= obj.position.x + obj.width &&
+            point.y >= obj.position.y &&
+            point.y <= obj.position.y + obj.height
+        );
+
+        if (clickedObject) {
+          setSelectedObjectId(clickedObject.id);
+          setIsDragging(true);
+          setStartPoint(point);
+          setDragOffset({
+            x: point.x - clickedObject.position.x,
+            y: point.y - clickedObject.position.y,
+          });
+        } else {
+          setSelectedObjectId(null);
+          setIsPanning(true);
+          setPanStart({ x: touch.clientX, y: touch.clientY });
+        }
+      } else {
+        setStartPoint(point);
+        setIsDragging(true);
+      }
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+
+    if (e.touches.length === 2) {
+      // Pinch zoom processing
+      const distance = getTouchDistance(e.touches);
+      const delta = (distance - lastTouchDistance) * 0.01;
+      const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
+
+      const center = getTouchCenter(e.touches);
+      const worldX = (center.x - offset.x) / scale;
+      const worldY = (center.y - offset.y) / scale;
+
+      const newOffsetX = center.x - worldX * newScale;
+      const newOffsetY = center.y - worldY * newScale;
+
+      setScale(newScale);
+      setOffset({ x: newOffsetX, y: newOffsetY });
+      setLastTouchDistance(distance);
+    } else if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      if (isDragging) {
+        if (selectedTool === "select" && selectedObjectId && startPoint) {
+          const currentPoint = getTouchPoint(touch);
+          const newX = currentPoint.x - dragOffset.x;
+          const newY = currentPoint.y - dragOffset.y;
+
+          const updatedObjects = objects.map((obj) =>
+            obj.id === selectedObjectId
+              ? { ...obj, position: { x: newX, y: newY } }
+              : obj
+          );
+          setObjects(updatedObjects);
+        } else if (startPoint) {
+          const currentPoint = getTouchPoint(touch);
+          const preview = createPreviewObject(
+            selectedTool,
+            startPoint,
+            currentPoint,
+            false
+          );
+          setPreviewObject(preview);
+        }
+      } else if (isPanning) {
+        if (panStart) {
+          const deltaX = touch.clientX - panStart.x;
+          const deltaY = touch.clientY - panStart.y;
+          setOffset({
+            x: offset.x + deltaX,
+            y: offset.y + deltaY,
+          });
+        }
+        setPanStart({ x: touch.clientX, y: touch.clientY });
+      }
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    const touchDuration = Date.now() - touchStartTime;
+
+    if (isDragging) {
+      setIsDragging(false);
+      setStartPoint(null);
+      setDragOffset({ x: 0, y: 0 });
+    }
+
+    if (isPanning) {
+      setIsPanning(false);
+      setPanStart(null);
+    }
+
+    if (touchDuration < 200 && !isDragging && selectedTool === "image") {
+      const touch = e.changedTouches[0];
+      const point = getTouchPoint(touch);
+      setImagePosition(point);
+      fileInputRef.current?.click();
+    }
+
+    setLastTouchDistance(0);
+  };
+
+  // Utility functions
+  const getTouchPoint = (touch: React.Touch): Point => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (touch.clientX - rect.left - offset.x) / scale,
+      y: (touch.clientY - rect.top - offset.y) / scale,
+    };
+  };
+
+  const getTouchDistance = (touches: React.TouchList): number => {
+    const dx = touches[1].clientX - touches[0].clientX;
+    const dy = touches[1].clientY - touches[0].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  const getTouchCenter = (touches: React.TouchList): Point => {
+    return {
+      x: (touches[0].clientX + touches[1].clientX) / 2,
+      y: (touches[0].clientY + touches[1].clientY) / 2,
+    };
+  };
+
   return (
     <div className="relative w-full h-full">
       <canvas
@@ -374,6 +524,9 @@ export const Canvas = () => {
           setIsPanning(false);
           setPanStart(null);
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       />
 
       <input
