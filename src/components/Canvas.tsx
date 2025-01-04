@@ -4,6 +4,7 @@ import { drawObject } from "../utils/canvas";
 import { Point, CanvasObject } from "../types/canvas";
 import { createPreviewObject } from "../utils/preview";
 import { TextObject } from "./objects/Text";
+import { ImageObject } from "./objects/Image";
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -363,42 +364,6 @@ export const Canvas = () => {
     reader.readAsDataURL(file);
   };
 
-  const ImageObject = React.memo(
-    ({
-      obj,
-      commonStyles,
-    }: {
-      obj: CanvasObject & { type: "image" };
-      commonStyles: React.CSSProperties;
-    }) => (
-      <div
-        key={obj.id}
-        className={`absolute select-none pointer-events-none ${
-          obj.id === selectedObjectId ? "border-2 border-blue-500" : ""
-        }`}
-        style={{
-          ...commonStyles,
-          width: obj.width * scale,
-          height: obj.height * scale,
-          willChange: "transform",
-        }}
-        onMouseDown={(e) => {
-          if (selectedTool === "select") {
-            handleMouseDown(e);
-          }
-        }}
-      >
-        <img
-          src={imageCache[obj.id] || obj.imageData}
-          alt="canvas object"
-          className="w-full h-full object-contain"
-          draggable={false}
-          loading="lazy"
-        />
-      </div>
-    )
-  );
-
   // Add touch event handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
@@ -582,22 +547,18 @@ export const Canvas = () => {
       {objects
         .filter((obj) => obj.type === "text" || obj.type === "image")
         .map((obj) => {
-          const commonStyles: React.CSSProperties = {
-            position: "absolute" as const,
-            top: obj.position.y * scale + offset.y,
-            left: obj.position.x * scale + offset.x,
-            transform: "translate(-50%, -50%)",
-            cursor: selectedTool === "select" ? "move" : "default",
-            pointerEvents:
-              isDragging && obj.id !== selectedObjectId ? "none" : "auto",
-          };
-
           if (obj.type === "image") {
             return (
               <ImageObject
                 key={obj.id}
                 obj={obj as CanvasObject & { type: "image" }}
-                commonStyles={commonStyles}
+                isSelected={obj.id === selectedObjectId}
+                isDragging={isDragging}
+                scale={scale}
+                offset={offset}
+                selectedTool={selectedTool}
+                imageCache={imageCache}
+                handleMouseDown={handleMouseDown}
               />
             );
           }
@@ -629,6 +590,7 @@ export const Canvas = () => {
               />
             );
           }
+
           return null;
         })}
     </div>

@@ -22,7 +22,7 @@ const tools: {
   { icon: Square, name: "rectangle", disabled: false },
   { icon: Circle, name: "circle", disabled: false },
   { icon: Type, name: "text", disabled: false },
-  { icon: ImageIcon, name: "image", disabled: true },
+  { icon: ImageIcon, name: "image", disabled: false },
 ];
 
 export function Toolbar(): React.ReactElement {
