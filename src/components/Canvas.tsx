@@ -292,7 +292,7 @@ export const Canvas = () => {
         let newHeight = selectedObject.height;
 
         // Maintain aspect ratio when Shift key is pressed
-        if (e.shiftKey) {
+        if (e.shiftKey || selectedObject.type === "image") {
           const aspectRatio = selectedObject.width / selectedObject.height;
 
           // Processing changes according to the position of the resizing handle
