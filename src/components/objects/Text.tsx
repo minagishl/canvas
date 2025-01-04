@@ -53,7 +53,7 @@ export const TextObject = React.memo(
         suppressContentEditableWarning
         className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
           isSelected ? "border-2 border-blue-500" : ""
-        }`}
+        } ${obj.bold ? "font-bold" : ""}`}
         style={{
           left: 0,
           top: 0,
@@ -86,7 +86,8 @@ export const TextObject = React.memo(
       prevProps.isSelected === nextProps.isSelected &&
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.selectedTool === nextProps.selectedTool &&
-      prevProps.obj.text === nextProps.obj.text
+      prevProps.obj.text === nextProps.obj.text &&
+      prevProps.obj.bold === nextProps.obj.bold
     );
   }
 );

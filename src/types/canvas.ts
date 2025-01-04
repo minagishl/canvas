@@ -12,6 +12,7 @@ export type CanvasObject = {
   fill: string;
   text?: string;
   imageData?: string;
+  bold: boolean;
 };
 
 export type ToolType = "select" | "rectangle" | "circle" | "text" | "image";

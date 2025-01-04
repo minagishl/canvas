@@ -1,5 +1,5 @@
 import React from "react";
-import { Circle, TextCursorInput } from "lucide-react";
+import { Circle, TextCursorInput, Bold } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 
 interface TooltipProps {
@@ -31,6 +31,21 @@ export function Tooltip({
         obj.id === selectedObjectId
           ? { ...obj, fill: colors[nextColorIndex] }
           : obj
+      );
+    });
+  };
+
+  const handleBoldChange = () => {
+    if (!selectedObjectId) return;
+
+    setObjects((prevObjects) => {
+      const selectedObject = prevObjects.find(
+        (obj) => obj.id === selectedObjectId
+      );
+      if (!selectedObject || selectedObject.type !== "text") return prevObjects;
+
+      return prevObjects.map((obj) =>
+        obj.id === selectedObjectId ? { ...obj, bold: !obj.bold } : obj
       );
     });
   };
@@ -82,12 +97,20 @@ export function Tooltip({
         />
       </button>
       {isTextObject && (
-        <button
-          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-          onClick={handleTextEdit}
-        >
-          <TextCursorInput className="w-5 h-5" />
-        </button>
+        <>
+          <button
+            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            onClick={handleTextEdit}
+          >
+            <TextCursorInput className="w-5 h-5" />
+          </button>
+          <button
+            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            onClick={handleBoldChange}
+          >
+            <Bold className="w-5 h-5" />
+          </button>
+        </>
       )}
     </div>
   );

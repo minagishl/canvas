@@ -2,8 +2,7 @@ import { CanvasObject } from "../types/canvas";
 
 export const drawObject = (
   ctx: CanvasRenderingContext2D,
-  object: CanvasObject,
-  scale: number
+  object: CanvasObject
 ) => {
   ctx.fillStyle = object.fill;
 
@@ -28,12 +27,6 @@ export const drawObject = (
         Math.PI * 2
       );
       ctx.fill();
-      break;
-    case "text":
-      if (object.text) {
-        ctx.font = `${16 * scale}px sans-serif`;
-        ctx.fillText(object.text, object.position.x, object.position.y + 16);
-      }
       break;
     case "image":
       if (object.imageData) {

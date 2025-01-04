@@ -32,5 +32,6 @@ export const createPreviewObject = (
     height,
     fill: "#4f46e5",
     text: tool === "text" ? "Double click to edit" : undefined,
+    bold: false,
   };
 };

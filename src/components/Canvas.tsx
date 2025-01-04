@@ -60,7 +60,7 @@ export const Canvas = () => {
     objects
       .filter((obj) => obj.type !== "text" && obj.type !== "image")
       .forEach((object) => {
-        drawObject(ctx, object, scale);
+        drawObject(ctx, object);
         if (object.id === selectedObjectId) {
           ctx.strokeStyle = "blue";
           ctx.lineWidth = 2 / scale;
@@ -76,7 +76,7 @@ export const Canvas = () => {
     // Draw preview object
     if (previewObject && selectedTool !== "select") {
       ctx.globalAlpha = 0.6;
-      drawObject(ctx, previewObject, scale);
+      drawObject(ctx, previewObject);
       ctx.globalAlpha = 1;
     }
 
@@ -360,6 +360,7 @@ export const Canvas = () => {
           height,
           fill: "transparent",
           imageData: resizedImageData,
+          bold: false,
         };
 
         addObject(imageObject);
