@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 import { ToolType } from "../types/canvas";
+import { isMobile } from "react-device-detect";
 
 const tools: {
   icon: typeof MousePointer2;
@@ -103,37 +104,41 @@ export function Toolbar(): React.ReactElement {
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-lg p-2 flex items-center gap-2 select-none">
-      {tools.map((Tool) => (
-        <div key={Tool.name} className="relative group">
-          <button
-            className={`p-2 rounded-md transition-colors cursor-pointer ${
-              selectedTool === Tool.name
-                ? "bg-indigo-100 text-indigo-600"
-                : "hover:bg-gray-100"
-            } ${Tool.disabled && "opacity-50"}`}
-            title={Tool.name}
-            onClick={() => {
-              if (!Tool.disabled) {
-                setSelectedTool(Tool.name);
-              }
-            }}
-          >
-            <Tool.icon className="w-5 h-5" />
-          </button>
-          {Tool.disabled && (
-            <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-              <Popover name={Tool.name} />
-            </div>
-          )}
-        </div>
-      ))}
-      <button
-        key="more"
-        className="p-2 rounded-md transition-colors hover:bg-gray-100 cursor-pointer"
-        title="More"
-      >
-        <MoreHorizontal className="w-5 h-5" />
-      </button>
+      {tools
+        .filter((Tool) => !isMobile || Tool.name === "select")
+        .map((Tool) => (
+          <div key={Tool.name} className="relative group">
+            <button
+              className={`p-2 rounded-md transition-colors cursor-pointer ${
+                selectedTool === Tool.name
+                  ? "bg-indigo-100 text-indigo-600"
+                  : "hover:bg-gray-100"
+              } ${Tool.disabled && "opacity-50"}`}
+              title={Tool.name}
+              onClick={() => {
+                if (!Tool.disabled) {
+                  setSelectedTool(Tool.name);
+                }
+              }}
+            >
+              <Tool.icon className="w-5 h-5" />
+            </button>
+            {Tool.disabled && (
+              <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+                <Popover name={Tool.name} />
+              </div>
+            )}
+          </div>
+        ))}
+      {!isMobile && (
+        <button
+          key="more"
+          className="p-2 rounded-md transition-colors hover:bg-gray-100 cursor-pointer"
+          title="More"
+        >
+          <MoreHorizontal className="w-5 h-5" />
+        </button>
+      )}
       <div className="w-px h-6 bg-gray-200 mx-2" />
       <button
         onClick={handleZoomOut}
