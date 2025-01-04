@@ -10,6 +10,9 @@ interface TextObjectProps {
   selectedTool: string;
   onMouseDown: (e: React.MouseEvent) => void;
   onBlur: (e: React.FocusEvent<HTMLDivElement>) => void;
+  isEditing: boolean;
+  onEditStart: () => void;
+  onEditEnd: () => void;
 }
 
 export const TextObject = React.memo(
@@ -22,6 +25,9 @@ export const TextObject = React.memo(
     selectedTool,
     onMouseDown,
     onBlur,
+    isEditing,
+    onEditStart,
+    onEditEnd,
   }: TextObjectProps) => {
     const elementRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef({ x: 0, y: 0 });
@@ -43,7 +49,7 @@ export const TextObject = React.memo(
       <div
         ref={elementRef}
         data-object-id={obj.id}
-        contentEditable={selectedTool !== "select"}
+        contentEditable={isEditing}
         suppressContentEditableWarning
         className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
           isSelected ? "border-2 border-blue-500" : ""
@@ -60,7 +66,11 @@ export const TextObject = React.memo(
           cursor: selectedTool === "select" ? "move" : "default",
         }}
         onMouseDown={onMouseDown}
-        onBlur={onBlur}
+        onBlur={(e) => {
+          onBlur(e);
+          onEditEnd();
+        }}
+        onFocus={() => onEditStart()}
       >
         {obj.text}
       </div>

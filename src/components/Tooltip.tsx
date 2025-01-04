@@ -1,5 +1,5 @@
 import React from "react";
-import { Circle } from "lucide-react";
+import { Circle, TextCursorInput } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 
 interface TooltipProps {
@@ -35,7 +35,27 @@ export function Tooltip({
     });
   };
 
+  const handleTextEdit = () => {
+    if (!selectedObjectId) return;
+
+    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    if (!selectedObject || selectedObject.type !== "text") return;
+
+    // Find and focus text elements
+    const textElement = document.querySelector(
+      `[data-object-id="${selectedObjectId}"]`
+    ) as HTMLElement;
+
+    if (textElement) {
+      textElement.contentEditable = "true";
+      textElement.focus();
+    }
+  };
+
   if (!position) return null;
+
+  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+  const isTextObject = selectedObject?.type === "text";
 
   return (
     <div
@@ -61,6 +81,14 @@ export function Tooltip({
           stroke="none"
         />
       </button>
+      {isTextObject && (
+        <button
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          onClick={handleTextEdit}
+        >
+          <TextCursorInput className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 }

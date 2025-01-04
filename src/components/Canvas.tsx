@@ -26,6 +26,7 @@ export const Canvas = () => {
   const [imagePosition, setImagePosition] = useState<Point | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [panStart, setPanStart] = useState<Point | null>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
@@ -527,6 +528,7 @@ export const Canvas = () => {
   // Delete an object with the Delete key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isEditing) return;
       if (e.key === "Delete" || e.key === "Backspace") {
         deleteSelectedObject();
       }
@@ -536,7 +538,7 @@ export const Canvas = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [deleteSelectedObject]);
+  }, [isEditing, deleteSelectedObject]);
 
   useEffect(() => {
     if (selectedObjectId) {
@@ -626,6 +628,7 @@ export const Canvas = () => {
                 offset={offset}
                 isSelected={obj.id === selectedObjectId}
                 isDragging={isDragging}
+                isEditing={isEditing && obj.id === selectedObjectId}
                 selectedTool={selectedTool}
                 onMouseDown={(e) => {
                   if (selectedTool === "select") {
@@ -641,6 +644,8 @@ export const Canvas = () => {
                     setObjects(updatedObjects);
                   }
                 }}
+                onEditStart={() => setIsEditing(true)}
+                onEditEnd={() => setIsEditing(false)}
               />
             );
           }
