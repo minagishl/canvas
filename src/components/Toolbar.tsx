@@ -138,20 +138,30 @@ export function Toolbar(): React.ReactElement {
         </button>
       )}
       <div className="w-px h-6 bg-gray-200 mx-2" />
-      <button
-        onClick={handleZoomOut}
-        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        disabled={isZooming || scale <= 0.7}
-      >
-        <ZoomOut className="w-5 h-5" />
-      </button>
-      <button
-        onClick={handleZoomIn}
-        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        disabled={isZooming || scale >= 2}
-      >
-        <ZoomIn className="w-5 h-5" />
-      </button>
+      <div className="relative group">
+        <button
+          onClick={handleZoomOut}
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          disabled={isZooming || scale <= 0.7}
+        >
+          <ZoomOut className="w-5 h-5" />
+        </button>
+        <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+          <Popover text="Zoom out" />
+        </div>
+      </div>
+      <div className="relative group">
+        <button
+          onClick={handleZoomIn}
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          disabled={isZooming || scale >= 2}
+        >
+          <ZoomIn className="w-5 h-5" />
+        </button>
+        <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+          <Popover text="Zoom in" />
+        </div>
+      </div>
     </div>
   );
 }
