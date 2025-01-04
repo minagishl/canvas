@@ -87,6 +87,8 @@ export function Tooltip({
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
   const isTextObject = selectedObject?.type === "text";
 
+  if (selectedObject?.type === "image") return null;
+
   return (
     <div
       className="bg-white rounded-xl shadow-lg p-2 flex items-center gap-2 select-none absolute z-10"
