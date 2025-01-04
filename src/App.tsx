@@ -9,7 +9,7 @@ function App(): React.ReactElement {
 
   return (
     <CanvasProvider>
-      <div className="w-screen h-screen bg-gray-50 overflow-hidden relative">
+      <div className="w-screen h-screen bg-gray-50 overflow-hidden relative select-none">
         <Canvas />
         <Toolbar />
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
