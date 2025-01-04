@@ -758,7 +758,9 @@ export const Canvas = () => {
         ref={canvasRef}
         className={`absolute inset-0 ${
           selectedTool === "select"
-            ? "cursor-default active:cursor-grabbing"
+            ? resizing
+              ? "cursor-grabbing"
+              : "cursor-default active:cursor-grabbing"
             : selectedTool === "text" || selectedTool === "image"
             ? "cursor-pointer"
             : "cursor-crosshair"
@@ -803,7 +805,6 @@ export const Canvas = () => {
                 isResizing={resizing !== null}
                 scale={scale}
                 offset={offset}
-                selectedTool={selectedTool}
                 imageCache={imageCache}
                 handleMouseDown={(e, handle) =>
                   handleMouseDown(e, handle as ResizeHandle)

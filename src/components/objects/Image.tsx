@@ -8,7 +8,6 @@ interface ImageObjectProps {
   isSelected: boolean;
   isDragging: boolean;
   isResizing: boolean;
-  selectedTool: string;
   imageCache: Record<string, string>;
   handleMouseDown: (e: React.MouseEvent, handle?: string) => void;
 }
@@ -21,7 +20,6 @@ export const ImageObject = React.memo(
     isSelected,
     isDragging,
     isResizing,
-    selectedTool,
     imageCache,
     handleMouseDown,
   }: ImageObjectProps) => {
@@ -52,7 +50,7 @@ export const ImageObject = React.memo(
           width: obj.width * scale,
           height: obj.height * scale,
           willChange: "transform",
-          cursor: selectedTool === "select" ? "move" : "default",
+          cursor: "default",
           pointerEvents: isDragging ? "none" : isResizing ? "none" : "auto",
         }}
         onMouseDown={(e) => handleMouseDown(e)}
@@ -68,28 +66,28 @@ export const ImageObject = React.memo(
           <>
             <div className="absolute -inset-2.5 border-2 border-indigo-600 pointer-events-none" />
             <div
-              className="absolute -left-3 -top-3 size-2 bg-white border border-indigo-600 rounded-full cursor-nw-resize"
+              className="absolute -left-3 -top-3 size-2 bg-white border border-indigo-600 rounded-full"
               onMouseDown={(e) => {
                 e.stopPropagation();
                 handleMouseDown(e, "top-left");
               }}
             />
             <div
-              className="absolute -right-3 -top-3 size-2 bg-white border border-indigo-600 rounded-full cursor-ne-resize"
+              className="absolute -right-3 -top-3 size-2 bg-white border border-indigo-600 rounded-full"
               onMouseDown={(e) => {
                 e.stopPropagation();
                 handleMouseDown(e, "top-right");
               }}
             />
             <div
-              className="absolute -left-3 -bottom-3 size-2 bg-white border border-indigo-600 rounded-full cursor-sw-resize"
+              className="absolute -left-3 -bottom-3 size-2 bg-white border border-indigo-600 rounded-full"
               onMouseDown={(e) => {
                 e.stopPropagation();
                 handleMouseDown(e, "bottom-left");
               }}
             />
             <div
-              className="absolute -right-3 -bottom-3 size-2 bg-white border border-indigo-600 rounded-full cursor-se-resize"
+              className="absolute -right-3 -bottom-3 size-2 bg-white border border-indigo-600 rounded-full"
               onMouseDown={(e) => {
                 e.stopPropagation();
                 handleMouseDown(e, "bottom-right");
@@ -111,7 +109,6 @@ export const ImageObject = React.memo(
       prevProps.offset.y === nextProps.offset.y &&
       prevProps.isSelected === nextProps.isSelected &&
       prevProps.isDragging === nextProps.isDragging &&
-      prevProps.selectedTool === nextProps.selectedTool &&
       prevProps.imageCache === nextProps.imageCache
     );
   }
