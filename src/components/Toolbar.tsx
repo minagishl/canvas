@@ -124,7 +124,7 @@ export function Toolbar(): React.ReactElement {
             </button>
             {Tool.disabled && (
               <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-                <Popover name={Tool.name} />
+                <Popover text={`${Tool.name} is disabled`} />
               </div>
             )}
           </div>
@@ -156,11 +156,11 @@ export function Toolbar(): React.ReactElement {
   );
 }
 
-function Popover({ name }: { name: string }): React.ReactElement {
+function Popover({ text }: { text: string }): React.ReactElement {
   return (
-    <div className="absolute bg-white rounded-md shadow-md flex items-center justify-center left-1/2 -translate-x-1/2 top-2">
+    <div className="absolute bg-white rounded-md shadow-md flex items-center justify-center left-1/2 -translate-x-1/2 top-2 animate-fade animate-once animate-duration-300">
       <div className="w-fit flex p-2 px-4 items-center justify-center font-sans flex-col whitespace-nowrap">
-        <p>{name} is currently disabled</p>
+        <p>{text}</p>
       </div>
     </div>
   );
