@@ -1,5 +1,11 @@
 import React from "react";
-import { Circle, TextCursorInput, Bold } from "lucide-react";
+import {
+  Circle,
+  TextCursorInput,
+  Bold,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 
 interface TooltipProps {
@@ -82,6 +88,44 @@ export function Tooltip({
     }
   };
 
+  const handleMoveDown = () => {
+    if (!selectedObjectId) return;
+
+    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    if (!selectedObject) return;
+
+    const selectedObjectIndex = objects.findIndex(
+      (obj) => obj.id === selectedObjectId
+    );
+
+    setObjects((prevObjects) => {
+      const nextObjects = [...prevObjects];
+      nextObjects.splice(selectedObjectIndex, 1);
+      nextObjects.splice(selectedObjectIndex + 1, 0, selectedObject);
+
+      return nextObjects;
+    });
+  };
+
+  const handleMoveUp = () => {
+    if (!selectedObjectId) return;
+
+    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    if (!selectedObject) return;
+
+    const selectedObjectIndex = objects.findIndex(
+      (obj) => obj.id === selectedObjectId
+    );
+
+    setObjects((prevObjects) => {
+      const nextObjects = [...prevObjects];
+      nextObjects.splice(selectedObjectIndex, 1);
+      nextObjects.splice(selectedObjectIndex - 1, 0, selectedObject);
+
+      return nextObjects;
+    });
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -112,6 +156,18 @@ export function Tooltip({
           }
           stroke="none"
         />
+      </button>
+      <button
+        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+        onClick={handleMoveUp}
+      >
+        <ChevronDown className="w-5 h-5" />
+      </button>
+      <button
+        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+        onClick={handleMoveDown}
+      >
+        <ChevronUp className="w-5 h-5" />
       </button>
       {isTextObject && (
         <>
