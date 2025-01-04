@@ -7,7 +7,7 @@ interface TooltipProps {
   isDragging: boolean;
 }
 
-const colors = ["#4f46e5", "#ef4444", "#22c55e", "#f59e0b", "#06b6d4"];
+const colors = ["#4f46e5", "#dc2626", "#16a34a", "#f59e0b", "#06b6d4"];
 
 export function Tooltip({
   position,
