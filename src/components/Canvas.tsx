@@ -329,7 +329,7 @@ export const Canvas = () => {
       img.onload = () => {
         // Image resizing process
         const canvas = document.createElement("canvas");
-        const maxSize = 300;
+        const maxSize = 500;
         const ratio = Math.min(maxSize / img.width, maxSize / img.height);
         const width = img.width * ratio;
         const height = img.height * ratio;
