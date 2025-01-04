@@ -115,15 +115,15 @@ export function Tooltip({
         <>
           <button
             className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-            onClick={handleTextEdit}
-          >
-            <TextCursorInput className="w-5 h-5" />
-          </button>
-          <button
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
             onClick={handleWeightChange}
           >
             <Bold className="w-5 h-5" />
+          </button>
+          <button
+            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            onClick={handleTextEdit}
+          >
+            <TextCursorInput className="w-5 h-5" />
           </button>
         </>
       )}
