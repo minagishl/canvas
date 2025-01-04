@@ -3,6 +3,7 @@ import { useCanvasContext } from "../contexts/CanvasContext";
 import { drawObject } from "../utils/canvas";
 import { Point, CanvasObject } from "../types/canvas";
 import { createPreviewObject } from "../utils/preview";
+import { TextObject } from "./TextObject";
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -592,21 +593,14 @@ export const Canvas = () => {
 
           if (obj.type === "text") {
             return (
-              <div
+              <TextObject
                 key={obj.id}
-                data-object-id={obj.id}
-                contentEditable={selectedTool !== "select"}
-                suppressContentEditableWarning
-                className={`absolute hover:border hover:border-dashed hover:border-gray-300 rounded-md ${
-                  obj.id === selectedObjectId ? "border-2 border-blue-500" : ""
-                }`}
-                style={{
-                  ...commonStyles,
-                  fontSize: `${16 * scale}px`,
-                  paddingRight: `${2 * scale}px`,
-                  paddingLeft: `${2 * scale}px`,
-                  color: obj.fill,
-                }}
+                obj={obj as CanvasObject & { type: "text" }}
+                scale={scale}
+                offset={offset}
+                isSelected={obj.id === selectedObjectId}
+                isDragging={isDragging}
+                selectedTool={selectedTool}
                 onMouseDown={(e) => {
                   if (selectedTool === "select") {
                     handleMouseDown(e);
@@ -621,9 +615,7 @@ export const Canvas = () => {
                     setObjects(updatedObjects);
                   }
                 }}
-              >
-                {obj.text}
-              </div>
+              />
             );
           }
           return null;
