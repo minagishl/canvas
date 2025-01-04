@@ -512,6 +512,27 @@ export const Canvas = () => {
     };
   };
 
+  const deleteSelectedObject = useCallback(() => {
+    if (!selectedObjectId) return;
+    const updatedObjects = objects.filter((obj) => obj.id !== selectedObjectId);
+    setObjects(updatedObjects);
+    setSelectedObjectId(null);
+  }, [selectedObjectId, objects, setObjects, setSelectedObjectId]);
+
+  // Delete an object with the Delete key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        deleteSelectedObject();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [deleteSelectedObject]);
+
   return (
     <div className="relative w-full h-full">
       <canvas
