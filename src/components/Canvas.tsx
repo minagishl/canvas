@@ -542,8 +542,19 @@ export const Canvas = () => {
     if (selectedObjectId) {
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
       if (selectedObject) {
-        const x = selectedObject.position.x * scale + offset.x;
-        const y = selectedObject.position.y * scale + offset.y;
+        let x, y;
+
+        // Calculate the position of the tooltip (Specified by tailwindcss standard)
+        if (selectedObject.type === "text") {
+          x = selectedObject.position.x * scale + offset.x;
+          y = selectedObject.position.y * scale + offset.y - 16; // 1rem
+        } else {
+          x =
+            (selectedObject.position.x + selectedObject.width / 2) * scale +
+            offset.x;
+          y = selectedObject.position.y * scale + offset.y - 8; // 0.5rem
+        }
+
         setTooltipPosition({ x, y });
       }
     } else {
