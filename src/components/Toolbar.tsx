@@ -114,7 +114,6 @@ export function Toolbar(): React.ReactElement {
                   ? "bg-indigo-100 text-indigo-600"
                   : "hover:bg-gray-100"
               } ${Tool.disabled && "opacity-50"}`}
-              title={Tool.name}
               onClick={() => {
                 if (!Tool.disabled) {
                   setSelectedTool(Tool.name);
@@ -134,7 +133,6 @@ export function Toolbar(): React.ReactElement {
         <button
           key="more"
           className="p-2 rounded-md transition-colors hover:bg-gray-100 cursor-pointer"
-          title="More"
         >
           <MoreHorizontal className="w-5 h-5" />
         </button>
@@ -143,7 +141,6 @@ export function Toolbar(): React.ReactElement {
       <button
         onClick={handleZoomOut}
         className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        title="Zoom Out"
         disabled={isZooming || scale <= 0.7}
       >
         <ZoomOut className="w-5 h-5" />
@@ -151,7 +148,6 @@ export function Toolbar(): React.ReactElement {
       <button
         onClick={handleZoomIn}
         className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        title="Zoom In"
         disabled={isZooming || scale >= 2}
       >
         <ZoomIn className="w-5 h-5" />
@@ -163,9 +159,9 @@ export function Toolbar(): React.ReactElement {
 // TODO: Need to work on design.
 function Popover({ name }: { name: string }): React.ReactElement {
   return (
-    <div className="absolute bg-white p-2 rounded-xl shadow-md flex items-center justify-center left-1/2 -translate-x-1/2 top-4">
-      <div className="w-fit flex items-center justify-center rounded-md font-sans flex-col whitespace-nowrap">
-        <p>{name} is disabled</p>
+    <div className="absolute bg-white rounded-md shadow-md flex items-center justify-center left-1/2 -translate-x-1/2 top-2">
+      <div className="w-fit flex p-2 px-4 items-center justify-center font-sans flex-col whitespace-nowrap">
+        <p>{name} is currently disabled</p>
       </div>
     </div>
   );
