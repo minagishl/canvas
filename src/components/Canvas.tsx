@@ -169,7 +169,6 @@ export const Canvas = () => {
   ) => {
     const point = getCanvasPoint(e);
 
-    console.log("resizeHandle", resizeHandle);
     if (resizeHandle && selectedObjectId) {
       // If the resize handle is clicked
       setResizing(resizeHandle);
