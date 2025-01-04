@@ -5,6 +5,7 @@ import { Point, CanvasObject } from "../types/canvas";
 import { createPreviewObject } from "../utils/preview";
 import { TextObject } from "./objects/Text";
 import { ImageObject } from "./objects/Image";
+import { Tooltip } from "./Tooltip";
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,6 +33,10 @@ export const Canvas = () => {
   const [imageCache, setImageCache] = useState<{ [key: string]: string }>({});
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [lastTouchDistance, setLastTouchDistance] = useState<number>(0);
+  const [tooltipPosition, setTooltipPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -533,6 +538,19 @@ export const Canvas = () => {
     };
   }, [deleteSelectedObject]);
 
+  useEffect(() => {
+    if (selectedObjectId) {
+      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+      if (selectedObject) {
+        const x = selectedObject.position.x * scale + offset.x;
+        const y = selectedObject.position.y * scale + offset.y;
+        setTooltipPosition({ x, y });
+      }
+    } else {
+      setTooltipPosition(null);
+    }
+  }, [selectedObjectId, objects, scale, offset]);
+
   return (
     <div className="relative w-full h-full">
       <canvas
@@ -556,6 +574,8 @@ export const Canvas = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       />
+
+      {selectedObjectId && <Tooltip position={tooltipPosition} />}
 
       <input
         type="file"
