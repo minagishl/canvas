@@ -5,6 +5,10 @@ export const drawObject = (
   object: CanvasObject
 ) => {
   ctx.fillStyle = object.fill;
+  ctx.strokeStyle = object.fill;
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
 
   switch (object.type) {
     case "rectangle":
@@ -27,6 +31,16 @@ export const drawObject = (
         Math.PI * 2
       );
       ctx.fill();
+      break;
+    case "line":
+      if (object.points && object.points.length > 0) {
+        ctx.beginPath();
+        ctx.moveTo(object.points[0].x, object.points[0].y);
+        for (let i = 1; i < object.points.length; i++) {
+          ctx.lineTo(object.points[i].x, object.points[i].y);
+        }
+        ctx.stroke();
+      }
       break;
     case "image":
       if (object.imageData) {

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 import { drawObject } from "../utils/canvas";
-import { Point, CanvasObject, ResizeHandle } from "../types/canvas";
+import { Point, CanvasObject, ResizeHandle, LinePoint } from "../types/canvas";
 import { createPreviewObject } from "../utils/preview";
 import { TextObject } from "./objects/Text";
 import { ImageObject } from "./objects/Image";
@@ -33,6 +33,7 @@ export const Canvas = () => {
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
   const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 });
   const [imageCache, setImageCache] = useState<{ [key: string]: string }>({});
+  const [currentLine, setCurrentLine] = useState<LinePoint[]>([]);
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [lastTouchDistance, setLastTouchDistance] = useState<number>(0);
   const [tooltipPosition, setTooltipPosition] = useState<{
@@ -176,6 +177,13 @@ export const Canvas = () => {
       return;
     }
 
+    if (selectedTool === "pen") {
+      const point = getCanvasPoint(e);
+      setCurrentLine([point]);
+      setIsDragging(true);
+      return;
+    }
+
     if (selectedTool === "select" && selectedObjectId) {
       // Resize handle detection
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -278,6 +286,22 @@ export const Canvas = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && selectedTool === "pen") {
+      const point = getCanvasPoint(e);
+      setCurrentLine((prev) => [...prev, point]);
+
+      setPreviewObject({
+        id: "preview",
+        type: "line",
+        position: { x: 0, y: 0 },
+        width: 0,
+        height: 0,
+        fill: "#4f46e5",
+        points: [...currentLine, point],
+      });
+      return;
+    }
+
     if (resizing && selectedObjectId && startPoint) {
       const currentPoint = getCanvasPoint(e);
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -419,6 +443,23 @@ export const Canvas = () => {
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
+    if (selectedTool === "pen" && currentLine.length > 0) {
+      const newLine: CanvasObject = {
+        id: Math.random().toString(36).substr(2, 9),
+        type: "line",
+        position: { x: 0, y: 0 },
+        width: 0,
+        height: 0,
+        fill: "#4f46e5",
+        points: currentLine,
+      };
+      addObject(newLine);
+      setCurrentLine([]);
+      setPreviewObject(null);
+      setIsDragging(false);
+      return;
+    }
+
     if (resizing) {
       setResizing(null);
       setStartPoint(null);

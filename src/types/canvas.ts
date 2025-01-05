@@ -3,9 +3,14 @@ export type Point = {
   y: number;
 };
 
+export type LinePoint = {
+  x: number;
+  y: number;
+};
+
 export type CanvasObject = {
   id: string;
-  type: "rectangle" | "circle" | "text" | "image";
+  type: "rectangle" | "circle" | "text" | "image" | "line";
   position: Point;
   width: number;
   height: number;
@@ -15,6 +20,7 @@ export type CanvasObject = {
   weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
   fontSize?: number;
   locked?: boolean;
+  points?: LinePoint[];
 };
 
 export type ToolType =
