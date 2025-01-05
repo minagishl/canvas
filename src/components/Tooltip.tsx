@@ -272,7 +272,7 @@ export function Tooltip({
               <ChevronUp className="w-5 h-5" />
             </button>
             <div className={popup({ isTextObject })}>
-              <Popover text="Move object down" upper={isTextObject} />
+              <Popover text="Move object up" upper={isTextObject} />
             </div>
           </div>
         </>
@@ -287,7 +287,7 @@ export function Tooltip({
               <Bold className="w-5 h-5" />
             </button>
             <div className={popup({ isTextObject })}>
-              <Popover text="Move object down" upper={isTextObject} />
+              <Popover text="Change font weight" upper={isTextObject} />
             </div>
           </div>
           <button
@@ -322,7 +322,7 @@ export function Tooltip({
           )}
         </button>
         <div className={popup({ isTextObject })}>
-          <Popover text="Move object down" upper={isTextObject} />
+          <Popover text="Lock object" upper={isTextObject} />
         </div>
       </div>
       <div className="relative group">
