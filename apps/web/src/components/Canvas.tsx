@@ -781,8 +781,19 @@ export const Canvas = () => {
 
         // Calculate the position of the tooltip (Specified by tailwindcss standard)
         if (selectedObject.type === 'text') {
-          x = selectedObject.position.x * scale + offset.x;
-          y = selectedObject.position.y * scale + offset.y - 16; // 1rem
+          const textElement = document.querySelector(
+            `[data-object-id="${selectedObjectId}"]`
+          ) as HTMLElement;
+
+          if (textElement) {
+            // Get the actual height of the text
+            const textHeight = textElement.offsetHeight;
+            x = selectedObject.position.x * scale + offset.x;
+            y = selectedObject.position.y * scale + offset.y - textHeight / 2;
+          } else {
+            x = selectedObject.position.x * scale + offset.x;
+            y = selectedObject.position.y * scale + offset.y;
+          }
         } else if (selectedObject.type === 'image') {
           x = selectedObject.position.x * scale + offset.x;
           y =
