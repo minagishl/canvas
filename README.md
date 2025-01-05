@@ -1,12 +1,14 @@
 # Canvas
 
-This repository utilizes TypeScript and Vite for secure and fast web applications. It is also optimized for performance, including optimized behavior.
+This repository utilizes TypeScript and Vite for secure and fast web applications with monorepo structure using Yarn Workspaces.
 
 ## Features
 
 - **TypeScript**: Strongly typed language for building robust applications.
 - **Vite**: Fast and secure web applications.
 - **Tailwind CSS**: Utility-first CSS framework for building custom designs.
+- **Yarn Workspaces**: Monorepo management for multiple packages
+- **Docker**: Containerized development environment
 
 ## Getting Started
 
@@ -14,6 +16,7 @@ This repository utilizes TypeScript and Vite for secure and fast web application
 
 - Node.js
 - Yarn
+- Docker
 
 ### Installation
 
@@ -33,21 +36,46 @@ This repository utilizes TypeScript and Vite for secure and fast web application
 
 1. Start the development server:
    ```sh
-   yarn dev
+   docker compose up
    ```
 
-## Scripts
+This will start:
 
-- `yarn start`: Starts the server.
-- `yarn lint`: Lints the code.
-- `yarn format`: Formats the code.
-- `yarn build`: Builds the application.
+- Web frontend at http://localhost:5173
+- API backend at http://localhost:8787
 
 ## Project Structure
 
-- `src`: Contains the source code.
-- `tailwind.config.js`: Configuration file for Tailwind CSS.
-- `tsconfig.json`: TypeScript configuration.
+```
+apps/
+  ├── web/          # Frontend application
+  │   ├── src/
+  │   ├── public/
+  │   └── package.json
+  └── api/          # Backend API
+      ├── src/
+      └── package.json
+```
+
+## Available Scripts
+
+### Root Directory
+
+- `yarn install`: Install all dependencies.
+
+### Web Application (`web`)
+
+- `yarn dev`: Start the development server.
+- `yarn lint`: Lints the code.
+- `yarn format`: Formats the code.
+- `yarn build`: Builds the application for production.
+
+### API (`api`)
+
+- `yarn dev`: Start the development server.
+- `yarn deploy`: Deploy to Cloudflare Workers
+- `yarn migration:local`: Run local database migrations
+- `yarn migration:remote`: Run remote database migrations
 
 ## License
 
