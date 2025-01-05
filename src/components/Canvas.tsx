@@ -228,6 +228,7 @@ export const Canvas = () => {
     }
 
     if (selectedTool === "select") {
+      setIsEditing(false);
       // Clicking on a text or image object
       const clickedHTMLObject = e.target as HTMLElement;
       const isHTMLObject =
@@ -795,10 +796,12 @@ export const Canvas = () => {
 
   const deleteSelectedObject = useCallback(() => {
     if (!selectedObjectId) return;
-    const updatedObjects = objects.filter((obj) => obj.id !== selectedObjectId);
-    setObjects(updatedObjects);
+
+    setObjects((prevObjects) =>
+      prevObjects.filter((obj) => obj.id !== selectedObjectId)
+    );
     setSelectedObjectId(null);
-  }, [selectedObjectId, objects, setObjects, setSelectedObjectId]);
+  }, [selectedObjectId, setObjects, setSelectedObjectId]);
 
   // Delete an object with the Delete key
   useEffect(() => {
