@@ -121,13 +121,15 @@ export function Menu() {
       >
         <ImageDown className="h-5 w-5" />
       </button>
-      <button
-        className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
-        onClick={handleShareCanvas}
-        title="Share"
-      >
-        <Share className="h-5 w-5" />
-      </button>
+      {import.meta.env.VITE_API_URL && (
+        <button
+          className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
+          onClick={handleShareCanvas}
+          title="Share"
+        >
+          <Share className="h-5 w-5" />
+        </button>
+      )}
       <button
         className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
         onClick={handleClearCanvas}
