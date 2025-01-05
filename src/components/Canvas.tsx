@@ -6,6 +6,7 @@ import { createPreviewObject } from "../utils/preview";
 import { TextObject } from "./objects/Text";
 import { ImageObject } from "./objects/Image";
 import { Tooltip } from "./Tooltip";
+import { handleCopyObject } from "../utils/copy";
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -810,13 +811,17 @@ export const Canvas = () => {
       if (e.key === "Delete" || e.key === "Backspace") {
         deleteSelectedObject();
       }
+
+      if (e.key === "c" && (e.metaKey || e.ctrlKey)) {
+        handleCopyObject(objects, selectedObjectId, setObjects);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isEditing, deleteSelectedObject]);
+  }, [isEditing, deleteSelectedObject, objects, selectedObjectId, setObjects]);
 
   useEffect(() => {
     if (selectedObjectId) {
