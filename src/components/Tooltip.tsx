@@ -203,7 +203,7 @@ export function Tooltip({
           </button>
           <select
             className="p-2 hover:bg-gray-100 rounded-md transition-colors appearance-none h-9 text-center leading-tight"
-            value={selectedObject?.fontSize || 16}
+            value={selectedObject?.fontSize || 24}
             onChange={handleChangeFontSize}
           >
             {[12, 14, 16, 18, 20, 24, 30, 36].map((size) => (

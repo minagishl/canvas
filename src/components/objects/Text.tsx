@@ -34,6 +34,10 @@ export const TextObject = React.memo(
     const elementRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef({ x: 0, y: 0 });
 
+    const getFontSize = () => {
+      return obj.fontSize === undefined ? 24 : obj.fontSize;
+    };
+
     useEffect(() => {
       positionRef.current = {
         x: obj.position.x * scale + offset.x,
@@ -59,7 +63,7 @@ export const TextObject = React.memo(
         style={{
           left: 0,
           top: 0,
-          fontSize: `${obj.fontSize ?? 24 * scale}px`,
+          fontSize: `${getFontSize() * scale}px`,
           paddingRight: `${6 * scale}px`,
           paddingLeft: `${6 * scale}px`,
           color: obj.fill,
