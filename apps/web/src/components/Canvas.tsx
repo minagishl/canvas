@@ -963,17 +963,7 @@ export const Canvas = () => {
                     handleMouseDown(e);
                   }
                 }}
-                onBlur={(e) => {
-                  if (selectedTool !== 'select') {
-                    const updatedText = e.currentTarget.textContent || '';
-                    const updatedObjects = objects.map((o) =>
-                      o.id === obj.id ? { ...o, text: updatedText } : o
-                    );
-                    setObjects(updatedObjects);
-                  }
-                }}
                 onEditStart={() => setIsEditing(true)}
-                onEditEnd={() => setIsEditing(false)}
               />
             );
           }

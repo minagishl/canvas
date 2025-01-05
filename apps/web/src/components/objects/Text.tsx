@@ -10,10 +10,8 @@ interface TextObjectProps {
   isResizing: boolean;
   selectedTool: string;
   onMouseDown: (e: React.MouseEvent) => void;
-  onBlur: (e: React.FocusEvent<HTMLDivElement>) => void;
   isEditing: boolean;
   onEditStart: () => void;
-  onEditEnd: () => void;
 }
 
 export const TextObject = React.memo(
@@ -26,10 +24,8 @@ export const TextObject = React.memo(
     isResizing,
     selectedTool,
     onMouseDown,
-    onBlur,
     isEditing,
     onEditStart,
-    onEditEnd,
   }: TextObjectProps) => {
     const elementRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef({ x: 0, y: 0 });
@@ -95,14 +91,12 @@ export const TextObject = React.memo(
           cursor: selectedTool === 'select' ? 'move' : 'default',
           fontWeight: obj.weight,
           lineHeight: `${getLineHeight() * scale}px`,
+          whiteSpace: 'pre-wrap',
         }}
         onMouseDown={onMouseDown}
         onInput={(e) => {
-          obj.text = e.currentTarget.textContent || '';
-        }}
-        onBlur={(e) => {
-          onBlur(e);
-          onEditEnd();
+          console.log(obj);
+          obj.text = e.currentTarget.innerText || '';
         }}
         onFocus={() => onEditStart()}
       >
@@ -125,9 +119,7 @@ export const TextObject = React.memo(
       prevProps.isEditing === nextProps.isEditing &&
       prevProps.isResizing === nextProps.isResizing &&
       prevProps.onMouseDown === nextProps.onMouseDown &&
-      prevProps.onBlur === nextProps.onBlur &&
       prevProps.onEditStart === nextProps.onEditStart &&
-      prevProps.onEditEnd === nextProps.onEditEnd &&
       prevProps.obj.fill === nextProps.obj.fill &&
       prevProps.obj.fontSize === nextProps.obj.fontSize
     );
