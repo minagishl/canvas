@@ -9,6 +9,7 @@ import {
   UnlockKeyhole,
 } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
+import { Popover } from "./Popover";
 
 interface TooltipProps {
   position: { x: number; y: number } | null;
@@ -93,7 +94,7 @@ export function Tooltip({
     }
   };
 
-  const handleMoveDown = () => {
+  const handleMoveUp = () => {
     if (!selectedObjectId) return;
 
     const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -112,7 +113,7 @@ export function Tooltip({
     });
   };
 
-  const handleMoveUp = () => {
+  const handleMoveDown = () => {
     if (!selectedObjectId) return;
 
     const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -188,28 +189,43 @@ export function Tooltip({
               stroke="none"
             />
           </button>
-          <button
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-            onClick={handleMoveUp}
-          >
-            <ChevronDown className="w-5 h-5" />
-          </button>
-          <button
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-            onClick={handleMoveDown}
-          >
-            <ChevronUp className="w-5 h-5" />
-          </button>
+          <div className="relative group">
+            <button
+              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              onClick={handleMoveDown}
+            >
+              <ChevronDown className="w-5 h-5" />
+            </button>
+            <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+              <Popover text="Move object down" />
+            </div>
+          </div>
+          <div className="relative group">
+            <button
+              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              onClick={handleMoveUp}
+            >
+              <ChevronUp className="w-5 h-5" />
+            </button>
+            <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+              <Popover text="Move object up" />
+            </div>
+          </div>
         </>
       )}
       {isTextObject && (
         <>
-          <button
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-            onClick={handleWeightChange}
-          >
-            <Bold className="w-5 h-5" />
-          </button>
+          <div className="relative group">
+            <button
+              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              onClick={handleWeightChange}
+            >
+              <Bold className="w-5 h-5" />
+            </button>
+            <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+              <Popover text="Change font weight" />
+            </div>
+          </div>
           <button
             className="p-2 hover:bg-gray-100 rounded-md transition-colors"
             onClick={handleTextEdit}
@@ -230,16 +246,21 @@ export function Tooltip({
         </>
       )}
       {!isImageObject && <div className="w-px h-6 bg-gray-200 mx-2" />}
-      <button
-        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        onClick={handleChangeLocked}
-      >
-        {selectedObject?.locked ? (
-          <LockKeyhole className="w-5 h-5" />
-        ) : (
-          <UnlockKeyhole className="w-5 h-5" />
-        )}
-      </button>
+      <div className="relative group">
+        <button
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          onClick={handleChangeLocked}
+        >
+          {selectedObject?.locked ? (
+            <LockKeyhole className="w-5 h-5" />
+          ) : (
+            <UnlockKeyhole className="w-5 h-5" />
+          )}
+        </button>
+        <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+          <Popover text="Lock object" />
+        </div>
+      </div>
     </div>
   );
 }
