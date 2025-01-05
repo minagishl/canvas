@@ -1,4 +1,4 @@
-import { CanvasObject } from '../types/canvas';
+import { CanvasObject, Point } from '../types/canvas';
 
 export const drawObject = (
   ctx: CanvasRenderingContext2D,
@@ -110,4 +110,20 @@ export const drawGrid = (
     ctx.lineTo(endX, y);
     ctx.stroke();
   }
+};
+
+export const getCanvasPoint = (
+  e: React.MouseEvent,
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  offset: Point,
+  scale: number
+): Point => {
+  const canvas = canvasRef.current;
+  if (!canvas) return { x: 0, y: 0 };
+
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left - offset.x) / scale,
+    y: (e.clientY - rect.top - offset.y) / scale,
+  };
 };

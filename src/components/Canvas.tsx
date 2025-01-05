@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useCanvasContext } from '../contexts/CanvasContext';
-import { drawObject, drawGrid } from '../utils/canvas';
+import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 import { createPreviewObject } from '../utils/preview';
 import { TextObject } from './objects/Text';
@@ -122,22 +122,11 @@ export const Canvas = () => {
     ctx.restore();
   }, [scale, offset, objects, previewObject, selectedTool, selectedObjectId]);
 
-  const getCanvasPoint = (e: React.MouseEvent): Point => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: (e.clientX - rect.left - offset.x) / scale,
-      y: (e.clientY - rect.top - offset.y) / scale,
-    };
-  };
-
   const handleMouseDown = (
     e: React.MouseEvent,
     resizeHandle?: ResizeHandle
   ) => {
-    const point = getCanvasPoint(e);
+    const point = getCanvasPoint(e, canvasRef, offset, scale);
 
     if (resizeHandle && selectedObjectId) {
       // If the resize handle is clicked
@@ -147,7 +136,7 @@ export const Canvas = () => {
     }
 
     if (selectedTool === 'pen') {
-      const point = getCanvasPoint(e);
+      const point = getCanvasPoint(e, canvasRef, offset, scale);
       setCurrentLine([point]);
       setIsDragging(true);
       return;
@@ -262,7 +251,7 @@ export const Canvas = () => {
     }
 
     if (isDragging && selectedTool === 'pen') {
-      const point = getCanvasPoint(e);
+      const point = getCanvasPoint(e, canvasRef, offset, scale);
       setCurrentLine((prev) => [...prev, point]);
 
       setPreviewObject({
@@ -278,7 +267,7 @@ export const Canvas = () => {
     }
 
     if (resizing && selectedObjectId && startPoint) {
-      const currentPoint = getCanvasPoint(e);
+      const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
 
       // Prevent resizing of locked objects
@@ -384,7 +373,7 @@ export const Canvas = () => {
       if (selectedObject?.locked) return;
 
       if (selectedTool === 'select' && selectedObjectId && startPoint) {
-        const currentPoint = getCanvasPoint(e);
+        const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
 
         // Special processing for line objects
         if (selectedObject?.type === 'line' && selectedObject.points) {
@@ -433,7 +422,7 @@ export const Canvas = () => {
           setObjects(updatedObjects);
         }
       } else if (startPoint && selectedTool !== 'image') {
-        const currentPoint = getCanvasPoint(e);
+        const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
         const preview = createPreviewObject(
           selectedTool,
           startPoint,
@@ -503,14 +492,14 @@ export const Canvas = () => {
       if (selectedTool === 'image') {
         e.preventDefault();
         e.stopPropagation();
-        const point = getCanvasPoint(e);
+        const point = getCanvasPoint(e, canvasRef, offset, scale);
         setImagePosition(point);
         fileInputRef.current?.click();
         setSelectedTool('select');
         return;
       }
 
-      const endPoint = getCanvasPoint(e);
+      const endPoint = getCanvasPoint(e, canvasRef, offset, scale);
       const newObject = createPreviewObject(
         selectedTool,
         startPoint,
