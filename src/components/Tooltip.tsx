@@ -30,12 +30,15 @@ export function Tooltip({
       );
       if (!selectedObject) return prevObjects;
 
-      const currentColorIndex = colors.indexOf(selectedObject.fill);
-      const nextColorIndex = (currentColorIndex + 1) % colors.length;
+      const availableColors =
+        selectedObject.type === "text" ? [...colors, "#fafafa"] : colors;
+
+      const currentColorIndex = availableColors.indexOf(selectedObject.fill);
+      const nextColorIndex = (currentColorIndex + 1) % availableColors.length;
 
       return prevObjects.map((obj) =>
         obj.id === selectedObjectId
-          ? { ...obj, fill: colors[nextColorIndex] }
+          ? { ...obj, fill: availableColors[nextColorIndex] }
           : obj
       );
     });
