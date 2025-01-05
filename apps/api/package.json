@@ -4,14 +4,21 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev --ip 0.0.0.0",
-    "deploy": "wrangler deploy --minify"
+    "deploy": "wrangler deploy --minify",
+    "generate": "drizzle-kit generate",
+    "migration:local": "wrangler d1 migrations apply canvas --local",
+    "migration:remote": "wrangler d1 migrations apply canvas --remote"
   },
   "dependencies": {
+    "drizzle-kit": "^0.30.1",
+    "drizzle-orm": "^0.38.3",
     "hono": "^4.6.16",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "uuid": "^11.0.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241230.0",
+    "drizzle-kit": "^0.30.1",
     "wrangler": "^3.99.0"
   }
 }

@@ -1,3 +1,10 @@
 name = "canvas"
 main = "src/index.ts"
 compatibility_date = "2025-01-05"
+node_compat = true
+
+[[ d1_databases ]]
+binding = "DB"
+database_name = "canvas"
+database_id = "e3119c7d-bcc9-4169-9074-264b5921ff39"
+migrations_dir = "drizzle"
