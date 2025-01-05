@@ -292,23 +292,23 @@ export function Tooltip({
           <div className="group relative">
             <button
               className="rounded-md p-2 transition-colors hover:bg-gray-100"
-              onClick={handleItalicChange}
-            >
-              <Italic className="h-5 w-5" />
-            </button>
-            <div className={popup({ isTextObject })}>
-              <Popover text="Change font style" upper={isTextObject} />
-            </div>
-          </div>
-          <div className="group relative">
-            <button
-              className="rounded-md p-2 transition-colors hover:bg-gray-100"
               onClick={handleWeightChange}
             >
               <Bold className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
               <Popover text="Change font weight" upper={isTextObject} />
+            </div>
+          </div>
+          <div className="group relative">
+            <button
+              className="rounded-md p-2 transition-colors hover:bg-gray-100"
+              onClick={handleItalicChange}
+            >
+              <Italic className="h-5 w-5" />
+            </button>
+            <div className={popup({ isTextObject })}>
+              <Popover text="Change font style" upper={isTextObject} />
             </div>
           </div>
           <button
