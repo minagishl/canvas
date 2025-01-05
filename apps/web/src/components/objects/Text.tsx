@@ -97,6 +97,9 @@ export const TextObject = React.memo(
           lineHeight: `${getLineHeight() * scale}px`,
         }}
         onMouseDown={onMouseDown}
+        onInput={(e) => {
+          obj.text = e.currentTarget.textContent || '';
+        }}
         onBlur={(e) => {
           onBlur(e);
           onEditEnd();
