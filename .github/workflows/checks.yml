@@ -28,7 +28,7 @@ jobs:
         run: yarn install
 
       - name: Run ESLint
-        run: yarn lint
+        run: yarn workspace web lint
 
   scan:
     name: Scan
