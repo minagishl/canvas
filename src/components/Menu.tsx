@@ -1,4 +1,4 @@
-import { Pencil, ImageDown, Trash2 } from 'lucide-react';
+import { Pencil, ImageDown, Trash2, Share } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import html2canvas from 'html2canvas';
 
@@ -66,6 +66,10 @@ export function Menu() {
     setSelectedObjectId(null);
   };
 
+  const handleShareCanvas = () => {
+    console.log(objects);
+  };
+
   return (
     <div className="absolute left-1/2 top-2 mt-2 flex -translate-x-1/2 animate-fade items-center justify-center gap-2 rounded-md bg-white p-2 shadow-md animate-duration-300 animate-once">
       <button
@@ -90,6 +94,13 @@ export function Menu() {
         title="Save as image"
       >
         <ImageDown className="h-5 w-5" />
+      </button>
+      <button
+        className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
+        onClick={handleShareCanvas}
+        title="Share"
+      >
+        <Share className="h-5 w-5" />
       </button>
       <button
         className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
