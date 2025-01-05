@@ -126,7 +126,7 @@ export function Toolbar(): React.ReactElement {
             </button>
             {Tool.disabled && (
               <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-                <Popover text={`${Tool.name} is disabled`} />
+                <Popover text={`${Tool.name} is disabled`} upper={false} />
               </div>
             )}
           </div>
@@ -155,7 +155,7 @@ export function Toolbar(): React.ReactElement {
           <ZoomOut className="w-5 h-5" />
         </button>
         <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-          <Popover text="Zoom out" />
+          <Popover text="Zoom out" upper={false} />
         </div>
       </div>
       <div className="relative group">
@@ -167,7 +167,7 @@ export function Toolbar(): React.ReactElement {
           <ZoomIn className="w-5 h-5" />
         </button>
         <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-          <Popover text="Zoom in" />
+          <Popover text="Zoom in" upper={false} />
         </div>
       </div>
     </div>

@@ -1841,6 +1841,18 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+tailwind-merge@^2.5.4:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/tailwind-merge/-/tailwind-merge-2.6.0.tgz#ac5fb7e227910c038d458f396b7400d93a3142d5"
+  integrity sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==
+
+tailwind-variants@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/tailwind-variants/-/tailwind-variants-0.3.0.tgz#481f53031cd4e91f92e0c078bbfd9fe453162e0b"
+  integrity sha512-ho2k5kn+LB1fT5XdNS3Clb96zieWxbStE9wNLK7D0AV64kdZMaYzAKo0fWl6fXLPY99ffF9oBJnIj5escEl/8A==
+  dependencies:
+    tailwind-merge "^2.5.4"
+
 tailwindcss-animated@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/tailwindcss-animated/-/tailwindcss-animated-1.1.2.tgz#cc8aabe5b371abdf20a195809785b3dbf34adcd5"
