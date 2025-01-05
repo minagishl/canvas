@@ -22,6 +22,7 @@ export type CanvasObject = {
   locked?: boolean;
   points?: LinePoint[];
   lineWidth?: number;
+  italic?: boolean;
 };
 
 export type ToolType =

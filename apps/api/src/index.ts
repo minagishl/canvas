@@ -102,6 +102,10 @@ app.post('/', async (c) => {
     if (body.lineWidth !== undefined && typeof body.lineWidth !== 'number') {
       return c.json({ error: 'invalid lineWidth' }, 400);
     }
+
+    if (body.italic !== undefined && typeof body.italic !== 'boolean') {
+      return c.json({ error: 'invalid italic status' }, 400);
+    }
   }
 
   const id = uuidv7();

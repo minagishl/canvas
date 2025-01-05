@@ -9,6 +9,7 @@ import {
   UnlockKeyhole,
   Trash2,
   Copy,
+  Italic,
 } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
@@ -59,6 +60,21 @@ export function Tooltip({
         obj.id === selectedObjectId
           ? { ...obj, fill: availableColors[nextColorIndex] }
           : obj
+      );
+    });
+  };
+
+  const handleItalicChange = () => {
+    if (!selectedObjectId) return;
+
+    setObjects((prevObjects) => {
+      const selectedObject = prevObjects.find(
+        (obj) => obj.id === selectedObjectId
+      );
+      if (!selectedObject || selectedObject.type !== 'text') return prevObjects;
+
+      return prevObjects.map((obj) =>
+        obj.id === selectedObjectId ? { ...obj, italic: !obj.italic } : obj
       );
     });
   };
@@ -273,6 +289,17 @@ export function Tooltip({
       )}
       {isTextObject && (
         <>
+          <div className="group relative">
+            <button
+              className="rounded-md p-2 transition-colors hover:bg-gray-100"
+              onClick={handleItalicChange}
+            >
+              <Italic className="h-5 w-5" />
+            </button>
+            <div className={popup({ isTextObject })}>
+              <Popover text="Change font style" upper={isTextObject} />
+            </div>
+          </div>
           <div className="group relative">
             <button
               className="rounded-md p-2 transition-colors hover:bg-gray-100"

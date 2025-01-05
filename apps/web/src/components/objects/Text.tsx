@@ -92,6 +92,7 @@ export const TextObject = React.memo(
           fontWeight: obj.weight,
           lineHeight: `${getLineHeight() * scale}px`,
           whiteSpace: 'pre-wrap',
+          fontStyle: obj.italic ? 'italic' : 'normal',
         }}
         onMouseDown={onMouseDown}
         onInput={(e) => {
@@ -121,7 +122,8 @@ export const TextObject = React.memo(
       prevProps.onMouseDown === nextProps.onMouseDown &&
       prevProps.onEditStart === nextProps.onEditStart &&
       prevProps.obj.fill === nextProps.obj.fill &&
-      prevProps.obj.fontSize === nextProps.obj.fontSize
+      prevProps.obj.fontSize === nextProps.obj.fontSize &&
+      prevProps.obj.italic === nextProps.obj.italic
     );
   }
 );
