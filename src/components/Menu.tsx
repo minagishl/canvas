@@ -1,9 +1,9 @@
-import { Pencil, ImageDown } from "lucide-react";
+import { Pencil, ImageDown, Trash2 } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 import html2canvas from "html2canvas";
 
 export function Menu() {
-  const { selectedTool, setSelectedTool, setSelectedObjectId } =
+  const { selectedTool, setSelectedTool, setSelectedObjectId, setObjects } =
     useCanvasContext();
 
   const handleSaveImage = async () => {
@@ -51,6 +51,11 @@ export function Menu() {
     }, 100);
   };
 
+  const handleClearCanvas = () => {
+    setObjects([]);
+    setSelectedObjectId(null);
+  };
+
   return (
     <div className="absolute bg-white rounded-md shadow-md flex items-center gap-2 justify-center left-1/2 -translate-x-1/2 top-2 animate-fade animate-once animate-duration-300 mt-2 p-2">
       <button
@@ -75,6 +80,13 @@ export function Menu() {
         title="Save as image"
       >
         <ImageDown className="w-5 h-5" />
+      </button>
+      <button
+        className="p-2 rounded-md transition-colors cursor-pointer hover:bg-gray-100"
+        onClick={handleClearCanvas}
+        title="Clear canvas"
+      >
+        <Trash2 className="w-5 h-5" />
       </button>
     </div>
   );
