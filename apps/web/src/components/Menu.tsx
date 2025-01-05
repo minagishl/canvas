@@ -84,9 +84,10 @@ export function Menu() {
       })
       .then((data) => {
         const id = data.id;
-        const url = `${window.location.href}?id=${id}`;
-        navigator.clipboard.writeText(url);
-        console.log('Canvas shared:', url);
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', id);
+        navigator.clipboard.writeText(url.toString());
+        console.log('Canvas shared:', url.toString());
         alert('Canvas shared! URL copied to clipboard');
       })
       .catch((error) => {
