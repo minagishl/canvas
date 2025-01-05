@@ -804,6 +804,15 @@ export const Canvas = () => {
     setSelectedObjectId(null);
   }, [selectedObjectId, setObjects, setSelectedObjectId]);
 
+  const retoreObjects = useCallback(() => {
+    const latestObject = objects[objects.length - 1];
+    if (!latestObject) return;
+
+    setObjects((prevObjects) =>
+      prevObjects.filter((obj) => obj.id !== latestObject.id)
+    );
+  }, [objects, setObjects]);
+
   // Delete an object with the Delete key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -815,13 +824,24 @@ export const Canvas = () => {
       if (e.key === "c" && (e.metaKey || e.ctrlKey)) {
         handleCopyObject(objects, selectedObjectId, setObjects);
       }
+
+      if (e.key === "z" && (e.metaKey || e.ctrlKey)) {
+        retoreObjects();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isEditing, deleteSelectedObject, objects, selectedObjectId, setObjects]);
+  }, [
+    isEditing,
+    deleteSelectedObject,
+    objects,
+    selectedObjectId,
+    setObjects,
+    retoreObjects,
+  ]);
 
   useEffect(() => {
     if (selectedObjectId) {
