@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useCanvasContext } from '../contexts/CanvasContext';
-import { drawObject } from '../utils/canvas';
+import { drawObject, drawGrid } from '../utils/canvas';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 import { createPreviewObject } from '../utils/preview';
 import { TextObject } from './objects/Text';
@@ -58,7 +58,7 @@ export const Canvas = () => {
     ctx.translate(offset.x, offset.y);
     ctx.scale(scale, scale);
 
-    drawGrid(ctx, canvas.width, canvas.height);
+    drawGrid(ctx, canvas.width, canvas.height, offset, scale);
 
     // Drawing objects other than text
     objects
@@ -119,43 +119,7 @@ export const Canvas = () => {
     }
 
     ctx.restore();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scale, offset, objects, previewObject, selectedTool, selectedObjectId]);
-
-  const drawGrid = (
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ) => {
-    const gridSize = 40;
-
-    // Calculate grid boundaries with buffer
-    const startX = Math.floor(-offset.x / scale / gridSize) * gridSize;
-    const startY = Math.floor(-offset.y / scale / gridSize) * gridSize;
-    const endX =
-      Math.ceil((width / scale - offset.x / scale) / gridSize) * gridSize;
-    const endY =
-      Math.ceil((height / scale - offset.y / scale) / gridSize) * gridSize;
-
-    ctx.strokeStyle = '#e5e7eb';
-    ctx.lineWidth = 0.5;
-
-    // Draw vertical lines
-    for (let x = startX; x <= endX; x += gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(x, startY);
-      ctx.lineTo(x, endY);
-      ctx.stroke();
-    }
-
-    // Draw horizontal lines
-    for (let y = startY; y <= endY; y += gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(startX, y);
-      ctx.lineTo(endX, y);
-      ctx.stroke();
-    }
-  };
 
   const getCanvasPoint = (e: React.MouseEvent): Point => {
     const canvas = canvasRef.current;

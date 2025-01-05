@@ -74,3 +74,40 @@ export const drawObject = (
       }
   }
 };
+
+export const drawGrid = (
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  offset: { x: number; y: number },
+  scale: number
+) => {
+  const gridSize = 40;
+
+  // Calculate grid boundaries with buffer
+  const startX = Math.floor(-offset.x / scale / gridSize) * gridSize;
+  const startY = Math.floor(-offset.y / scale / gridSize) * gridSize;
+  const endX =
+    Math.ceil((width / scale - offset.x / scale) / gridSize) * gridSize;
+  const endY =
+    Math.ceil((height / scale - offset.y / scale) / gridSize) * gridSize;
+
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.lineWidth = 0.5;
+
+  // Draw vertical lines
+  for (let x = startX; x <= endX; x += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(x, startY);
+    ctx.lineTo(x, endY);
+    ctx.stroke();
+  }
+
+  // Draw horizontal lines
+  for (let y = startY; y <= endY; y += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(startX, y);
+    ctx.lineTo(endX, y);
+    ctx.stroke();
+  }
+};
