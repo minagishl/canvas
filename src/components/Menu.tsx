@@ -3,12 +3,22 @@ import { useCanvasContext } from "../contexts/CanvasContext";
 import html2canvas from "html2canvas";
 
 export function Menu() {
-  const { selectedTool, setSelectedTool, setSelectedObjectId, setObjects } =
-    useCanvasContext();
+  const {
+    selectedTool,
+    setSelectedTool,
+    setSelectedObjectId,
+    setObjects,
+    objects,
+  } = useCanvasContext();
 
   const handleSaveImage = async () => {
     // Deselect the object
     setSelectedObjectId(null);
+
+    if (objects.length === 0) {
+      alert("Canvas is empty!");
+      return;
+    }
 
     setTimeout(async () => {
       try {
