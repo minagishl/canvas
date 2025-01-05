@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --ip 0.0.0.0",
     "deploy": "wrangler deploy --minify"
   },
   "dependencies": {
-    "hono": "^4.6.16"
+    "hono": "^4.6.16",
+    "tsx": "^4.19.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241230.0",
