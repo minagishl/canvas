@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from "react";
-import { CanvasObject } from "../../types/canvas";
+import React, { useRef, useEffect } from 'react';
+import { CanvasObject } from '../../types/canvas';
 
 interface ImageObjectProps {
-  obj: CanvasObject & { type: "image" };
+  obj: CanvasObject & { type: 'image' };
   scale: number;
   offset: { x: number; y: number };
   isSelected: boolean;
@@ -49,48 +49,48 @@ export const ImageObject = React.memo(
           top: 0,
           width: obj.width * scale,
           height: obj.height * scale,
-          willChange: "transform",
-          cursor: "default",
-          pointerEvents: isDragging ? "none" : isResizing ? "none" : "auto",
+          willChange: 'transform',
+          cursor: 'default',
+          pointerEvents: isDragging ? 'none' : isResizing ? 'none' : 'auto',
         }}
         onMouseDown={(e) => handleMouseDown(e)}
       >
         <img
           src={imageCache[obj.id] || obj.imageData}
           alt="canvas object"
-          className="w-full h-full object-contain pointer-events-none"
+          className="pointer-events-none h-full w-full object-contain"
           draggable={false}
           loading="lazy"
         />
         {isSelected && (
           <>
-            <div className="absolute -inset-2.5 border-2 border-indigo-600 pointer-events-none" />
+            <div className="pointer-events-none absolute -inset-2.5 border-2 border-indigo-600" />
             <div
-              className="absolute -left-3 -top-3 size-2 bg-white border border-indigo-600 rounded-full"
+              className="absolute -left-3 -top-3 size-2 rounded-full border border-indigo-600 bg-white"
               onMouseDown={(e) => {
                 e.stopPropagation();
-                handleMouseDown(e, "top-left");
+                handleMouseDown(e, 'top-left');
               }}
             />
             <div
-              className="absolute -right-3 -top-3 size-2 bg-white border border-indigo-600 rounded-full"
+              className="absolute -right-3 -top-3 size-2 rounded-full border border-indigo-600 bg-white"
               onMouseDown={(e) => {
                 e.stopPropagation();
-                handleMouseDown(e, "top-right");
+                handleMouseDown(e, 'top-right');
               }}
             />
             <div
-              className="absolute -left-3 -bottom-3 size-2 bg-white border border-indigo-600 rounded-full"
+              className="absolute -bottom-3 -left-3 size-2 rounded-full border border-indigo-600 bg-white"
               onMouseDown={(e) => {
                 e.stopPropagation();
-                handleMouseDown(e, "bottom-left");
+                handleMouseDown(e, 'bottom-left');
               }}
             />
             <div
-              className="absolute -right-3 -bottom-3 size-2 bg-white border border-indigo-600 rounded-full"
+              className="absolute -bottom-3 -right-3 size-2 rounded-full border border-indigo-600 bg-white"
               onMouseDown={(e) => {
                 e.stopPropagation();
-                handleMouseDown(e, "bottom-right");
+                handleMouseDown(e, 'bottom-right');
               }}
             />
           </>

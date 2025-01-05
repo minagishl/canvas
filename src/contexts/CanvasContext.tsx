@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
-import { CanvasObject, ToolType, Point } from "../types/canvas";
+import React, { createContext, useContext, useState } from 'react';
+import { CanvasObject, ToolType, Point } from '../types/canvas';
 
 interface CanvasContextType {
   scale: number;
@@ -23,7 +23,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState<Point>({ x: 0, y: 0 });
   const [objects, setObjects] = useState<CanvasObject[]>([]);
-  const [selectedTool, setSelectedTool] = useState<ToolType>("select");
+  const [selectedTool, setSelectedTool] = useState<ToolType>('select');
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
 
   const addObject = (object: CanvasObject) => {
@@ -55,7 +55,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
 export function useCanvasContext(): CanvasContextType {
   const context = useContext(CanvasContext);
   if (!context) {
-    throw new Error("useCanvasContext must be used within a CanvasProvider");
+    throw new Error('useCanvasContext must be used within a CanvasProvider');
   }
   return context;
 }

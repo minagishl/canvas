@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Circle,
   TextCursorInput,
@@ -9,18 +9,18 @@ import {
   UnlockKeyhole,
   Trash2,
   Copy,
-} from "lucide-react";
-import { useCanvasContext } from "../contexts/CanvasContext";
-import { Popover } from "./Popover";
-import { tv } from "tailwind-variants";
-import { handleCopyObject } from "../utils/copy";
+} from 'lucide-react';
+import { useCanvasContext } from '../contexts/CanvasContext';
+import { Popover } from './Popover';
+import { tv } from 'tailwind-variants';
+import { handleCopyObject } from '../utils/copy';
 
 const popup = tv({
-  base: "absolute hidden group-hover:block left-1/2 -translate-x-1/2",
+  base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
   variants: {
     isTextObject: {
-      true: "bottom-full mb-2",
-      false: "top-full mt-2",
+      true: 'bottom-full mb-2',
+      false: 'top-full mt-2',
     },
   },
 });
@@ -30,7 +30,7 @@ interface TooltipProps {
   isDragging: boolean;
 }
 
-const colors = ["#4f46e5", "#dc2626", "#16a34a", "#f59e0b", "#06b6d4"];
+const colors = ['#4f46e5', '#dc2626', '#16a34a', '#f59e0b', '#06b6d4'];
 
 export function Tooltip({
   position,
@@ -49,7 +49,7 @@ export function Tooltip({
       if (!selectedObject) return prevObjects;
 
       const availableColors =
-        selectedObject.type === "text" ? [...colors, "#fafafa"] : colors;
+        selectedObject.type === 'text' ? [...colors, '#fafafa'] : colors;
 
       const currentColorIndex = availableColors.indexOf(selectedObject.fill);
       const nextColorIndex = (currentColorIndex + 1) % availableColors.length;
@@ -96,7 +96,7 @@ export function Tooltip({
     if (!selectedObjectId) return;
 
     const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-    if (!selectedObject || selectedObject.type !== "text") return;
+    if (!selectedObject || selectedObject.type !== 'text') return;
 
     // Find and focus text elements
     const textElement = document.querySelector(
@@ -104,7 +104,7 @@ export function Tooltip({
     ) as HTMLElement;
 
     if (textElement) {
-      textElement.contentEditable = "true";
+      textElement.contentEditable = 'true';
       textElement.focus();
     }
   };
@@ -151,7 +151,7 @@ export function Tooltip({
     if (!selectedObjectId) return;
 
     const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-    if (!selectedObject || selectedObject.type !== "text") return;
+    if (!selectedObject || selectedObject.type !== 'text') return;
 
     setObjects((prevObjects) =>
       prevObjects.map((obj) =>
@@ -179,7 +179,7 @@ export function Tooltip({
       const selectedObject = prevObjects.find(
         (obj) => obj.id === selectedObjectId
       );
-      if (!selectedObject || selectedObject.type !== "line") return prevObjects;
+      if (!selectedObject || selectedObject.type !== 'line') return prevObjects;
 
       const widths = [2, 4, 6, 8, 10];
       const currentWidth = selectedObject.lineWidth || 2;
@@ -204,28 +204,28 @@ export function Tooltip({
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  const isTextObject = selectedObject?.type === "text";
-  const isImageObject = selectedObject?.type === "image";
+  const isTextObject = selectedObject?.type === 'text';
+  const isImageObject = selectedObject?.type === 'image';
 
   return (
     <div
-      className="bg-white rounded-xl shadow-lg p-2 flex items-center gap-2 select-none absolute z-10"
+      className="absolute z-10 flex select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg"
       style={{
         top: position.y,
         left: position.x,
-        transform: "translate(-50%, -100%)",
-        marginTop: "-8px",
-        pointerEvents: isDragging ? "none" : "auto",
+        transform: 'translate(-50%, -100%)',
+        marginTop: '-8px',
+        pointerEvents: isDragging ? 'none' : 'auto',
       }}
     >
       {!isImageObject && (
         <>
           <button
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            className="rounded-md p-2 transition-colors hover:bg-gray-100"
             onClick={handleColorChange}
           >
             <Circle
-              className="w-5 h-5"
+              className="h-5 w-5"
               fill={
                 objects.find((obj) => obj.id === selectedObjectId)?.fill ||
                 colors[0]
@@ -233,19 +233,19 @@ export function Tooltip({
               stroke="none"
             />
           </button>
-          {selectedObject?.type === "line" && (
+          {selectedObject?.type === 'line' && (
             <>
-              <div className="relative group">
+              <div className="group relative">
                 <button
-                  className="p-2 size-9 hover:bg-gray-100 rounded-md transition-colors flex items-center justify-center"
+                  className="flex size-9 items-center justify-center rounded-md p-2 transition-colors hover:bg-gray-100"
                   onClick={handleLineWidthChange}
                 >
                   <div
-                    className="w-5 flex items-center justify-center"
+                    className="flex w-5 items-center justify-center"
                     style={{
                       height: selectedObject.lineWidth || 2,
                       backgroundColor: selectedObject.fill,
-                      minHeight: "2px",
+                      minHeight: '2px',
                     }}
                   />
                 </button>
@@ -255,23 +255,23 @@ export function Tooltip({
               </div>
             </>
           )}
-          <div className="relative group">
+          <div className="group relative">
             <button
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              className="rounded-md p-2 transition-colors hover:bg-gray-100"
               onClick={handleMoveDown}
             >
-              <ChevronDown className="w-5 h-5" />
+              <ChevronDown className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
               <Popover text="Move object down" upper={isTextObject} />
             </div>
           </div>
-          <div className="relative group">
+          <div className="group relative">
             <button
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              className="rounded-md p-2 transition-colors hover:bg-gray-100"
               onClick={handleMoveUp}
             >
-              <ChevronUp className="w-5 h-5" />
+              <ChevronUp className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
               <Popover text="Move object up" upper={isTextObject} />
@@ -281,25 +281,25 @@ export function Tooltip({
       )}
       {isTextObject && (
         <>
-          <div className="relative group">
+          <div className="group relative">
             <button
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              className="rounded-md p-2 transition-colors hover:bg-gray-100"
               onClick={handleWeightChange}
             >
-              <Bold className="w-5 h-5" />
+              <Bold className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
               <Popover text="Change font weight" upper={isTextObject} />
             </div>
           </div>
           <button
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            className="rounded-md p-2 transition-colors hover:bg-gray-100"
             onClick={handleTextEdit}
           >
-            <TextCursorInput className="w-5 h-5" />
+            <TextCursorInput className="h-5 w-5" />
           </button>
           <select
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors appearance-none h-9 text-center leading-tight"
+            className="h-9 appearance-none rounded-md p-2 text-center leading-tight transition-colors hover:bg-gray-100"
             value={selectedObject?.fontSize || 24}
             onChange={handleChangeFontSize}
           >
@@ -311,41 +311,41 @@ export function Tooltip({
           </select>
         </>
       )}
-      {!isImageObject && <div className="w-px h-6 bg-gray-200 mx-2" />}
-      <div className="relative group">
+      {!isImageObject && <div className="mx-2 h-6 w-px bg-gray-200" />}
+      <div className="group relative">
         <button
-          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          className="rounded-md p-2 transition-colors hover:bg-gray-100"
           onClick={handleChangeLocked}
         >
           {selectedObject?.locked ? (
-            <LockKeyhole className="w-5 h-5" />
+            <LockKeyhole className="h-5 w-5" />
           ) : (
-            <UnlockKeyhole className="w-5 h-5" />
+            <UnlockKeyhole className="h-5 w-5" />
           )}
         </button>
         <div className={popup({ isTextObject })}>
           <Popover text="Lock object" upper={isTextObject} />
         </div>
       </div>
-      <div className="relative group">
+      <div className="group relative">
         <button
-          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          className="rounded-md p-2 transition-colors hover:bg-gray-100"
           onClick={() =>
             handleCopyObject(objects, selectedObjectId, setObjects)
           }
         >
-          <Copy className="w-5 h-5" />
+          <Copy className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>
           <Popover text="Copy object" upper={isTextObject} />
         </div>
       </div>
-      <div className="relative group">
+      <div className="group relative">
         <button
-          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          className="rounded-md p-2 transition-colors hover:bg-gray-100"
           onClick={handleDelete}
         >
-          <Trash2 className="w-5 h-5" />
+          <Trash2 className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>
           <Popover text="Delete object" upper={isTextObject} />

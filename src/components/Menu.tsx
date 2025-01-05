@@ -1,6 +1,6 @@
-import { Pencil, ImageDown, Trash2 } from "lucide-react";
-import { useCanvasContext } from "../contexts/CanvasContext";
-import html2canvas from "html2canvas";
+import { Pencil, ImageDown, Trash2 } from 'lucide-react';
+import { useCanvasContext } from '../contexts/CanvasContext';
+import html2canvas from 'html2canvas';
 
 export function Menu() {
   const {
@@ -16,7 +16,7 @@ export function Menu() {
     setSelectedObjectId(null);
 
     if (objects.length === 0) {
-      alert("Canvas is empty!");
+      alert('Canvas is empty!');
       return;
     }
 
@@ -24,13 +24,13 @@ export function Menu() {
       try {
         // Get the canvas container
         const canvasContainer = document.querySelector(
-          ".relative.w-full.h-full"
+          '.relative.w-full.h-full'
         );
         if (!canvasContainer) return;
 
         // Create a screenshot with html2canvas
         const canvas = await html2canvas(canvasContainer as HTMLElement, {
-          backgroundColor: "#f9fafb",
+          backgroundColor: '#f9fafb',
           scale: window.devicePixelRatio,
           useCORS: true,
         });
@@ -39,12 +39,12 @@ export function Menu() {
         const blob = await new Promise<Blob>((resolve) => {
           canvas.toBlob((blob) => {
             resolve(blob as Blob);
-          }, "image/png");
+          }, 'image/png');
         });
 
         // Create a download link
         const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
+        const link = document.createElement('a');
         link.href = url;
         link.download = `canvas-${new Date().toISOString().slice(0, -5)}.png`;
 
@@ -56,7 +56,7 @@ export function Menu() {
         // Revoke the URL
         URL.revokeObjectURL(url);
       } catch (error) {
-        console.error("Error saving image:", error);
+        console.error('Error saving image:', error);
       }
     }, 100);
   };
@@ -67,36 +67,36 @@ export function Menu() {
   };
 
   return (
-    <div className="absolute bg-white rounded-md shadow-md flex items-center gap-2 justify-center left-1/2 -translate-x-1/2 top-2 animate-fade animate-once animate-duration-300 mt-2 p-2">
+    <div className="absolute left-1/2 top-2 mt-2 flex -translate-x-1/2 animate-fade items-center justify-center gap-2 rounded-md bg-white p-2 shadow-md animate-duration-300 animate-once">
       <button
-        className={`p-2 rounded-md transition-colors cursor-pointer ${
-          selectedTool === "pen"
-            ? "bg-indigo-100 text-indigo-600"
-            : "hover:bg-gray-100"
+        className={`cursor-pointer rounded-md p-2 transition-colors ${
+          selectedTool === 'pen'
+            ? 'bg-indigo-100 text-indigo-600'
+            : 'hover:bg-gray-100'
         }`}
         onClick={() => {
-          setSelectedTool("pen");
+          setSelectedTool('pen');
         }}
       >
-        <Pencil className="w-5 h-5" />
+        <Pencil className="h-5 w-5" />
       </button>
       <button
-        className={`p-2 rounded-md transition-colors cursor-pointer ${
-          selectedTool === "save"
-            ? "bg-indigo-100 text-indigo-600"
-            : "hover:bg-gray-100"
+        className={`cursor-pointer rounded-md p-2 transition-colors ${
+          selectedTool === 'save'
+            ? 'bg-indigo-100 text-indigo-600'
+            : 'hover:bg-gray-100'
         }`}
         onClick={handleSaveImage}
         title="Save as image"
       >
-        <ImageDown className="w-5 h-5" />
+        <ImageDown className="h-5 w-5" />
       </button>
       <button
-        className="p-2 rounded-md transition-colors cursor-pointer hover:bg-gray-100"
+        className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
         onClick={handleClearCanvas}
         title="Clear canvas"
       >
-        <Trash2 className="w-5 h-5" />
+        <Trash2 className="h-5 w-5" />
       </button>
     </div>
   );

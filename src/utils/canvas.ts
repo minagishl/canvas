@@ -1,4 +1,4 @@
-import { CanvasObject } from "../types/canvas";
+import { CanvasObject } from '../types/canvas';
 
 export const drawObject = (
   ctx: CanvasRenderingContext2D,
@@ -9,11 +9,11 @@ export const drawObject = (
   ctx.fillStyle = object.fill;
   ctx.strokeStyle = object.fill;
   ctx.lineWidth = 2;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
 
   switch (object.type) {
-    case "rectangle":
+    case 'rectangle':
       ctx.fillRect(
         object.position.x,
         object.position.y,
@@ -21,7 +21,7 @@ export const drawObject = (
         object.height
       );
       break;
-    case "circle":
+    case 'circle':
       ctx.beginPath();
       ctx.ellipse(
         object.position.x + object.width / 2,
@@ -34,7 +34,7 @@ export const drawObject = (
       );
       ctx.fill();
       break;
-    case "line":
+    case 'line':
       if (object.points && object.points.length > 0) {
         ctx.beginPath();
         ctx.lineWidth = object.lineWidth || 2 / scale;
@@ -47,7 +47,7 @@ export const drawObject = (
         // Display the boundary box when selected
         if (object.id === selectedObjectId) {
           const padding = 8 / scale;
-          ctx.strokeStyle = "#4f46e5";
+          ctx.strokeStyle = '#4f46e5';
           ctx.lineWidth = 2 / scale;
           ctx.strokeRect(
             object.position.x - padding,
@@ -58,7 +58,7 @@ export const drawObject = (
         }
       }
       break;
-    case "image":
+    case 'image':
       if (object.imageData) {
         const img = new Image();
         img.src = object.imageData;

@@ -1,12 +1,12 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
-import { useCanvasContext } from "../contexts/CanvasContext";
-import { drawObject } from "../utils/canvas";
-import { Point, CanvasObject, ResizeHandle, LinePoint } from "../types/canvas";
-import { createPreviewObject } from "../utils/preview";
-import { TextObject } from "./objects/Text";
-import { ImageObject } from "./objects/Image";
-import { Tooltip } from "./Tooltip";
-import { handleCopyObject } from "../utils/copy";
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { useCanvasContext } from '../contexts/CanvasContext';
+import { drawObject } from '../utils/canvas';
+import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
+import { createPreviewObject } from '../utils/preview';
+import { TextObject } from './objects/Text';
+import { ImageObject } from './objects/Image';
+import { Tooltip } from './Tooltip';
+import { handleCopyObject } from '../utils/copy';
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -46,7 +46,7 @@ export const Canvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     canvas.width = window.innerWidth;
@@ -61,13 +61,13 @@ export const Canvas = () => {
 
     // Drawing objects other than text
     objects
-      .filter((obj) => obj.type !== "text" && obj.type !== "image")
+      .filter((obj) => obj.type !== 'text' && obj.type !== 'image')
       .forEach((object) => {
         drawObject(ctx, object, selectedObjectId, scale);
         if (object.id === selectedObjectId) {
           // Added selection border padding
           const padding = 8 / scale;
-          ctx.strokeStyle = "#4f46e5";
+          ctx.strokeStyle = '#4f46e5';
           ctx.lineWidth = 2 / scale;
 
           // Drawing borders considering padding
@@ -79,11 +79,11 @@ export const Canvas = () => {
           );
 
           const handleSize = 8 / scale;
-          ctx.fillStyle = "#ffffff";
-          ctx.strokeStyle = "#4f46e5";
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = '#4f46e5';
           ctx.lineWidth = 1 / scale;
 
-          if (object.type === "line") return;
+          if (object.type === 'line') return;
 
           const corners = [
             { x: object.position.x - padding, y: object.position.y - padding },
@@ -111,7 +111,7 @@ export const Canvas = () => {
       });
 
     // Draw preview object
-    if (previewObject && selectedTool !== "select") {
+    if (previewObject && selectedTool !== 'select') {
       ctx.globalAlpha = 0.6;
       drawObject(ctx, previewObject, null, scale);
       ctx.globalAlpha = 1;
@@ -136,7 +136,7 @@ export const Canvas = () => {
     const endY =
       Math.ceil((height / scale - offset.y / scale) / gridSize) * gridSize;
 
-    ctx.strokeStyle = "#e5e7eb";
+    ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 0.5;
 
     // Draw vertical lines
@@ -180,34 +180,34 @@ export const Canvas = () => {
       return;
     }
 
-    if (selectedTool === "pen") {
+    if (selectedTool === 'pen') {
       const point = getCanvasPoint(e);
       setCurrentLine([point]);
       setIsDragging(true);
       return;
     }
 
-    if (selectedTool === "select" && selectedObjectId) {
+    if (selectedTool === 'select' && selectedObjectId) {
       // Resize handle detection
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-      if (selectedObject && selectedObject.type !== "line") {
+      if (selectedObject && selectedObject.type !== 'line') {
         const handleSize = 8 / scale;
         const padding = 8 / scale;
 
         const handles = {
-          "top-left": {
+          'top-left': {
             x: selectedObject.position.x - padding,
             y: selectedObject.position.y - padding,
           },
-          "top-right": {
+          'top-right': {
             x: selectedObject.position.x + selectedObject.width + padding,
             y: selectedObject.position.y - padding,
           },
-          "bottom-left": {
+          'bottom-left': {
             x: selectedObject.position.x - padding,
             y: selectedObject.position.y + selectedObject.height + padding,
           },
-          "bottom-right": {
+          'bottom-right': {
             x: selectedObject.position.x + selectedObject.width + padding,
             y: selectedObject.position.y + selectedObject.height + padding,
           },
@@ -216,7 +216,7 @@ export const Canvas = () => {
         // Check the distance to each handle
         for (const [handle, pos] of Object.entries(handles) as [
           ResizeHandle,
-          Point
+          Point,
         ][]) {
           const distance = Math.hypot(point.x - pos.x, point.y - pos.y);
           if (distance <= handleSize) {
@@ -228,19 +228,19 @@ export const Canvas = () => {
       }
     }
 
-    if (selectedTool === "select") {
+    if (selectedTool === 'select') {
       setIsEditing(false);
       // Clicking on a text or image object
       const clickedHTMLObject = e.target as HTMLElement;
       const isHTMLObject =
-        clickedHTMLObject.tagName === "DIV" ||
-        clickedHTMLObject.tagName === "IMG";
+        clickedHTMLObject.tagName === 'DIV' ||
+        clickedHTMLObject.tagName === 'IMG';
 
       if (isHTMLObject) {
         // When an HTML element (text or image) is clicked
         const objectId = clickedHTMLObject
-          .closest("[data-object-id]")
-          ?.getAttribute("data-object-id");
+          .closest('[data-object-id]')
+          ?.getAttribute('data-object-id');
         if (objectId) {
           e.preventDefault(); // Prevent text selection
           e.stopPropagation(); // Prevent event propagation to canvas
@@ -295,17 +295,17 @@ export const Canvas = () => {
       return;
     }
 
-    if (isDragging && selectedTool === "pen") {
+    if (isDragging && selectedTool === 'pen') {
       const point = getCanvasPoint(e);
       setCurrentLine((prev) => [...prev, point]);
 
       setPreviewObject({
-        id: "preview",
-        type: "line",
+        id: 'preview',
+        type: 'line',
         position: { x: 0, y: 0 },
         width: 0,
         height: 0,
-        fill: "#4f46e5",
+        fill: '#4f46e5',
         points: [...currentLine, point],
       });
       return;
@@ -327,18 +327,18 @@ export const Canvas = () => {
         let newHeight = selectedObject.height;
 
         // Maintain aspect ratio when Shift key is pressed
-        if (e.shiftKey || selectedObject.type === "image") {
+        if (e.shiftKey || selectedObject.type === 'image') {
           const aspectRatio = selectedObject.width / selectedObject.height;
 
           // Processing changes according to the position of the resizing handle
           switch (resizing) {
-            case "bottom-right": {
+            case 'bottom-right': {
               const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
               newWidth = selectedObject.width + maxDelta * Math.sign(dx);
               newHeight = newWidth / aspectRatio;
               break;
             }
-            case "bottom-left": {
+            case 'bottom-left': {
               const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
               newWidth = selectedObject.width - maxDelta * Math.sign(dx);
               newHeight = newWidth / aspectRatio;
@@ -346,7 +346,7 @@ export const Canvas = () => {
                 selectedObject.position.x + (selectedObject.width - newWidth);
               break;
             }
-            case "top-right": {
+            case 'top-right': {
               const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
               newWidth = selectedObject.width + maxDelta * Math.sign(dx);
               newHeight = newWidth / aspectRatio;
@@ -354,7 +354,7 @@ export const Canvas = () => {
                 selectedObject.position.y + (selectedObject.height - newHeight);
               break;
             }
-            case "top-left": {
+            case 'top-left': {
               const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
               newWidth = selectedObject.width - maxDelta * Math.sign(dx);
               newHeight = newWidth / aspectRatio;
@@ -368,23 +368,23 @@ export const Canvas = () => {
         } else {
           // Normal resizing process
           switch (resizing) {
-            case "top-left":
+            case 'top-left':
               newPosition.x = selectedObject.position.x + dx;
               newPosition.y = selectedObject.position.y + dy;
               newWidth = selectedObject.width - dx;
               newHeight = selectedObject.height - dy;
               break;
-            case "top-right":
+            case 'top-right':
               newPosition.y = selectedObject.position.y + dy;
               newWidth = selectedObject.width + dx;
               newHeight = selectedObject.height - dy;
               break;
-            case "bottom-left":
+            case 'bottom-left':
               newPosition.x = selectedObject.position.x + dx;
               newWidth = selectedObject.width - dx;
               newHeight = selectedObject.height + dy;
               break;
-            case "bottom-right":
+            case 'bottom-right':
               newWidth = selectedObject.width + dx;
               newHeight = selectedObject.height + dy;
               break;
@@ -417,11 +417,11 @@ export const Canvas = () => {
       // Prevent movement of locked objects
       if (selectedObject?.locked) return;
 
-      if (selectedTool === "select" && selectedObjectId && startPoint) {
+      if (selectedTool === 'select' && selectedObjectId && startPoint) {
         const currentPoint = getCanvasPoint(e);
 
         // Special processing for line objects
-        if (selectedObject?.type === "line" && selectedObject.points) {
+        if (selectedObject?.type === 'line' && selectedObject.points) {
           // Calculate the amount of movement
           const dx = currentPoint.x - dragOffset.x - selectedObject.position.x;
           const dy = currentPoint.y - dragOffset.y - selectedObject.position.y;
@@ -466,7 +466,7 @@ export const Canvas = () => {
           );
           setObjects(updatedObjects);
         }
-      } else if (startPoint && selectedTool !== "image") {
+      } else if (startPoint && selectedTool !== 'image') {
         const currentPoint = getCanvasPoint(e);
         const preview = createPreviewObject(
           selectedTool,
@@ -480,7 +480,7 @@ export const Canvas = () => {
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
-    if (selectedTool === "pen" && currentLine.length > 0) {
+    if (selectedTool === 'pen' && currentLine.length > 0) {
       // Calculate the bounding box from the line coordinates
       const minX = Math.min(...currentLine.map((point) => point.x));
       const maxX = Math.max(...currentLine.map((point) => point.x));
@@ -490,11 +490,11 @@ export const Canvas = () => {
       // Create a line object
       const newLine: CanvasObject = {
         id: Math.random().toString(36).slice(2, 11),
-        type: "line",
+        type: 'line',
         position: { x: minX, y: minY },
         width: maxX - minX,
         height: maxY - minY,
-        fill: "#4f46e5",
+        fill: '#4f46e5',
         points: currentLine,
       };
 
@@ -520,13 +520,13 @@ export const Canvas = () => {
     if (isPanning) {
       setIsPanning(false);
       setPanStart(null);
-      canvasRef.current!.style.cursor = "default";
+      canvasRef.current!.style.cursor = 'default';
       return;
     }
 
     const isShiftPressed = e.shiftKey; // Get Shift key status
 
-    if (selectedTool !== "select" && !isPanning) {
+    if (selectedTool !== 'select' && !isPanning) {
       if (!startPoint) {
         setIsDragging(false);
         setStartPoint(null);
@@ -534,13 +534,13 @@ export const Canvas = () => {
         return;
       }
 
-      if (selectedTool === "image") {
+      if (selectedTool === 'image') {
         e.preventDefault();
         e.stopPropagation();
         const point = getCanvasPoint(e);
         setImagePosition(point);
         fileInputRef.current?.click();
-        setSelectedTool("select");
+        setSelectedTool('select');
         return;
       }
 
@@ -552,7 +552,7 @@ export const Canvas = () => {
         isShiftPressed
       );
       addObject(newObject);
-      setSelectedTool("select");
+      setSelectedTool('select');
       setIsDragging(false);
       setStartPoint(null);
       setPreviewObject(null);
@@ -599,10 +599,10 @@ export const Canvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    canvas.addEventListener("wheel", handleWheel, { passive: false });
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
-      canvas.removeEventListener("wheel", handleWheel);
+      canvas.removeEventListener('wheel', handleWheel);
     };
   }, [handleWheel]);
 
@@ -617,7 +617,7 @@ export const Canvas = () => {
       const img = new Image();
       img.onload = () => {
         // Image resizing process
-        const canvas = document.createElement("canvas");
+        const canvas = document.createElement('canvas');
         const maxSize = 500;
         const ratio = Math.min(maxSize / img.width, maxSize / img.height);
         const width = img.width * ratio;
@@ -625,11 +625,11 @@ export const Canvas = () => {
 
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
         ctx.drawImage(img, 0, 0, width, height);
-        const resizedImageData = canvas.toDataURL("image/jpeg", 0.8);
+        const resizedImageData = canvas.toDataURL('image/jpeg', 0.8);
 
         // Save to cache
         const id = Math.random().toString(36).substr(2, 9);
@@ -637,11 +637,11 @@ export const Canvas = () => {
 
         const imageObject: CanvasObject = {
           id,
-          type: "image",
+          type: 'image',
           position: imagePosition,
           width,
           height,
-          fill: "transparent",
+          fill: 'transparent',
           imageData: resizedImageData,
         };
 
@@ -665,7 +665,7 @@ export const Canvas = () => {
       setLastTouchDistance(distance);
     } else if (e.touches.length === 1) {
       const point = getTouchPoint(touch);
-      if (selectedTool === "select") {
+      if (selectedTool === 'select') {
         const clickedObject = findClickedObject(point);
 
         if (clickedObject) {
@@ -710,7 +710,7 @@ export const Canvas = () => {
     } else if (e.touches.length === 1) {
       const touch = e.touches[0];
       if (isDragging) {
-        if (selectedTool === "select" && selectedObjectId && startPoint) {
+        if (selectedTool === 'select' && selectedObjectId && startPoint) {
           const currentPoint = getTouchPoint(touch);
           const newX = currentPoint.x - dragOffset.x;
           const newY = currentPoint.y - dragOffset.y;
@@ -760,7 +760,7 @@ export const Canvas = () => {
       setPanStart(null);
     }
 
-    if (touchDuration < 200 && !isDragging && selectedTool === "image") {
+    if (touchDuration < 200 && !isDragging && selectedTool === 'image') {
       const touch = e.changedTouches[0];
       const point = getTouchPoint(touch);
       setImagePosition(point);
@@ -817,22 +817,22 @@ export const Canvas = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditing) return;
-      if (e.key === "Delete" || e.key === "Backspace") {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteSelectedObject();
       }
 
-      if (e.key === "c" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
         handleCopyObject(objects, selectedObjectId, setObjects);
       }
 
-      if (e.key === "z" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
         retoreObjects();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [
     isEditing,
@@ -850,10 +850,10 @@ export const Canvas = () => {
         let x, y;
 
         // Calculate the position of the tooltip (Specified by tailwindcss standard)
-        if (selectedObject.type === "text") {
+        if (selectedObject.type === 'text') {
           x = selectedObject.position.x * scale + offset.x;
           y = selectedObject.position.y * scale + offset.y - 16; // 1rem
-        } else if (selectedObject.type === "image") {
+        } else if (selectedObject.type === 'image') {
           x = selectedObject.position.x * scale + offset.x;
           y =
             (selectedObject.position.y - selectedObject.height / 2) * scale +
@@ -912,7 +912,7 @@ export const Canvas = () => {
   const findClickedObject = (point: Point) => {
     // Check line objects first
     const lineObject = objects.find((obj) => {
-      if (obj.type === "line" && obj.points) {
+      if (obj.type === 'line' && obj.points) {
         return isPointNearLine(point, obj.points);
       }
       return false;
@@ -925,7 +925,7 @@ export const Canvas = () => {
     // Check other objects
     return objects.find(
       (obj) =>
-        obj.type !== "line" &&
+        obj.type !== 'line' &&
         point.x >= obj.position.x &&
         point.x <= obj.position.x + obj.width &&
         point.y >= obj.position.y &&
@@ -934,17 +934,17 @@ export const Canvas = () => {
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative h-full w-full">
       <canvas
         ref={canvasRef}
         className={`absolute inset-0 ${
-          selectedTool === "select"
+          selectedTool === 'select'
             ? isPanning
-              ? "cursor-grabbing"
-              : "cursor-grab active:cursor-grabbing"
-            : selectedTool === "text" || selectedTool === "image"
-            ? "cursor-pointer"
-            : "cursor-crosshair"
+              ? 'cursor-grabbing'
+              : 'cursor-grab active:cursor-grabbing'
+            : selectedTool === 'text' || selectedTool === 'image'
+              ? 'cursor-pointer'
+              : 'cursor-crosshair'
         }`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -955,7 +955,7 @@ export const Canvas = () => {
           setPreviewObject(null);
           setIsPanning(false);
           setPanStart(null);
-          canvasRef.current!.style.cursor = "default";
+          canvasRef.current!.style.cursor = 'default';
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -969,19 +969,19 @@ export const Canvas = () => {
       <input
         type="file"
         ref={fileInputRef}
-        style={{ display: "none" }}
+        style={{ display: 'none' }}
         accept="image/*"
         onChange={handleFileChange}
       />
 
       {objects
-        .filter((obj) => obj.type === "text" || obj.type === "image")
+        .filter((obj) => obj.type === 'text' || obj.type === 'image')
         .map((obj) => {
-          if (obj.type === "image") {
+          if (obj.type === 'image') {
             return (
               <ImageObject
                 key={obj.id}
-                obj={obj as CanvasObject & { type: "image" }}
+                obj={obj as CanvasObject & { type: 'image' }}
                 isSelected={obj.id === selectedObjectId}
                 isDragging={isDragging}
                 isResizing={resizing !== null}
@@ -995,11 +995,11 @@ export const Canvas = () => {
             );
           }
 
-          if (obj.type === "text") {
+          if (obj.type === 'text') {
             return (
               <TextObject
                 key={obj.id}
-                obj={obj as CanvasObject & { type: "text" }}
+                obj={obj as CanvasObject & { type: 'text' }}
                 scale={scale}
                 offset={offset}
                 isSelected={obj.id === selectedObjectId}
@@ -1008,13 +1008,13 @@ export const Canvas = () => {
                 isEditing={isEditing && obj.id === selectedObjectId}
                 selectedTool={selectedTool}
                 onMouseDown={(e) => {
-                  if (selectedTool === "select") {
+                  if (selectedTool === 'select') {
                     handleMouseDown(e);
                   }
                 }}
                 onBlur={(e) => {
-                  if (selectedTool !== "select") {
-                    const updatedText = e.currentTarget.textContent || "";
+                  if (selectedTool !== 'select') {
+                    const updatedText = e.currentTarget.textContent || '';
                     const updatedObjects = objects.map((o) =>
                       o.id === obj.id ? { ...o, text: updatedText } : o
                     );

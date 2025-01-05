@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from "react";
-import { CanvasObject } from "../../types/canvas";
+import React, { useRef, useEffect } from 'react';
+import { CanvasObject } from '../../types/canvas';
 
 interface TextObjectProps {
-  obj: CanvasObject & { type: "text" };
+  obj: CanvasObject & { type: 'text' };
   scale: number;
   offset: { x: number; y: number };
   isSelected: boolean;
@@ -80,8 +80,8 @@ export const TextObject = React.memo(
         data-object-id={obj.id}
         contentEditable={isEditing}
         suppressContentEditableWarning
-        className={`absolute hover:border-2 hover:border-indigo-600 outline-none ${
-          isSelected ? "border-2 border-indigo-600" : ""
+        className={`absolute outline-none hover:border-2 hover:border-indigo-600 ${
+          isSelected ? 'border-2 border-indigo-600' : ''
         }`}
         style={{
           left: 0,
@@ -90,9 +90,9 @@ export const TextObject = React.memo(
           paddingRight: `${6 * scale}px`,
           paddingLeft: `${6 * scale}px`,
           color: obj.fill,
-          willChange: "transform",
-          pointerEvents: isDragging ? "none" : isResizing ? "none" : "auto",
-          cursor: selectedTool === "select" ? "move" : "default",
+          willChange: 'transform',
+          pointerEvents: isDragging ? 'none' : isResizing ? 'none' : 'auto',
+          cursor: selectedTool === 'select' ? 'move' : 'default',
           fontWeight: obj.weight,
           lineHeight: `${getLineHeight() * scale}px`,
         }}

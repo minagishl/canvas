@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 import {
   MousePointer2,
   Square,
@@ -8,23 +8,23 @@ import {
   ZoomIn,
   ZoomOut,
   MoreHorizontal,
-} from "lucide-react";
-import { useCanvasContext } from "../contexts/CanvasContext";
-import { ToolType } from "../types/canvas";
-import { isMobile } from "react-device-detect";
-import { Popover } from "./Popover";
-import { Menu } from "./Menu";
+} from 'lucide-react';
+import { useCanvasContext } from '../contexts/CanvasContext';
+import { ToolType } from '../types/canvas';
+import { isMobile } from 'react-device-detect';
+import { Popover } from './Popover';
+import { Menu } from './Menu';
 
 const tools: {
   icon: typeof MousePointer2;
   name: ToolType;
   disabled: boolean;
 }[] = [
-  { icon: MousePointer2, name: "select", disabled: false },
-  { icon: Square, name: "rectangle", disabled: false },
-  { icon: Circle, name: "circle", disabled: false },
-  { icon: Type, name: "text", disabled: false },
-  { icon: ImageIcon, name: "image", disabled: false },
+  { icon: MousePointer2, name: 'select', disabled: false },
+  { icon: Square, name: 'rectangle', disabled: false },
+  { icon: Circle, name: 'circle', disabled: false },
+  { icon: Type, name: 'text', disabled: false },
+  { icon: ImageIcon, name: 'image', disabled: false },
 ];
 
 export function Toolbar(): React.ReactElement {
@@ -105,68 +105,68 @@ export function Toolbar(): React.ReactElement {
   }, []);
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-lg p-2 flex items-center gap-2 select-none z-50">
+    <div className="fixed left-1/2 top-4 z-50 flex -translate-x-1/2 select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg">
       {tools
-        .filter((Tool) => !isMobile || Tool.name === "select")
+        .filter((Tool) => !isMobile || Tool.name === 'select')
         .map((Tool) => (
-          <div key={Tool.name} className="relative group">
+          <div key={Tool.name} className="group relative">
             <button
-              className={`p-2 rounded-md transition-colors cursor-pointer ${
+              className={`cursor-pointer rounded-md p-2 transition-colors ${
                 selectedTool === Tool.name
-                  ? "bg-indigo-100 text-indigo-600"
-                  : "hover:bg-gray-100"
-              } ${Tool.disabled && "opacity-50"}`}
+                  ? 'bg-indigo-100 text-indigo-600'
+                  : 'hover:bg-gray-100'
+              } ${Tool.disabled && 'opacity-50'}`}
               onClick={() => {
                 if (!Tool.disabled) {
                   setSelectedTool(Tool.name);
                 }
               }}
             >
-              <Tool.icon className="w-5 h-5" />
+              <Tool.icon className="h-5 w-5" />
             </button>
             {Tool.disabled && (
-              <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+              <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
                 <Popover text={`${Tool.name} is disabled`} upper={false} />
               </div>
             )}
           </div>
         ))}
       {!isMobile && (
-        <div className="relative group">
+        <div className="group relative">
           <button
             key="more"
-            className="p-2 rounded-md transition-colors hover:bg-gray-100 cursor-pointer"
+            className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
           >
-            <MoreHorizontal className="w-5 h-5" />
+            <MoreHorizontal className="h-5 w-5" />
           </button>
-          <div className="absolute left-1/2 -translate-x-1/2 h-8 w-16 hidden group-hover:block" />
-          <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 pt-3">
+          <div className="absolute left-1/2 hidden h-8 w-16 -translate-x-1/2 group-hover:block" />
+          <div className="absolute left-1/2 top-full hidden -translate-x-1/2 pt-3 group-hover:block">
             <Menu />
           </div>
         </div>
       )}
-      <div className="w-px h-6 bg-gray-200 mx-2" />
-      <div className="relative group">
+      <div className="mx-2 h-6 w-px bg-gray-200" />
+      <div className="group relative">
         <button
           onClick={handleZoomOut}
-          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          className="rounded-md p-2 transition-colors hover:bg-gray-100"
           disabled={isZooming || scale <= 0.7}
         >
-          <ZoomOut className="w-5 h-5" />
+          <ZoomOut className="h-5 w-5" />
         </button>
-        <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
           <Popover text="Zoom out" upper={false} />
         </div>
       </div>
-      <div className="relative group">
+      <div className="group relative">
         <button
           onClick={handleZoomIn}
-          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          className="rounded-md p-2 transition-colors hover:bg-gray-100"
           disabled={isZooming || scale >= 2}
         >
-          <ZoomIn className="w-5 h-5" />
+          <ZoomIn className="h-5 w-5" />
         </button>
-        <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
           <Popover text="Zoom in" upper={false} />
         </div>
       </div>

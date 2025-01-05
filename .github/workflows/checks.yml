@@ -2,11 +2,11 @@ name: Checks
 
 on:
   push:
-    branches: ["main", "develop"]
+    branches: ['main', 'develop']
   pull_request:
-    branches: ["main", "develop"]
+    branches: ['main', 'develop']
   schedule:
-    - cron: "0 10 * * 1"
+    - cron: '0 10 * * 1'
 
 jobs:
   lint:
@@ -22,7 +22,7 @@ jobs:
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.18.x"
+          node-version: '20.18.x'
 
       - name: Install Dependencies
         run: yarn install
@@ -46,10 +46,10 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: "javascript-typescript"
-          build-mode: "none"
+          languages: 'javascript-typescript'
+          build-mode: 'none'
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:javascript-typescript"
+          category: '/language:javascript-typescript'
