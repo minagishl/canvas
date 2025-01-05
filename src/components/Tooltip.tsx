@@ -210,10 +210,10 @@ export function Tooltip({
       ...prevObjects,
       {
         ...selectedObject,
-        id: Math.random().toString(36).substr(2, 9),
+        id: Math.random().toString(36).slice(2, 11),
         position: {
-          x: selectedObject.position.x + 10,
-          y: selectedObject.position.y + 10,
+          x: selectedObject.position.x + 40,
+          y: selectedObject.position.y + 40,
         },
       },
     ]);
