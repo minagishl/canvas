@@ -14,6 +14,7 @@ import { ToolType } from '../types/canvas';
 import { isMobile } from 'react-device-detect';
 import { Popover } from './Popover';
 import { Menu } from './Menu';
+import { Loading } from './Loading';
 
 const tools: {
   icon: typeof MousePointer2;
@@ -28,9 +29,16 @@ const tools: {
 ];
 
 export function Toolbar(): React.ReactElement {
-  const { offset, setOffset, scale, setScale, selectedTool, setSelectedTool } =
-    useCanvasContext();
-
+  const {
+    objects,
+    offset,
+    setOffset,
+    scale,
+    setScale,
+    selectedTool,
+    setSelectedTool,
+  } = useCanvasContext();
+  const [isLoading, setIsLoading] = React.useState(false);
   const [isZooming, setIsZooming] = React.useState(false);
   const animationRef = useRef<number | null>(null);
 
@@ -104,72 +112,107 @@ export function Toolbar(): React.ReactElement {
     };
   }, []);
 
+  const handleShareCanvas = () => {
+    setIsLoading(true);
+    const apiUrl = new URL(import.meta.env.VITE_API_URL);
+    fetch(`${apiUrl.href}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(objects),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error sharing canvas');
+        }
+      })
+      .then((data) => {
+        const id = data.id;
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', id);
+        navigator.clipboard.writeText(url.toString());
+        console.log('Canvas shared:', url.toString());
+        alert('Canvas shared! URL copied to clipboard');
+      })
+      .catch((error) => {
+        console.error('Error sharing canvas:', error);
+        alert('Error sharing canvas');
+      });
+    setIsLoading(false);
+  };
+
   return (
-    <div className="fixed left-1/2 top-4 z-50 flex -translate-x-1/2 select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg">
-      {tools
-        .filter((Tool) => !isMobile || Tool.name === 'select')
-        .map((Tool) => (
-          <div key={Tool.name} className="group relative">
+    <>
+      <Loading hidden={!isLoading} />
+      <div className="fixed left-1/2 top-4 z-50 flex -translate-x-1/2 select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg">
+        {tools
+          .filter((Tool) => !isMobile || Tool.name === 'select')
+          .map((Tool) => (
+            <div key={Tool.name} className="group relative">
+              <button
+                className={`cursor-pointer rounded-md p-2 transition-colors ${
+                  selectedTool === Tool.name
+                    ? 'bg-indigo-100 text-indigo-600'
+                    : 'hover:bg-gray-100'
+                } ${Tool.disabled && 'opacity-50'}`}
+                onClick={() => {
+                  if (!Tool.disabled) {
+                    setSelectedTool(Tool.name);
+                  }
+                }}
+              >
+                <Tool.icon className="h-5 w-5" />
+              </button>
+              {Tool.disabled && (
+                <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
+                  <Popover text={`${Tool.name} is disabled`} upper={false} />
+                </div>
+              )}
+            </div>
+          ))}
+        {!isMobile && (
+          <div className="group relative">
             <button
-              className={`cursor-pointer rounded-md p-2 transition-colors ${
-                selectedTool === Tool.name
-                  ? 'bg-indigo-100 text-indigo-600'
-                  : 'hover:bg-gray-100'
-              } ${Tool.disabled && 'opacity-50'}`}
-              onClick={() => {
-                if (!Tool.disabled) {
-                  setSelectedTool(Tool.name);
-                }
-              }}
+              key="more"
+              className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
             >
-              <Tool.icon className="h-5 w-5" />
+              <MoreHorizontal className="h-5 w-5" />
             </button>
-            {Tool.disabled && (
-              <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
-                <Popover text={`${Tool.name} is disabled`} upper={false} />
-              </div>
-            )}
+            <div className="absolute left-1/2 hidden h-8 w-16 -translate-x-1/2 group-hover:block" />
+            <div className="absolute left-1/2 top-full hidden -translate-x-1/2 pt-3 group-hover:block">
+              <Menu handleShareCanvas={handleShareCanvas} />
+            </div>
           </div>
-        ))}
-      {!isMobile && (
+        )}
+        <div className="mx-2 h-6 w-px bg-gray-200" />
         <div className="group relative">
           <button
-            key="more"
-            className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
+            onClick={handleZoomOut}
+            className="rounded-md p-2 transition-colors hover:bg-gray-100"
+            disabled={isZooming || scale <= 0.7}
           >
-            <MoreHorizontal className="h-5 w-5" />
+            <ZoomOut className="h-5 w-5" />
           </button>
-          <div className="absolute left-1/2 hidden h-8 w-16 -translate-x-1/2 group-hover:block" />
-          <div className="absolute left-1/2 top-full hidden -translate-x-1/2 pt-3 group-hover:block">
-            <Menu />
+          <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
+            <Popover text="Zoom out" upper={false} />
           </div>
         </div>
-      )}
-      <div className="mx-2 h-6 w-px bg-gray-200" />
-      <div className="group relative">
-        <button
-          onClick={handleZoomOut}
-          className="rounded-md p-2 transition-colors hover:bg-gray-100"
-          disabled={isZooming || scale <= 0.7}
-        >
-          <ZoomOut className="h-5 w-5" />
-        </button>
-        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
-          <Popover text="Zoom out" upper={false} />
+        <div className="group relative">
+          <button
+            onClick={handleZoomIn}
+            className="rounded-md p-2 transition-colors hover:bg-gray-100"
+            disabled={isZooming || scale >= 2}
+          >
+            <ZoomIn className="h-5 w-5" />
+          </button>
+          <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
+            <Popover text="Zoom in" upper={false} />
+          </div>
         </div>
       </div>
-      <div className="group relative">
-        <button
-          onClick={handleZoomIn}
-          className="rounded-md p-2 transition-colors hover:bg-gray-100"
-          disabled={isZooming || scale >= 2}
-        >
-          <ZoomIn className="h-5 w-5" />
-        </button>
-        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
-          <Popover text="Zoom in" upper={false} />
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

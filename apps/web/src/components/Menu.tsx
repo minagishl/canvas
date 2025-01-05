@@ -2,7 +2,7 @@ import { Pencil, ImageDown, Trash2, Share } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import html2canvas from 'html2canvas';
 
-export function Menu() {
+export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const {
     selectedTool,
     setSelectedTool,
@@ -64,36 +64,6 @@ export function Menu() {
   const handleClearCanvas = () => {
     setObjects([]);
     setSelectedObjectId(null);
-  };
-
-  const handleShareCanvas = () => {
-    const apiUrl = new URL(import.meta.env.VITE_API_URL);
-    fetch(`${apiUrl.href}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(objects),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Error sharing canvas');
-        }
-      })
-      .then((data) => {
-        const id = data.id;
-        const url = new URL(window.location.href);
-        url.searchParams.set('id', id);
-        navigator.clipboard.writeText(url.toString());
-        console.log('Canvas shared:', url.toString());
-        alert('Canvas shared! URL copied to clipboard');
-      })
-      .catch((error) => {
-        console.error('Error sharing canvas:', error);
-        alert('Error sharing canvas');
-      });
   };
 
   return (
