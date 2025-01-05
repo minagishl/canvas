@@ -7,6 +7,7 @@ import {
   ChevronUp,
   LockKeyhole,
   UnlockKeyhole,
+  Trash2,
 } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 import { Popover } from "./Popover";
@@ -33,7 +34,8 @@ export function Tooltip({
   position,
   isDragging,
 }: TooltipProps): React.ReactElement | null {
-  const { objects, setObjects, selectedObjectId } = useCanvasContext();
+  const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
+    useCanvasContext();
 
   const handleColorChange = () => {
     if (!selectedObjectId) return;
@@ -188,6 +190,15 @@ export function Tooltip({
     });
   };
 
+  const handleDelete = () => {
+    if (!selectedObjectId) return;
+
+    setObjects((prevObjects) =>
+      prevObjects.filter((obj) => obj.id !== selectedObjectId)
+    );
+    setSelectedObjectId(null);
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -312,6 +323,17 @@ export function Tooltip({
         </button>
         <div className={popup({ isTextObject })}>
           <Popover text="Move object down" upper={isTextObject} />
+        </div>
+      </div>
+      <div className="relative group">
+        <button
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          onClick={handleDelete}
+        >
+          <Trash2 className="w-5 h-5" />
+        </button>
+        <div className={popup({ isTextObject })}>
+          <Popover text="Delete object" upper={isTextObject} />
         </div>
       </div>
     </div>
