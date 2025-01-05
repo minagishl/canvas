@@ -62,7 +62,7 @@ export const Canvas = () => {
     objects
       .filter((obj) => obj.type !== "text" && obj.type !== "image")
       .forEach((object) => {
-        drawObject(ctx, object);
+        drawObject(ctx, object, selectedObjectId, scale);
         if (object.id === selectedObjectId) {
           // Added selection border padding
           const padding = 8 / scale;
@@ -81,6 +81,8 @@ export const Canvas = () => {
           ctx.fillStyle = "#ffffff";
           ctx.strokeStyle = "#4f46e5";
           ctx.lineWidth = 1 / scale;
+
+          if (object.type === "line") return;
 
           const corners = [
             { x: object.position.x - padding, y: object.position.y - padding },
@@ -110,7 +112,7 @@ export const Canvas = () => {
     // Draw preview object
     if (previewObject && selectedTool !== "select") {
       ctx.globalAlpha = 0.6;
-      drawObject(ctx, previewObject);
+      drawObject(ctx, previewObject, null, scale);
       ctx.globalAlpha = 1;
     }
 
@@ -187,7 +189,7 @@ export const Canvas = () => {
     if (selectedTool === "select" && selectedObjectId) {
       // Resize handle detection
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-      if (selectedObject) {
+      if (selectedObject && selectedObject.type !== "line") {
         const handleSize = 8 / scale;
         const padding = 8 / scale;
 
@@ -256,15 +258,7 @@ export const Canvas = () => {
       }
 
       // When an object on the canvas is clicked
-      const clickedCanvasObject = objects.find(
-        (obj) =>
-          obj.type !== "text" &&
-          obj.type !== "image" &&
-          point.x >= obj.position.x &&
-          point.x <= obj.position.x + obj.width &&
-          point.y >= obj.position.y &&
-          point.y <= obj.position.y + obj.height
-      );
+      const clickedCanvasObject = findClickedObject(point);
 
       if (clickedCanvasObject) {
         setSelectedObjectId(clickedCanvasObject.id);
@@ -405,54 +399,90 @@ export const Canvas = () => {
     if (isDragging) {
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
 
-      // Prevent dragging of locked objects
+      // Prevent movement of locked objects
       if (selectedObject?.locked) return;
 
       if (selectedTool === "select" && selectedObjectId && startPoint) {
         const currentPoint = getCanvasPoint(e);
-        const newX = currentPoint.x - dragOffset.x;
-        const newY = currentPoint.y - dragOffset.y;
 
-        const updatedObjects = objects.map((obj) =>
-          obj.id === selectedObjectId
-            ? { ...obj, position: { x: newX, y: newY } }
-            : obj
-        );
-        setObjects(updatedObjects);
+        // Special processing for line objects
+        if (selectedObject?.type === "line" && selectedObject.points) {
+          // Calculate the amount of movement
+          const dx = currentPoint.x - dragOffset.x - selectedObject.position.x;
+          const dy = currentPoint.y - dragOffset.y - selectedObject.position.y;
+
+          const updatedObjects = objects.map((obj) => {
+            if (obj.id === selectedObjectId) {
+              // Move all points
+              const newPoints = obj.points!.map((point) => ({
+                x: point.x + dx,
+                y: point.y + dy,
+              }));
+
+              // Calculate the new bounding box
+              const minX = Math.min(...newPoints.map((p) => p.x));
+              const maxX = Math.max(...newPoints.map((p) => p.x));
+              const minY = Math.min(...newPoints.map((p) => p.y));
+              const maxY = Math.max(...newPoints.map((p) => p.y));
+
+              return {
+                ...obj,
+                position: { x: minX, y: minY },
+                width: maxX - minX,
+                height: maxY - minY,
+                points: newPoints,
+              };
+            }
+            return obj;
+          });
+
+          setObjects(updatedObjects);
+          // Update the reference point for the next movement
+          setStartPoint(currentPoint);
+        } else {
+          // Normal object movement process (existing code)
+          const newX = currentPoint.x - dragOffset.x;
+          const newY = currentPoint.y - dragOffset.y;
+
+          const updatedObjects = objects.map((obj) =>
+            obj.id === selectedObjectId
+              ? { ...obj, position: { x: newX, y: newY } }
+              : obj
+          );
+          setObjects(updatedObjects);
+        }
       } else if (startPoint && selectedTool !== "image") {
-        const isShiftPressed = e.shiftKey; // Get Shift key status
         const currentPoint = getCanvasPoint(e);
         const preview = createPreviewObject(
           selectedTool,
           startPoint,
           currentPoint,
-          isShiftPressed
+          e.shiftKey
         );
         setPreviewObject(preview);
       }
-    } else if (isPanning && panStart) {
-      // Panning
-      const deltaX = e.clientX - panStart.x;
-      const deltaY = e.clientY - panStart.y;
-      setOffset({
-        x: offset.x + deltaX,
-        y: offset.y + deltaY,
-      });
-      setPanStart({ x: e.clientX, y: e.clientY });
     }
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
     if (selectedTool === "pen" && currentLine.length > 0) {
+      // Calculate the bounding box from the line coordinates
+      const minX = Math.min(...currentLine.map((point) => point.x));
+      const maxX = Math.max(...currentLine.map((point) => point.x));
+      const minY = Math.min(...currentLine.map((point) => point.y));
+      const maxY = Math.max(...currentLine.map((point) => point.y));
+
+      // Create a line object
       const newLine: CanvasObject = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: Math.random().toString(36).slice(2, 11),
         type: "line",
-        position: { x: 0, y: 0 },
-        width: 0,
-        height: 0,
+        position: { x: minX, y: minY },
+        width: maxX - minX,
+        height: maxY - minY,
         fill: "#4f46e5",
         points: currentLine,
       };
+
       addObject(newLine);
       setCurrentLine([]);
       setPreviewObject(null);
@@ -620,13 +650,7 @@ export const Canvas = () => {
     } else if (e.touches.length === 1) {
       const point = getTouchPoint(touch);
       if (selectedTool === "select") {
-        const clickedObject = objects.find(
-          (obj) =>
-            point.x >= obj.position.x &&
-            point.x <= obj.position.x + obj.width &&
-            point.y >= obj.position.y &&
-            point.y <= obj.position.y + obj.height
-        );
+        const clickedObject = findClickedObject(point);
 
         if (clickedObject) {
           setSelectedObjectId(clickedObject.id);
@@ -806,6 +830,66 @@ export const Canvas = () => {
       setTooltipPosition(null);
     }
   }, [selectedObjectId, objects, scale, offset]);
+
+  const isPointNearLine = (
+    point: Point,
+    linePoints: LinePoint[],
+    threshold: number = 5
+  ): boolean => {
+    for (let i = 1; i < linePoints.length; i++) {
+      const start = linePoints[i - 1];
+      const end = linePoints[i];
+
+      // Calculate the distance between the line segment and the point
+      const a = end.y - start.y;
+      const b = start.x - end.x;
+      const c = end.x * start.y - start.x * end.y;
+
+      const distance =
+        Math.abs(a * point.x + b * point.y + c) / Math.sqrt(a * a + b * b);
+
+      // Check if the point is within the range of the line segment
+      const minX = Math.min(start.x, end.x) - threshold;
+      const maxX = Math.max(start.x, end.x) + threshold;
+      const minY = Math.min(start.y, end.y) - threshold;
+      const maxY = Math.max(start.y, end.y) + threshold;
+
+      if (
+        distance <= threshold &&
+        point.x >= minX &&
+        point.x <= maxX &&
+        point.y >= minY &&
+        point.y <= maxY
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const findClickedObject = (point: Point) => {
+    // Check line objects first
+    const lineObject = objects.find((obj) => {
+      if (obj.type === "line" && obj.points) {
+        return isPointNearLine(point, obj.points);
+      }
+      return false;
+    });
+
+    if (lineObject) {
+      return lineObject;
+    }
+
+    // Check other objects
+    return objects.find(
+      (obj) =>
+        obj.type !== "line" &&
+        point.x >= obj.position.x &&
+        point.x <= obj.position.x + obj.width &&
+        point.y >= obj.position.y &&
+        point.y <= obj.position.y + obj.height
+    );
+  };
 
   return (
     <div className="relative w-full h-full">

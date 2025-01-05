@@ -2,7 +2,9 @@ import { CanvasObject } from "../types/canvas";
 
 export const drawObject = (
   ctx: CanvasRenderingContext2D,
-  object: CanvasObject
+  object: CanvasObject,
+  selectedObjectId: string | null,
+  scale: number
 ) => {
   ctx.fillStyle = object.fill;
   ctx.strokeStyle = object.fill;
@@ -40,6 +42,19 @@ export const drawObject = (
           ctx.lineTo(object.points[i].x, object.points[i].y);
         }
         ctx.stroke();
+
+        // Display the boundary box when selected
+        if (object.id === selectedObjectId) {
+          const padding = 8 / scale;
+          ctx.strokeStyle = "#4f46e5";
+          ctx.lineWidth = 2 / scale;
+          ctx.strokeRect(
+            object.position.x - padding,
+            object.position.y - padding,
+            object.width + padding * 2,
+            object.height + padding * 2
+          );
+        }
       }
       break;
     case "image":
