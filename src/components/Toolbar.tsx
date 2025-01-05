@@ -105,7 +105,7 @@ export function Toolbar(): React.ReactElement {
   }, []);
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-lg p-2 flex items-center gap-2 select-none">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-lg p-2 flex items-center gap-2 select-none z-50">
       {tools
         .filter((Tool) => !isMobile || Tool.name === "select")
         .map((Tool) => (
