@@ -8,6 +8,7 @@ import {
   LockKeyhole,
   UnlockKeyhole,
   Trash2,
+  Copy,
 } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 import { Popover } from "./Popover";
@@ -199,6 +200,25 @@ export function Tooltip({
     setSelectedObjectId(null);
   };
 
+  const handleCopyObject = () => {
+    if (!selectedObjectId) return;
+
+    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    if (!selectedObject) return;
+
+    setObjects((prevObjects) => [
+      ...prevObjects,
+      {
+        ...selectedObject,
+        id: Math.random().toString(36).substr(2, 9),
+        position: {
+          x: selectedObject.position.x + 10,
+          y: selectedObject.position.y + 10,
+        },
+      },
+    ]);
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -323,6 +343,17 @@ export function Tooltip({
         </button>
         <div className={popup({ isTextObject })}>
           <Popover text="Lock object" upper={isTextObject} />
+        </div>
+      </div>
+      <div className="relative group">
+        <button
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          onClick={handleCopyObject}
+        >
+          <Copy className="w-5 h-5" />
+        </button>
+        <div className={popup({ isTextObject })}>
+          <Popover text="Copy object" upper={isTextObject} />
         </div>
       </div>
       <div className="relative group">
