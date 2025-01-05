@@ -96,7 +96,6 @@ export const TextObject = React.memo(
         }}
         onMouseDown={onMouseDown}
         onInput={(e) => {
-          console.log(obj);
           obj.text = e.currentTarget.innerText || '';
         }}
         onFocus={() => onEditStart()}
