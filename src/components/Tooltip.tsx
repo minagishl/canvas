@@ -9,7 +9,7 @@ import {
   UnlockKeyhole,
 } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
-import { Popover } from "./Popover";
+import { Popover, PopoverUpper } from "./Popover";
 
 interface TooltipProps {
   position: { x: number; y: number } | null;
@@ -238,9 +238,15 @@ export function Tooltip({
             >
               <ChevronDown className="w-5 h-5" />
             </button>
-            <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-              <Popover text="Move object down" />
-            </div>
+            {isTextObject ? (
+              <div className="absolute hidden group-hover:block bottom-full left-1/2 -translate-x-1/2 mb-2">
+                <PopoverUpper text="Move object down" />
+              </div>
+            ) : (
+              <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+                <Popover text="Move object down" />
+              </div>
+            )}
           </div>
           <div className="relative group">
             <button
@@ -249,9 +255,15 @@ export function Tooltip({
             >
               <ChevronUp className="w-5 h-5" />
             </button>
-            <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-              <Popover text="Move object up" />
-            </div>
+            {isTextObject ? (
+              <div className="absolute hidden group-hover:block bottom-full left-1/2 -translate-x-1/2 mb-2">
+                <PopoverUpper text="Move object up" />
+              </div>
+            ) : (
+              <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+                <Popover text="Move object up" />
+              </div>
+            )}
           </div>
         </>
       )}
@@ -264,8 +276,8 @@ export function Tooltip({
             >
               <Bold className="w-5 h-5" />
             </button>
-            <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-              <Popover text="Change font weight" />
+            <div className="absolute hidden group-hover:block bottom-full left-1/2 -translate-x-1/2 mb-2">
+              <PopoverUpper text="Change font weight" />
             </div>
           </div>
           <button
@@ -299,9 +311,15 @@ export function Tooltip({
             <UnlockKeyhole className="w-5 h-5" />
           )}
         </button>
-        <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
-          <Popover text="Lock object" />
-        </div>
+        {isTextObject ? (
+          <div className="absolute hidden group-hover:block bottom-full left-1/2 -translate-x-1/2 mb-2">
+            <PopoverUpper text="Lock object" />
+          </div>
+        ) : (
+          <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+            <Popover text="Lock object" />
+          </div>
+        )}
       </div>
     </div>
   );
