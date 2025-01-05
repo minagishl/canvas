@@ -59,7 +59,7 @@ export const TextObject = React.memo(
         style={{
           left: 0,
           top: 0,
-          fontSize: `${24 * scale}px`,
+          fontSize: `${obj.fontSize ?? 24 * scale}px`,
           paddingRight: `${6 * scale}px`,
           paddingLeft: `${6 * scale}px`,
           color: obj.fill,
@@ -97,7 +97,8 @@ export const TextObject = React.memo(
       prevProps.onBlur === nextProps.onBlur &&
       prevProps.onEditStart === nextProps.onEditStart &&
       prevProps.onEditEnd === nextProps.onEditEnd &&
-      prevProps.obj.fill === nextProps.obj.fill
+      prevProps.obj.fill === nextProps.obj.fill &&
+      prevProps.obj.fontSize === nextProps.obj.fontSize
     );
   }
 );

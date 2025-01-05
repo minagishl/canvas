@@ -126,6 +126,21 @@ export function Tooltip({
     });
   };
 
+  const handleChangeFontSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!selectedObjectId) return;
+
+    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    if (!selectedObject || selectedObject.type !== "text") return;
+
+    setObjects((prevObjects) =>
+      prevObjects.map((obj) =>
+        obj.id === selectedObjectId
+          ? { ...obj, fontSize: parseInt(e.target.value, 10) }
+          : obj
+      )
+    );
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -183,6 +198,17 @@ export function Tooltip({
           >
             <TextCursorInput className="w-5 h-5" />
           </button>
+          <select
+            className="p-2 hover:bg-gray-100 rounded-md transition-colors appearance-none h-9 text-center leading-tight"
+            value={selectedObject?.fontSize || 16}
+            onChange={handleChangeFontSize}
+          >
+            {[12, 14, 16, 18, 20, 24, 30, 36].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
         </>
       )}
     </div>

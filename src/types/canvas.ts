@@ -13,6 +13,7 @@ export type CanvasObject = {
   text?: string;
   imageData?: string;
   weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+  fontSize?: number;
 };
 
 export type ToolType = "select" | "rectangle" | "circle" | "text" | "image";
