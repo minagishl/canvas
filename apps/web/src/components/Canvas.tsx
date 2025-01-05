@@ -9,6 +9,7 @@ import { Tooltip } from './Tooltip';
 import { handleCopyObject } from '../utils/copy';
 import { handleDeleteObject } from '../utils/delete';
 import { handleRestoreObjects } from '../utils/restore';
+import { calculateTooltipPosition } from '../utils/tooltip';
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -777,37 +778,13 @@ export const Canvas = () => {
     if (selectedObjectId) {
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
       if (selectedObject) {
-        let x, y;
-
-        // Calculate the position of the tooltip (Specified by tailwindcss standard)
-        if (selectedObject.type === 'text') {
-          const textElement = document.querySelector(
-            `[data-object-id="${selectedObjectId}"]`
-          ) as HTMLElement;
-
-          if (textElement) {
-            // Get the actual height of the text
-            const textHeight = textElement.offsetHeight;
-            x = selectedObject.position.x * scale + offset.x;
-            y = selectedObject.position.y * scale + offset.y - textHeight / 2;
-          } else {
-            x = selectedObject.position.x * scale + offset.x;
-            y = selectedObject.position.y * scale + offset.y;
-          }
-        } else if (selectedObject.type === 'image') {
-          x = selectedObject.position.x * scale + offset.x;
-          y =
-            (selectedObject.position.y - selectedObject.height / 2) * scale +
-            offset.y -
-            8; // 0.5rem
-        } else {
-          x =
-            (selectedObject.position.x + selectedObject.width / 2) * scale +
-            offset.x;
-          y = selectedObject.position.y * scale + offset.y - 8; // 0.5rem
-        }
-
-        setTooltipPosition({ x, y });
+        const position = calculateTooltipPosition({
+          selectedObject,
+          selectedObjectId,
+          scale,
+          offset,
+        });
+        setTooltipPosition(position);
       }
     } else {
       setTooltipPosition(null);
