@@ -14,6 +14,7 @@ import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
 import { tv } from 'tailwind-variants';
 import { handleCopyObject } from '../utils/copy';
+import { handleDeleteObject } from '../utils/delete';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -192,15 +193,6 @@ export function Tooltip({
     });
   };
 
-  const handleDelete = () => {
-    if (!selectedObjectId) return;
-
-    setObjects((prevObjects) =>
-      prevObjects.filter((obj) => obj.id !== selectedObjectId)
-    );
-    setSelectedObjectId(null);
-  };
-
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -343,7 +335,13 @@ export function Tooltip({
       <div className="group relative">
         <button
           className="rounded-md p-2 transition-colors hover:bg-gray-100"
-          onClick={handleDelete}
+          onClick={() =>
+            handleDeleteObject(
+              selectedObjectId,
+              setObjects,
+              setSelectedObjectId
+            )
+          }
         >
           <Trash2 className="h-5 w-5" />
         </button>

@@ -7,6 +7,7 @@ import { TextObject } from './objects/Text';
 import { ImageObject } from './objects/Image';
 import { Tooltip } from './Tooltip';
 import { handleCopyObject } from '../utils/copy';
+import { handleDeleteObject } from '../utils/delete';
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -795,15 +796,6 @@ export const Canvas = () => {
     };
   };
 
-  const deleteSelectedObject = useCallback(() => {
-    if (!selectedObjectId) return;
-
-    setObjects((prevObjects) =>
-      prevObjects.filter((obj) => obj.id !== selectedObjectId)
-    );
-    setSelectedObjectId(null);
-  }, [selectedObjectId, setObjects, setSelectedObjectId]);
-
   const retoreObjects = useCallback(() => {
     const latestObject = objects[objects.length - 1];
     if (!latestObject) return;
@@ -818,7 +810,7 @@ export const Canvas = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditing) return;
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        deleteSelectedObject();
+        handleDeleteObject(selectedObjectId, setObjects, setSelectedObjectId);
       }
 
       if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
@@ -836,11 +828,11 @@ export const Canvas = () => {
     };
   }, [
     isEditing,
-    deleteSelectedObject,
     objects,
     selectedObjectId,
     setObjects,
     retoreObjects,
+    setSelectedObjectId,
   ]);
 
   useEffect(() => {
