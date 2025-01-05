@@ -157,6 +157,26 @@ export function Tooltip({
     );
   };
 
+  const handleLineWidthChange = () => {
+    if (!selectedObjectId) return;
+
+    setObjects((prevObjects) => {
+      const selectedObject = prevObjects.find(
+        (obj) => obj.id === selectedObjectId
+      );
+      if (!selectedObject || selectedObject.type !== "line") return prevObjects;
+
+      const widths = [2, 4, 6, 8, 10];
+      const currentWidth = selectedObject.lineWidth || 2;
+      const currentIndex = widths.indexOf(currentWidth);
+      const nextWidth = widths[(currentIndex + 1) % widths.length];
+
+      return prevObjects.map((obj) =>
+        obj.id === selectedObjectId ? { ...obj, lineWidth: nextWidth } : obj
+      );
+    });
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -189,6 +209,28 @@ export function Tooltip({
               stroke="none"
             />
           </button>
+          {selectedObject?.type === "line" && (
+            <>
+              <div className="relative group">
+                <button
+                  className="p-2 size-9 hover:bg-gray-100 rounded-md transition-colors flex items-center justify-center"
+                  onClick={handleLineWidthChange}
+                >
+                  <div
+                    className="w-5 flex items-center justify-center"
+                    style={{
+                      height: selectedObject.lineWidth || 2,
+                      backgroundColor: selectedObject.fill,
+                      minHeight: "2px",
+                    }}
+                  />
+                </button>
+                <div className="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2">
+                  <Popover text="Change line width" />
+                </div>
+              </div>
+            </>
+          )}
           <div className="relative group">
             <button
               className="p-2 hover:bg-gray-100 rounded-md transition-colors"

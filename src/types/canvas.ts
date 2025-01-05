@@ -21,6 +21,7 @@ export type CanvasObject = {
   fontSize?: number;
   locked?: boolean;
   points?: LinePoint[];
+  lineWidth?: number;
 };
 
 export type ToolType =

@@ -37,6 +37,7 @@ export const drawObject = (
     case "line":
       if (object.points && object.points.length > 0) {
         ctx.beginPath();
+        ctx.lineWidth = object.lineWidth || 2 / scale;
         ctx.moveTo(object.points[0].x, object.points[0].y);
         for (let i = 1; i < object.points.length; i++) {
           ctx.lineTo(object.points[i].x, object.points[i].y);
