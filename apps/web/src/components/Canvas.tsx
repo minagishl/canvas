@@ -867,7 +867,8 @@ export const Canvas = () => {
   // The part of the query that gets the id from the query to get the information
   //
   useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get('id');
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
     if (id) {
       const apiUrl = new URL(import.meta.env.VITE_API_URL);
       fetch(`${apiUrl.href}${id}`)
@@ -875,6 +876,12 @@ export const Canvas = () => {
         .then((data) => {
           if (data.content) {
             setObjects(objects.concat(data.content));
+            // Remove the id parameter from URL without page reload
+            params.delete('id');
+            const newUrl =
+              window.location.pathname +
+              (params.toString() ? '?' + params.toString() : '');
+            window.history.replaceState({}, '', newUrl);
           }
         })
         .catch((error) => {
