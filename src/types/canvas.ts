@@ -17,7 +17,13 @@ export type CanvasObject = {
   locked?: boolean;
 };
 
-export type ToolType = "select" | "rectangle" | "circle" | "text" | "image";
+export type ToolType =
+  | "select"
+  | "rectangle"
+  | "circle"
+  | "text"
+  | "image"
+  | "pen";
 
 export type ResizeHandle =
   | "top-left"
