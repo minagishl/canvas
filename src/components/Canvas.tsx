@@ -282,6 +282,9 @@ export const Canvas = () => {
       const currentPoint = getCanvasPoint(e);
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
 
+      // Prevent resizing of locked objects
+      if (selectedObject?.locked) return;
+
       if (selectedObject) {
         const dx = currentPoint.x - startPoint.x;
         const dy = currentPoint.y - startPoint.y;
@@ -376,6 +379,11 @@ export const Canvas = () => {
     }
 
     if (isDragging) {
+      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+
+      // Prevent dragging of locked objects
+      if (selectedObject?.locked) return;
+
       if (selectedTool === "select" && selectedObjectId && startPoint) {
         const currentPoint = getCanvasPoint(e);
         const newX = currentPoint.x - dragOffset.x;
@@ -738,6 +746,12 @@ export const Canvas = () => {
         if (selectedObject.type === "text") {
           x = selectedObject.position.x * scale + offset.x;
           y = selectedObject.position.y * scale + offset.y - 16; // 1rem
+        } else if (selectedObject.type === "image") {
+          x = selectedObject.position.x * scale + offset.x;
+          y =
+            (selectedObject.position.y - selectedObject.height / 2) * scale +
+            offset.y -
+            8; // 0.5rem
         } else {
           x =
             (selectedObject.position.x + selectedObject.width / 2) * scale +

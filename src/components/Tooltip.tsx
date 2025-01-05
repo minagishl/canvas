@@ -5,6 +5,8 @@ import {
   Bold,
   ChevronDown,
   ChevronUp,
+  LockKeyhole,
+  UnlockKeyhole,
 } from "lucide-react";
 import { useCanvasContext } from "../contexts/CanvasContext";
 
@@ -144,12 +146,21 @@ export function Tooltip({
     );
   };
 
+  const handleChangeLocked = () => {
+    if (!selectedObjectId) return;
+
+    setObjects((prevObjects) =>
+      prevObjects.map((obj) =>
+        obj.id === selectedObjectId ? { ...obj, locked: !obj.locked } : obj
+      )
+    );
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
   const isTextObject = selectedObject?.type === "text";
-
-  if (selectedObject?.type === "image") return null;
+  const isImageObject = selectedObject?.type === "image";
 
   return (
     <div
@@ -162,31 +173,35 @@ export function Tooltip({
         pointerEvents: isDragging ? "none" : "auto",
       }}
     >
-      <button
-        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        onClick={handleColorChange}
-      >
-        <Circle
-          className="w-5 h-5"
-          fill={
-            objects.find((obj) => obj.id === selectedObjectId)?.fill ||
-            colors[0]
-          }
-          stroke="none"
-        />
-      </button>
-      <button
-        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        onClick={handleMoveUp}
-      >
-        <ChevronDown className="w-5 h-5" />
-      </button>
-      <button
-        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        onClick={handleMoveDown}
-      >
-        <ChevronUp className="w-5 h-5" />
-      </button>
+      {!isImageObject && (
+        <>
+          <button
+            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            onClick={handleColorChange}
+          >
+            <Circle
+              className="w-5 h-5"
+              fill={
+                objects.find((obj) => obj.id === selectedObjectId)?.fill ||
+                colors[0]
+              }
+              stroke="none"
+            />
+          </button>
+          <button
+            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            onClick={handleMoveUp}
+          >
+            <ChevronDown className="w-5 h-5" />
+          </button>
+          <button
+            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            onClick={handleMoveDown}
+          >
+            <ChevronUp className="w-5 h-5" />
+          </button>
+        </>
+      )}
       {isTextObject && (
         <>
           <button
@@ -214,6 +229,17 @@ export function Tooltip({
           </select>
         </>
       )}
+      {!isImageObject && <div className="w-px h-6 bg-gray-200 mx-2" />}
+      <button
+        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+        onClick={handleChangeLocked}
+      >
+        {selectedObject?.locked ? (
+          <LockKeyhole className="w-5 h-5" />
+        ) : (
+          <UnlockKeyhole className="w-5 h-5" />
+        )}
+      </button>
     </div>
   );
 }

@@ -14,6 +14,7 @@ export type CanvasObject = {
   imageData?: string;
   weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
   fontSize?: number;
+  locked?: boolean;
 };
 
 export type ToolType = "select" | "rectangle" | "circle" | "text" | "image";
