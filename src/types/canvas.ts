@@ -30,7 +30,8 @@ export type ToolType =
   | "circle"
   | "text"
   | "image"
-  | "pen";
+  | "pen"
+  | "save";
 
 export type ResizeHandle =
   | "top-left"
