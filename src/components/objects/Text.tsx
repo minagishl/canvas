@@ -38,6 +38,29 @@ export const TextObject = React.memo(
       return obj.fontSize === undefined ? 24 : obj.fontSize;
     };
 
+    const getLineHeight = () => {
+      switch (obj.fontSize) {
+        case 12:
+          return 16;
+        case 14:
+          return 20;
+        case 16:
+          return 24;
+        case 18:
+          return 28;
+        case 20:
+          return 28;
+        case 24:
+          return 32;
+        case 30:
+          return 36;
+        case 36:
+          return 40;
+        default:
+          return 32; // Because the default font size is 24px
+      }
+    };
+
     useEffect(() => {
       positionRef.current = {
         x: obj.position.x * scale + offset.x,
@@ -71,6 +94,7 @@ export const TextObject = React.memo(
           pointerEvents: isDragging ? "none" : isResizing ? "none" : "auto",
           cursor: selectedTool === "select" ? "move" : "default",
           fontWeight: obj.weight,
+          lineHeight: `${getLineHeight() * scale}px`,
         }}
         onMouseDown={onMouseDown}
         onBlur={(e) => {
