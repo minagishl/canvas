@@ -6,6 +6,7 @@ This repository utilizes TypeScript and Vite for secure and fast web application
 
 - **TypeScript**: Strongly typed language for building robust applications.
 - **Vite**: Fast and secure web applications.
+- **Tailwind CSS**: Utility-first CSS framework for building custom designs.
 
 ## Getting Started
 
@@ -39,6 +40,7 @@ This repository utilizes TypeScript and Vite for secure and fast web application
 
 - `yarn start`: Starts the server.
 - `yarn lint`: Lints the code.
+- `yarn format`: Formats the code.
 - `yarn build`: Builds the application.
 
 ## Project Structure
