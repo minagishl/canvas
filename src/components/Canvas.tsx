@@ -280,6 +280,19 @@ export const Canvas = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (isPanning && panStart) {
+      const deltaX = e.clientX - panStart.x;
+      const deltaY = e.clientY - panStart.y;
+
+      setOffset({
+        x: offset.x + deltaX,
+        y: offset.y + deltaY,
+      });
+
+      setPanStart({ x: e.clientX, y: e.clientY });
+      return;
+    }
+
     if (isDragging && selectedTool === "pen") {
       const point = getCanvasPoint(e);
       setCurrentLine((prev) => [...prev, point]);
@@ -503,9 +516,10 @@ export const Canvas = () => {
     }
 
     if (isPanning) {
-      // Stop panning
       setIsPanning(false);
       setPanStart(null);
+      canvasRef.current!.style.cursor = "default";
+      return;
     }
 
     const isShiftPressed = e.shiftKey; // Get Shift key status
@@ -897,9 +911,9 @@ export const Canvas = () => {
         ref={canvasRef}
         className={`absolute inset-0 ${
           selectedTool === "select"
-            ? resizing
+            ? isPanning
               ? "cursor-grabbing"
-              : "cursor-default active:cursor-grabbing"
+              : "cursor-grab active:cursor-grabbing"
             : selectedTool === "text" || selectedTool === "image"
             ? "cursor-pointer"
             : "cursor-crosshair"
@@ -913,6 +927,7 @@ export const Canvas = () => {
           setPreviewObject(null);
           setIsPanning(false);
           setPanStart(null);
+          canvasRef.current!.style.cursor = "default";
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
