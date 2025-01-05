@@ -8,7 +8,7 @@ import { ImageObject } from './objects/Image';
 import { Tooltip } from './Tooltip';
 import { handleCopyObject } from '../utils/copy';
 import { handleDeleteObject } from '../utils/delete';
-import { handleRetoreObjects } from '../utils/restore';
+import { handleRestoreObjects } from '../utils/restore';
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -763,7 +763,7 @@ export const Canvas = () => {
       }
 
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
-        handleRetoreObjects(objects, setObjects);
+        handleRestoreObjects(objects, setObjects, setSelectedObjectId);
       }
     };
 
