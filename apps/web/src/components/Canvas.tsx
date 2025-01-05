@@ -863,6 +863,27 @@ export const Canvas = () => {
     );
   };
 
+  //
+  // The part of the query that gets the id from the query to get the information
+  //
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (id) {
+      const apiUrl = new URL(import.meta.env.VITE_API_URL);
+      fetch(`${apiUrl.href}${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.content) {
+            setObjects(objects.concat(data.content));
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching canvas data:', error);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="relative h-full w-full">
       <canvas

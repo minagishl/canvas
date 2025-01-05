@@ -8,6 +8,8 @@ services:
     volumes:
       - ./apps/web:/app
       - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8787
 
   api:
     build:

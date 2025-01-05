@@ -67,11 +67,36 @@ export function Menu() {
   };
 
   const handleShareCanvas = () => {
-    console.log(objects);
+    const apiUrl = new URL(import.meta.env.VITE_API_URL);
+    fetch(`${apiUrl.href}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(objects),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error sharing canvas');
+        }
+      })
+      .then((data) => {
+        const id = data.id;
+        const url = `${window.location.href}?id=${id}`;
+        navigator.clipboard.writeText(url);
+        console.log('Canvas shared:', url);
+        alert('Canvas shared! URL copied to clipboard');
+      })
+      .catch((error) => {
+        console.error('Error sharing canvas:', error);
+        alert('Error sharing canvas');
+      });
   };
 
   return (
-    <div className="absolute left-1/2 top-2 mt-2 flex -translate-x-1/2 animate-fade items-center justify-center gap-2 rounded-md bg-white p-2 shadow-md animate-duration-300 animate-once">
+    <div className="animate-fade animate-duration-300 animate-once absolute left-1/2 top-2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-md bg-white p-2 shadow-md">
       <button
         className={`cursor-pointer rounded-md p-2 transition-colors ${
           selectedTool === 'pen'
