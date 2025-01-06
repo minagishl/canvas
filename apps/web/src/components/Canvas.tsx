@@ -127,6 +127,11 @@ export const Canvas = () => {
     e: React.MouseEvent,
     resizeHandle?: ResizeHandle
   ) => {
+    // Prevent the context menu from appearing
+    if (e.button === 2) {
+      e.preventDefault();
+    }
+
     const point = getCanvasPoint(e, canvasRef, offset, scale);
 
     if (resizeHandle && selectedObjectId) {
@@ -238,7 +243,7 @@ export const Canvas = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (isPanning && panStart) {
+    if (isPanning && panStart && (e.buttons === 2 || e.buttons === 4)) {
       const deltaX = e.clientX - panStart.x;
       const deltaY = e.clientY - panStart.y;
 
@@ -373,7 +378,12 @@ export const Canvas = () => {
       // Prevent movement of locked objects
       if (selectedObject?.locked) return;
 
-      if (selectedTool === 'select' && selectedObjectId && startPoint) {
+      if (
+        selectedTool === 'select' &&
+        selectedObjectId &&
+        startPoint &&
+        e.buttons === 1
+      ) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
 
         // Special processing for line objects
@@ -874,7 +884,10 @@ export const Canvas = () => {
   }, []);
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div
+      className="relative h-full w-full overflow-hidden"
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <canvas
         ref={canvasRef}
         className={`absolute inset-0 ${
