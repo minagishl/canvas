@@ -3,14 +3,13 @@ import {
   Circle,
   TextCursorInput,
   Bold,
-  ChevronDown,
-  ChevronUp,
   LockKeyhole,
   UnlockKeyhole,
   Trash2,
   Copy,
   Italic,
   RefreshCw,
+  Layers2,
 } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
@@ -126,25 +125,6 @@ export function Tooltip({
       textElement.contentEditable = 'true';
       textElement.focus();
     }
-  };
-
-  const handleMoveUp = () => {
-    if (!selectedObjectId) return;
-
-    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-    if (!selectedObject) return;
-
-    const selectedObjectIndex = objects.findIndex(
-      (obj) => obj.id === selectedObjectId
-    );
-
-    setObjects((prevObjects) => {
-      const nextObjects = [...prevObjects];
-      nextObjects.splice(selectedObjectIndex, 1);
-      nextObjects.splice(selectedObjectIndex + 1, 0, selectedObject);
-
-      return nextObjects;
-    });
   };
 
   const handleMoveDown = () => {
@@ -307,21 +287,10 @@ export function Tooltip({
               className="rounded-md p-2 transition-colors hover:bg-gray-100"
               onClick={handleMoveDown}
             >
-              <ChevronDown className="h-5 w-5" />
+              <Layers2 className="h-5 w-5 rotate-180 scale-x-[-1]" />
             </button>
             <div className={popup({ isTextObject })}>
               <Popover text="Move object down" upper={isTextObject} />
-            </div>
-          </div>
-          <div className="group relative">
-            <button
-              className="rounded-md p-2 transition-colors hover:bg-gray-100"
-              onClick={handleMoveUp}
-            >
-              <ChevronUp className="h-5 w-5" />
-            </button>
-            <div className={popup({ isTextObject })}>
-              <Popover text="Move object up" upper={isTextObject} />
             </div>
           </div>
         </>
