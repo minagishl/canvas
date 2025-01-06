@@ -23,6 +23,7 @@ export type CanvasObject = {
   points?: LinePoint[];
   lineWidth?: number;
   italic?: boolean;
+  rotation?: number;
 };
 
 export type ToolType =

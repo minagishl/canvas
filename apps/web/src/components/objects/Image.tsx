@@ -35,9 +35,16 @@ export const ImageObject = React.memo(
       if (elementRef.current) {
         elementRef.current.style.transform = `translate(${-50}%, ${-50}%) translate3d(${
           positionRef.current.x
-        }px, ${positionRef.current.y}px, 0)`;
+        }px, ${positionRef.current.y}px, 0) rotate(${obj.rotation || 0}deg)`;
       }
-    }, [obj.position.x, obj.position.y, scale, offset.x, offset.y]);
+    }, [
+      obj.position.x,
+      obj.position.y,
+      scale,
+      offset.x,
+      offset.y,
+      obj.rotation,
+    ]);
 
     return (
       <div
@@ -53,7 +60,7 @@ export const ImageObject = React.memo(
           cursor: 'default',
           pointerEvents: isDragging ? 'none' : isResizing ? 'none' : 'auto',
         }}
-        onMouseDown={(e) => handleMouseDown(e)}
+        onMouseDown={handleMouseDown}
       >
         <img
           src={imageCache[obj.id] || obj.imageData}
@@ -109,7 +116,8 @@ export const ImageObject = React.memo(
       prevProps.offset.y === nextProps.offset.y &&
       prevProps.isSelected === nextProps.isSelected &&
       prevProps.isDragging === nextProps.isDragging &&
-      prevProps.imageCache === nextProps.imageCache
+      prevProps.imageCache === nextProps.imageCache &&
+      prevProps.obj.rotation === nextProps.obj.rotation
     );
   }
 );

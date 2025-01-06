@@ -10,6 +10,7 @@ import {
   Trash2,
   Copy,
   Italic,
+  RefreshCw,
 } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
@@ -40,6 +41,7 @@ export function Tooltip({
 }: TooltipProps): React.ReactElement | null {
   const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
     useCanvasContext();
+  const [isRotating, setIsRotating] = React.useState(false);
 
   const handleColorChange = () => {
     if (!selectedObjectId) return;
@@ -209,6 +211,43 @@ export function Tooltip({
     });
   };
 
+  const handleRotate = () => {
+    if (!selectedObjectId || isRotating) return;
+
+    setIsRotating(true);
+
+    const startTime = performance.now();
+    const startRotation =
+      objects.find((obj) => obj.id === selectedObjectId)?.rotation || 0;
+    const duration = 300;
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      setObjects((prevObjects) =>
+        prevObjects.map((obj) =>
+          obj.id === selectedObjectId
+            ? {
+                ...obj,
+                rotation: startRotation + ((progress * 30) % 360),
+              }
+            : obj
+        )
+      );
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+
+      if (progress >= 1) {
+        setIsRotating(false);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -330,7 +369,18 @@ export function Tooltip({
           </select>
         </>
       )}
-      {!isImageObject && <div className="mx-2 h-6 w-px bg-gray-200" />}
+      <div className="group relative">
+        <button
+          className="rounded-md p-2 transition-colors hover:bg-gray-100"
+          onClick={handleRotate}
+        >
+          <RefreshCw className="h-5 w-5" />
+        </button>
+        <div className={popup({ isTextObject })}>
+          <Popover text="Rotate object" upper={isTextObject} />
+        </div>
+      </div>
+      <div className="mx-2 h-6 w-px bg-gray-200" />
       <div className="group relative">
         <button
           className="rounded-md p-2 transition-colors hover:bg-gray-100"

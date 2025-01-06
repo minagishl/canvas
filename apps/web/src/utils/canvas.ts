@@ -1,11 +1,25 @@
 import { CanvasObject, Point } from '../types/canvas';
-
 export const drawObject = (
   ctx: CanvasRenderingContext2D,
   object: CanvasObject,
   selectedObjectId: string | null,
   scale: number
 ) => {
+  // Save the current context state
+  ctx.save();
+
+  // Move to the center of the object and rotate
+  ctx.translate(
+    object.position.x + object.width / 2,
+    object.position.y + object.height / 2
+  );
+  const DEGREES_TO_RADIANS = Math.PI / 180;
+  ctx.rotate((object.rotation || 0) * DEGREES_TO_RADIANS);
+  ctx.translate(
+    -(object.position.x + object.width / 2),
+    -(object.position.y + object.height / 2)
+  );
+
   ctx.fillStyle = object.fill;
   ctx.strokeStyle = object.fill;
   ctx.lineWidth = 2;
@@ -58,21 +72,54 @@ export const drawObject = (
         }
       }
       break;
-    case 'image':
-      if (object.imageData) {
-        const img = new Image();
-        img.src = object.imageData;
-        img.onload = () => {
-          ctx.drawImage(
-            img,
-            object.position.x,
-            object.position.y,
-            object.width,
-            object.height
-          );
-        };
-      }
   }
+
+  // Draw selection border if selected
+  if (object.id === selectedObjectId) {
+    const padding = 8 / scale;
+    ctx.strokeStyle = '#4f46e5';
+    ctx.lineWidth = 2 / scale;
+    ctx.strokeRect(
+      object.position.x - padding,
+      object.position.y - padding,
+      object.width + padding * 2,
+      object.height + padding * 2
+    );
+
+    // Draw resize handles
+    if (object.type !== 'line') {
+      const handleSize = 8 / scale;
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#4f46e5';
+      ctx.lineWidth = 1 / scale;
+
+      const corners = [
+        { x: object.position.x - padding, y: object.position.y - padding },
+        {
+          x: object.position.x + object.width + padding,
+          y: object.position.y - padding,
+        },
+        {
+          x: object.position.x - padding,
+          y: object.position.y + object.height + padding,
+        },
+        {
+          x: object.position.x + object.width + padding,
+          y: object.position.y + object.height + padding,
+        },
+      ];
+
+      corners.forEach((corner) => {
+        ctx.beginPath();
+        ctx.arc(corner.x, corner.y, handleSize / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
+    }
+  }
+
+  // Restore the context state
+  ctx.restore();
 };
 
 export const drawGrid = (
@@ -126,4 +173,33 @@ export const getCanvasPoint = (
     x: (e.clientX - rect.left - offset.x) / scale,
     y: (e.clientY - rect.top - offset.y) / scale,
   };
+};
+
+export const drawRotationHandle = (
+  ctx: CanvasRenderingContext2D,
+  object: CanvasObject,
+  scale: number
+) => {
+  const padding = 20 / scale;
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#4f46e5';
+  ctx.lineWidth = 1 / scale;
+
+  // Rotation handle drawn (top center of object)
+  ctx.beginPath();
+  ctx.arc(
+    object.position.x + object.width / 2,
+    object.position.y - padding,
+    4 / scale,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+  ctx.stroke();
+
+  // Draw a line up to the handle
+  ctx.beginPath();
+  ctx.moveTo(object.position.x + object.width / 2, object.position.y);
+  ctx.lineTo(object.position.x + object.width / 2, object.position.y - padding);
+  ctx.stroke();
 };

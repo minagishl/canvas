@@ -67,50 +67,6 @@ export const Canvas = () => {
       .filter((obj) => obj.type !== 'text' && obj.type !== 'image')
       .forEach((object) => {
         drawObject(ctx, object, selectedObjectId, scale);
-        if (object.id === selectedObjectId) {
-          // Added selection border padding
-          const padding = 8 / scale;
-          ctx.strokeStyle = '#4f46e5';
-          ctx.lineWidth = 2 / scale;
-
-          // Drawing borders considering padding
-          ctx.strokeRect(
-            object.position.x - padding,
-            object.position.y - padding,
-            object.width + padding * 2,
-            object.height + padding * 2
-          );
-
-          const handleSize = 8 / scale;
-          ctx.fillStyle = '#ffffff';
-          ctx.strokeStyle = '#4f46e5';
-          ctx.lineWidth = 1 / scale;
-
-          if (object.type === 'line') return;
-
-          const corners = [
-            { x: object.position.x - padding, y: object.position.y - padding },
-            {
-              x: object.position.x + object.width + padding,
-              y: object.position.y - padding,
-            },
-            {
-              x: object.position.x - padding,
-              y: object.position.y + object.height + padding,
-            },
-            {
-              x: object.position.x + object.width + padding,
-              y: object.position.y + object.height + padding,
-            },
-          ];
-
-          corners.forEach((corner) => {
-            ctx.beginPath();
-            ctx.arc(corner.x, corner.y, handleSize / 2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-          });
-        }
       });
 
     // Draw preview object
@@ -932,13 +888,13 @@ export const Canvas = () => {
           if (obj.type === 'image') {
             return (
               <ImageObject
-                key={obj.id}
-                obj={obj as CanvasObject & { type: 'image' }}
-                isSelected={obj.id === selectedObjectId}
-                isDragging={isDragging}
-                isResizing={resizing !== null}
                 scale={scale}
                 offset={offset}
+                obj={obj as CanvasObject & { type: 'image' }}
+                key={obj.id}
+                isSelected={obj.id === selectedObjectId}
+                isResizing={resizing !== null}
+                isDragging={isDragging}
                 imageCache={imageCache}
                 handleMouseDown={(e, handle) =>
                   handleMouseDown(e, handle as ResizeHandle)
@@ -950,15 +906,15 @@ export const Canvas = () => {
           if (obj.type === 'text') {
             return (
               <TextObject
-                key={obj.id}
-                obj={obj as CanvasObject & { type: 'text' }}
+                selectedTool={selectedTool}
                 scale={scale}
                 offset={offset}
+                obj={obj as CanvasObject & { type: 'text' }}
+                key={obj.id}
                 isSelected={obj.id === selectedObjectId}
-                isDragging={isDragging}
                 isResizing={resizing !== null}
                 isEditing={isEditing && obj.id === selectedObjectId}
-                selectedTool={selectedTool}
+                isDragging={isDragging}
                 onMouseDown={(e) => {
                   if (selectedTool === 'select') {
                     handleMouseDown(e);

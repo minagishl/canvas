@@ -3,28 +3,28 @@ import { CanvasObject } from '../../types/canvas';
 
 interface TextObjectProps {
   obj: CanvasObject & { type: 'text' };
+  selectedTool: string;
   scale: number;
   offset: { x: number; y: number };
   isSelected: boolean;
-  isDragging: boolean;
   isResizing: boolean;
-  selectedTool: string;
-  onMouseDown: (e: React.MouseEvent) => void;
   isEditing: boolean;
+  isDragging: boolean;
+  onMouseDown: (e: React.MouseEvent) => void;
   onEditStart: () => void;
 }
 
 export const TextObject = React.memo(
   ({
-    obj,
+    selectedTool,
     scale,
     offset,
+    obj,
     isSelected,
-    isDragging,
     isResizing,
-    selectedTool,
-    onMouseDown,
     isEditing,
+    isDragging,
+    onMouseDown,
     onEditStart,
   }: TextObjectProps) => {
     const elementRef = useRef<HTMLDivElement>(null);
@@ -66,9 +66,16 @@ export const TextObject = React.memo(
       if (elementRef.current) {
         elementRef.current.style.transform = `translate(${-50}%, ${-50}%) translate3d(${
           positionRef.current.x
-        }px, ${positionRef.current.y}px, 0)`;
+        }px, ${positionRef.current.y}px, 0) rotate(${obj.rotation || 0}deg)`;
       }
-    }, [obj.position.x, obj.position.y, scale, offset.x, offset.y]);
+    }, [
+      obj.position.x,
+      obj.position.y,
+      scale,
+      offset.x,
+      offset.y,
+      obj.rotation,
+    ]);
 
     return (
       <div

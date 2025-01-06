@@ -110,6 +110,10 @@ app.post('/', async (c) => {
     if (body.italic !== undefined && typeof body.italic !== 'boolean') {
       return c.json({ error: 'invalid italic status' }, 400);
     }
+
+    if (body.rotation !== undefined && typeof body.rotation !== 'number') {
+      return c.json({ error: 'invalid rotation' }, 400);
+    }
   }
 
   const id = uuidv7();
