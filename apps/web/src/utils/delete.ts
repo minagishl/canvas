@@ -12,3 +12,12 @@ export const handleDeleteObject = (
   );
   setSelectedObjectId(null);
 };
+
+export const handleDeleteParms = (params: URLSearchParams) => {
+  // Remove the id parameter from URL without page reload
+  params.delete('id');
+  const newUrl =
+    window.location.pathname +
+    (params.toString() ? '?' + params.toString() : '');
+  window.history.replaceState({}, '', newUrl);
+};

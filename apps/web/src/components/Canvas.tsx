@@ -7,7 +7,7 @@ import { TextObject } from './objects/Text';
 import { ImageObject } from './objects/Image';
 import { Tooltip } from './Tooltip';
 import { handleCopyObject } from '../utils/copy';
-import { handleDeleteObject } from '../utils/delete';
+import { handleDeleteObject, handleDeleteParms } from '../utils/delete';
 import { handleRestoreObjects } from '../utils/restore';
 import { calculateTooltipPosition } from '../utils/tooltip';
 
@@ -851,12 +851,10 @@ export const Canvas = () => {
     );
   };
 
-  //
-  // The part of the query that gets the id from the query to get the information
-  //
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
+
     if (id) {
       const apiUrl = new URL(import.meta.env.VITE_API_URL);
       fetch(`${apiUrl.href}${id}`)
@@ -864,17 +862,13 @@ export const Canvas = () => {
         .then((data) => {
           if (data.content) {
             setObjects(objects.concat(data.content));
-            // Remove the id parameter from URL without page reload
-            params.delete('id');
-            const newUrl =
-              window.location.pathname +
-              (params.toString() ? '?' + params.toString() : '');
-            window.history.replaceState({}, '', newUrl);
           }
         })
         .catch((error) => {
           console.error('Error fetching canvas data:', error);
         });
+      // Delete the id parameter from the URL without reloading the page
+      handleDeleteParms(params);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
