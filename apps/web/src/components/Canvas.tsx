@@ -884,12 +884,12 @@ export const Canvas = () => {
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden"
+      className="relative h-screen w-screen overflow-hidden"
       onContextMenu={(e) => e.preventDefault()}
     >
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 ${
+        className={`fixed inset-0 left-0 top-0 ${
           selectedTool === 'select'
             ? isPanning
               ? 'cursor-grabbing'
