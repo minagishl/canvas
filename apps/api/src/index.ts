@@ -47,6 +47,10 @@ app.post('/', async (c) => {
     return c.json({ error: 'request body must be an array' }, 400);
   }
 
+  if (bodies.length === 0) {
+    return c.json({ error: 'request body must not be empty' }, 400);
+  }
+
   for (const body of bodies) {
     if (!body.id) {
       return c.json({ error: 'invalid id' }, 400);
