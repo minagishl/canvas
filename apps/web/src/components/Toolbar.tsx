@@ -143,12 +143,13 @@ export function Toolbar(): React.ReactElement {
         navigator.clipboard.writeText(url.toString());
         console.log('Canvas shared:', url.toString());
         alert('Canvas shared! URL copied to clipboard');
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error('Error sharing canvas:', error);
         alert('Error sharing canvas');
+        setIsLoading(false);
       });
-    setIsLoading(false);
   };
 
   return (
