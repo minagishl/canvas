@@ -114,6 +114,13 @@ export function Toolbar(): React.ReactElement {
 
   const handleShareCanvas = () => {
     setIsLoading(true);
+
+    // Check if canvas is empty
+    if (objects.length === 0) {
+      alert('Canvas is empty!');
+      setIsLoading(false);
+    }
+
     const apiUrl = new URL(import.meta.env.VITE_API_URL);
     fetch(`${apiUrl.href}`, {
       method: 'POST',
