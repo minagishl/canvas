@@ -92,6 +92,10 @@ export const TextObject = React.memo(
           fontWeight: obj.weight,
           lineHeight: `${getLineHeight() * scale}px`,
           whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+          wordBreak: 'break-word',
+          maxWidth: '100%',
+          overflowWrap: 'break-word',
           fontStyle: obj.italic ? 'italic' : 'normal',
         }}
         onMouseDown={onMouseDown}

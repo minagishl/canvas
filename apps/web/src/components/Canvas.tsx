@@ -874,7 +874,7 @@ export const Canvas = () => {
   }, []);
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full overflow-hidden">
       <canvas
         ref={canvasRef}
         className={`absolute inset-0 ${
