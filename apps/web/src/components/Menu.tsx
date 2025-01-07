@@ -1,4 +1,4 @@
-import { Pencil, ImageDown, Trash2, Share } from 'lucide-react';
+import { Pencil, ImageDown, Trash2, Share, MoveUpRight } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import html2canvas from 'html2canvas';
 import { Popover } from './Popover';
@@ -81,6 +81,18 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         title="Pen"
       >
         <Pencil className="h-5 w-5" />
+      </button>
+      <button
+        className={`cursor-pointer rounded-md p-2 transition-colors ${
+          selectedTool === 'arrow'
+            ? 'bg-indigo-100 text-indigo-600'
+            : 'hover:bg-gray-100'
+        }`}
+        onClick={() => {
+          setSelectedTool('arrow');
+        }}
+      >
+        <MoveUpRight className="h-5 w-5" />
       </button>
       <div className="mx-2 h-6 w-px bg-gray-200" />
       <div className="group/menu relative">

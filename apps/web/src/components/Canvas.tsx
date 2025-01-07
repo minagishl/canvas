@@ -97,6 +97,12 @@ export const Canvas = () => {
       return;
     }
 
+    if (selectedTool === 'arrow') {
+      setCurrentLine([point]);
+      setIsDragging(true);
+      return;
+    }
+
     if (selectedTool === 'pen') {
       const point = getCanvasPoint(e, canvasRef, offset, scale);
       setCurrentLine([point]);
@@ -209,6 +215,21 @@ export const Canvas = () => {
       });
 
       setPanStart({ x: e.clientX, y: e.clientY });
+      return;
+    }
+
+    if (isDragging && selectedTool === 'arrow') {
+      const point = getCanvasPoint(e, canvasRef, offset, scale);
+
+      setPreviewObject({
+        id: 'preview',
+        type: 'arrow',
+        position: { x: 0, y: 0 },
+        width: 0,
+        height: 0,
+        fill: '#4f46e5',
+        points: [...currentLine, point],
+      });
       return;
     }
 
@@ -402,6 +423,31 @@ export const Canvas = () => {
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
+    if (selectedTool === 'arrow' && currentLine.length > 0) {
+      const point = getCanvasPoint(e, canvasRef, offset, scale);
+
+      if (currentLine.length === 1) {
+        const newArrow: CanvasObject = {
+          id: Math.random().toString(36).slice(2, 11),
+          type: 'arrow',
+          position: { x: 0, y: 0 },
+          width: 0,
+          height: 0,
+          fill: '#4f46e5',
+          points: [...currentLine, point],
+        };
+
+        addObject(newArrow);
+        setCurrentLine([]);
+        setPreviewObject(null);
+        setIsDragging(false);
+        setSelectedTool('select');
+      } else {
+        setCurrentLine([point]);
+      }
+      return;
+    }
+
     if (selectedTool === 'pen' && currentLine.length > 0) {
       // Calculate the bounding box from the line coordinates
       const minX = Math.min(...currentLine.map((point) => point.x));

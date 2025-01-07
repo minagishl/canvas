@@ -10,7 +10,7 @@ export type LinePoint = {
 
 export type CanvasObject = {
   id: string;
-  type: 'rectangle' | 'circle' | 'text' | 'image' | 'line';
+  type: 'rectangle' | 'circle' | 'text' | 'image' | 'line' | 'arrow';
   position: Point;
   width: number;
   height: number;
@@ -33,7 +33,8 @@ export type ToolType =
   | 'text'
   | 'image'
   | 'pen'
-  | 'save';
+  | 'save'
+  | 'arrow';
 
 export type ResizeHandle =
   | 'top-left'

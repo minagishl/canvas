@@ -72,6 +72,35 @@ export const drawObject = (
         }
       }
       break;
+    case 'arrow':
+      if (object.points && object.points.length === 2) {
+        const start = object.points[0];
+        const end = object.points[1];
+
+        // Drawing arrow lines
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.stroke();
+
+        // Drawing arrow heads
+        const headLength = 20 / scale;
+        const angle = Math.atan2(end.y - start.y, end.x - start.x);
+
+        ctx.beginPath();
+        ctx.moveTo(end.x, end.y);
+        ctx.lineTo(
+          end.x - headLength * Math.cos(angle - Math.PI / 6),
+          end.y - headLength * Math.sin(angle - Math.PI / 6)
+        );
+        ctx.moveTo(end.x, end.y);
+        ctx.lineTo(
+          end.x - headLength * Math.cos(angle + Math.PI / 6),
+          end.y - headLength * Math.sin(angle + Math.PI / 6)
+        );
+        ctx.stroke();
+      }
+      break;
   }
 
   // Draw selection border if selected
