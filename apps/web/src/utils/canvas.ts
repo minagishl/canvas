@@ -192,7 +192,7 @@ export const drawGrid = (
 
 export const getCanvasPoint = (
   e: React.MouseEvent,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
   offset: Point,
   scale: number
 ): Point => {
