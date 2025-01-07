@@ -118,7 +118,7 @@ export const drawObject = (
     );
 
     // Draw resize handles
-    if (object.type !== 'line') {
+    if (object.type !== 'line' && object.type !== 'arrow') {
       const handleSize = 8 / scale;
       ctx.fillStyle = '#ffffff';
       ctx.strokeStyle = '#4f46e5';
