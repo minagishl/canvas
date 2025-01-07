@@ -541,6 +541,14 @@ export const Canvas = () => {
     (e: WheelEvent) => {
       e.preventDefault();
 
+      if (!e.ctrlKey) {
+        setOffset((prev) => ({
+          x: prev.x - e.deltaX,
+          y: prev.y - e.deltaY,
+        }));
+        return;
+      }
+
       // Pinch zoom
       const delta = -e.deltaY / 500;
       const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
