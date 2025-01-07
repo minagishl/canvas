@@ -124,6 +124,14 @@ export function Tooltip({
     if (textElement) {
       textElement.contentEditable = 'true';
       textElement.focus();
+
+      // Move cursor to last line
+      const range = document.createRange();
+      const selection = window.getSelection();
+      range.selectNodeContents(textElement);
+      range.collapse(false);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
     }
   };
 
