@@ -1,4 +1,5 @@
 import { CanvasObject, Point } from '../types/canvas';
+
 export const drawObject = (
   ctx: CanvasRenderingContext2D,
   object: CanvasObject,
