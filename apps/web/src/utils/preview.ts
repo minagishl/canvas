@@ -31,7 +31,7 @@ export const createPreviewObject = (
     width,
     height,
     fill: '#4f46e5',
-    text: tool === 'text' ? 'Select to edit' : undefined,
+    text: tool === 'text' ? '' : undefined,
     weight: 400,
   };
 };

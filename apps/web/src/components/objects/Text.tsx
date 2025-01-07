@@ -8,10 +8,10 @@ interface TextObjectProps {
   offset: { x: number; y: number };
   isSelected: boolean;
   isResizing: boolean;
-  isEditing: boolean;
+  isEditingId: string;
   isDragging: boolean;
   onMouseDown: (e: React.MouseEvent) => void;
-  onEditStart: () => void;
+  onTextChange: () => void;
 }
 
 export const TextObject = React.memo(
@@ -22,10 +22,10 @@ export const TextObject = React.memo(
     obj,
     isSelected,
     isResizing,
-    isEditing,
+    isEditingId,
     isDragging,
     onMouseDown,
-    onEditStart,
+    onTextChange,
   }: TextObjectProps) => {
     const elementRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef({ x: 0, y: 0 });
@@ -77,11 +77,18 @@ export const TextObject = React.memo(
       obj.rotation,
     ]);
 
+    // Update the text property of the object when the text changes
+    useEffect(() => {
+      console.log(elementRef.current?.textContent);
+      obj.text = elementRef.current?.textContent || '';
+    }, [isEditingId, obj]);
+
     return (
       <div
         ref={elementRef}
+        key={obj.id}
         data-object-id={obj.id}
-        contentEditable={isEditing}
+        contentEditable={isEditingId === obj.id}
         suppressContentEditableWarning
         className={`absolute outline-none hover:border-2 hover:border-indigo-600 ${
           isSelected ? 'border-2 border-indigo-600' : ''
@@ -103,12 +110,20 @@ export const TextObject = React.memo(
           fontStyle: obj.italic ? 'italic' : 'normal',
         }}
         onMouseDown={onMouseDown}
-        onInput={(e) => {
-          obj.text = e.currentTarget.innerText || '';
+        onInput={onTextChange}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            elementRef.current?.blur();
+          }
+
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            elementRef.current?.blur();
+          }
         }}
-        onFocus={() => onEditStart()}
       >
-        {obj.text}
+        {obj.text === '' ? 'Select to edit' : obj.text}
       </div>
     );
   },
@@ -124,10 +139,9 @@ export const TextObject = React.memo(
       prevProps.selectedTool === nextProps.selectedTool &&
       prevProps.obj.text === nextProps.obj.text &&
       prevProps.obj.weight === nextProps.obj.weight &&
-      prevProps.isEditing === nextProps.isEditing &&
+      prevProps.isEditingId === nextProps.isEditingId &&
       prevProps.isResizing === nextProps.isResizing &&
       prevProps.onMouseDown === nextProps.onMouseDown &&
-      prevProps.onEditStart === nextProps.onEditStart &&
       prevProps.obj.fill === nextProps.obj.fill &&
       prevProps.obj.fontSize === nextProps.obj.fontSize &&
       prevProps.obj.italic === nextProps.obj.italic

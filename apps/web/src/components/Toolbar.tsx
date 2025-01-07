@@ -30,7 +30,11 @@ const tools: {
   { icon: ImageIcon, name: 'image', disabled: false },
 ];
 
-export function Toolbar(): React.ReactElement {
+export function Toolbar({
+  setIsEditingId,
+}: {
+  setIsEditingId: React.Dispatch<React.SetStateAction<string>>;
+}): React.ReactElement {
   const {
     objects,
     offset,
@@ -125,35 +129,43 @@ export function Toolbar(): React.ReactElement {
       return;
     }
 
-    const apiUrl = new URL(import.meta.env.VITE_API_URL);
-    fetch(`${apiUrl.href}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(objects),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Error sharing canvas');
-        }
+    // Must be completed
+    setIsEditingId('');
+
+    setTimeout(() => {
+      const apiUrl = new URL(import.meta.env.VITE_API_URL);
+      fetch(`${apiUrl.href}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(objects),
       })
-      .then((data) => {
-        const id = data.id;
-        const url = new URL(window.location.href);
-        url.searchParams.set('id', id);
-        navigator.clipboard.writeText(url.toString());
-        console.log('Canvas shared:', url.toString());
-        showTemporaryAlert('Canvas shared! URL copied to clipboard', setAlert);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error sharing canvas:', error);
-        showTemporaryAlert('Error sharing canvas', setAlert);
-        setIsLoading(false);
-      });
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Error sharing canvas');
+          }
+        })
+        .then((data) => {
+          const id = data.id;
+          const url = new URL(window.location.href);
+          url.searchParams.set('id', id);
+          navigator.clipboard.writeText(url.toString());
+          console.log('Canvas shared:', url.toString());
+          showTemporaryAlert(
+            'Canvas shared! URL copied to clipboard',
+            setAlert
+          );
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error sharing canvas:', error);
+          showTemporaryAlert('Error sharing canvas', setAlert);
+          setIsLoading(false);
+        });
+    }, 500);
   };
 
   return (

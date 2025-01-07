@@ -1,17 +1,26 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
+
+// Utility functions
+import { showTemporaryAlert } from '../utils/alert';
+import { handleRestoreObjects } from '../utils/restore';
+import { handleDeleteObject, handleDeleteParms } from '../utils/delete';
+import { handleCopyObject } from '../utils/copy';
+import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
+import { createPreviewObject } from '../utils/preview';
+import { calculateTooltipPosition } from '../utils/tooltip';
+
+// Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { useAlertContext } from '../contexts/AlertContext';
-import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
-import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
-import { createPreviewObject } from '../utils/preview';
+
+// Objects
 import { TextObject } from './objects/Text';
 import { ImageObject } from './objects/Image';
+
+// Components
 import { Tooltip } from './Tooltip';
-import { handleCopyObject } from '../utils/copy';
-import { handleDeleteObject, handleDeleteParms } from '../utils/delete';
-import { handleRestoreObjects } from '../utils/restore';
-import { calculateTooltipPosition } from '../utils/tooltip';
-import { showTemporaryAlert } from '../utils/alert';
+import { Toolbar } from './Toolbar';
 import { Alert } from './Alert';
 
 export const Canvas = () => {
@@ -34,7 +43,7 @@ export const Canvas = () => {
   const [imagePosition, setImagePosition] = useState<Point | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingId, setIsEditingId] = useState<string>('');
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [panStart, setPanStart] = useState<Point | null>(null);
   const [resizing, setResizing] = useState<ResizeHandle>(null);
@@ -160,7 +169,7 @@ export const Canvas = () => {
     }
 
     if (selectedTool === 'select') {
-      setIsEditing(false);
+      setIsEditingId('');
       // Clicking on a text or image object
       const clickedHTMLObject = e.target as HTMLElement;
       const isHTMLObject =
@@ -774,8 +783,9 @@ export const Canvas = () => {
   // Delete an object with the Delete key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isEditing) return;
+      if (isEditingId !== '') return;
       if (e.key === 'Delete' || e.key === 'Backspace') {
+        console.log('Delete key pressed');
         handleDeleteObject(selectedObjectId, setObjects, setSelectedObjectId);
       }
 
@@ -792,7 +802,7 @@ export const Canvas = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isEditing, objects, selectedObjectId, setObjects, setSelectedObjectId]);
+  }, [isEditingId, objects, selectedObjectId, setObjects, setSelectedObjectId]);
 
   useEffect(() => {
     if (selectedObjectId) {
@@ -894,11 +904,25 @@ export const Canvas = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const onTextChange = () => {
+    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    if (selectedObject && selectedObjectId && selectedObject.type === 'text') {
+      const position = calculateTooltipPosition({
+        selectedObject,
+        selectedObjectId,
+        scale,
+        offset,
+      });
+      setTooltipPosition(position);
+    }
+  };
+
   return (
     <div
       className="relative h-screen w-screen overflow-hidden"
       onContextMenu={(e) => e.preventDefault()}
     >
+      <Toolbar setIsEditingId={setIsEditingId} />
       <canvas
         ref={canvasRef}
         className={`fixed inset-0 left-0 top-0 ${
@@ -927,7 +951,11 @@ export const Canvas = () => {
       />
 
       {selectedObjectId && (
-        <Tooltip position={tooltipPosition} isDragging={isDragging} />
+        <Tooltip
+          position={tooltipPosition}
+          isDragging={isDragging}
+          setIsEditingId={setIsEditingId}
+        />
       )}
 
       <input
@@ -971,14 +999,14 @@ export const Canvas = () => {
                 key={obj.id}
                 isSelected={obj.id === selectedObjectId}
                 isResizing={resizing !== null}
-                isEditing={isEditing && obj.id === selectedObjectId}
+                isEditingId={isEditingId}
                 isDragging={isDragging}
+                onTextChange={onTextChange}
                 onMouseDown={(e) => {
                   if (selectedTool === 'select') {
                     handleMouseDown(e);
                   }
                 }}
-                onEditStart={() => setIsEditing(true)}
               />
             );
           }

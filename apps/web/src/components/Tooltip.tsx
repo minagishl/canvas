@@ -30,6 +30,7 @@ const popup = tv({
 interface TooltipProps {
   position: { x: number; y: number } | null;
   isDragging: boolean;
+  setIsEditingId: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const colors = ['#4f46e5', '#dc2626', '#16a34a', '#f59e0b', '#06b6d4'];
@@ -37,6 +38,7 @@ const colors = ['#4f46e5', '#dc2626', '#16a34a', '#f59e0b', '#06b6d4'];
 export function Tooltip({
   position,
   isDragging,
+  setIsEditingId,
 }: TooltipProps): React.ReactElement | null {
   const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
     useCanvasContext();
@@ -122,6 +124,8 @@ export function Tooltip({
     ) as HTMLElement;
 
     if (textElement) {
+      setIsEditingId(selectedObjectId);
+
       textElement.contentEditable = 'true';
       textElement.focus();
 
