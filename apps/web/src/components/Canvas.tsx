@@ -211,6 +211,12 @@ export const Canvas = () => {
         });
       } else {
         setSelectedObjectId(null);
+
+        // Left click does nothing (current status)
+        if (!isDragging && e.buttons === 1) {
+          return;
+        }
+
         setIsPanning(true);
         setPanStart({ x: e.clientX, y: e.clientY });
       }
