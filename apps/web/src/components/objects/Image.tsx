@@ -47,6 +47,15 @@ export const ImageObject = React.memo(
     ]);
 
     const isSelected = selectedObjectId === obj.id;
+    const isOriginal = obj.originalUrl !== undefined;
+
+    if (isOriginal) {
+      const url = new URL(obj.originalUrl ?? '');
+      // Only allow images from tenor
+      if (url.hostname !== 'media.tenor.com') {
+        obj.originalUrl = '';
+      }
+    }
 
     return (
       <div
