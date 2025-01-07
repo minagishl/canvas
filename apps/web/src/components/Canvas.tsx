@@ -498,7 +498,6 @@ export const Canvas = () => {
     if (isPanning) {
       setIsPanning(false);
       setPanStart(null);
-      canvasRef.current!.style.cursor = 'default';
       return;
     }
 
@@ -935,7 +934,7 @@ export const Canvas = () => {
           selectedTool === 'select'
             ? isPanning
               ? 'cursor-grabbing'
-              : 'cursor-grab active:cursor-grabbing'
+              : 'cursor-default'
             : selectedTool === 'text' || selectedTool === 'image'
               ? 'cursor-pointer'
               : 'cursor-crosshair'
@@ -949,7 +948,6 @@ export const Canvas = () => {
           setPreviewObject(null);
           setIsPanning(false);
           setPanStart(null);
-          canvasRef.current!.style.cursor = 'default';
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
