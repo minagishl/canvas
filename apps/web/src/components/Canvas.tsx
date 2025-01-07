@@ -991,7 +991,9 @@ export const Canvas = () => {
             ? isPanning
               ? 'cursor-grabbing'
               : 'cursor-default'
-            : selectedTool === 'text' || selectedTool === 'image'
+            : selectedTool === 'text' ||
+                selectedTool === 'image' ||
+                selectedTool === 'gif'
               ? 'cursor-pointer'
               : 'cursor-crosshair'
         }`}
