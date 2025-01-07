@@ -1,4 +1,11 @@
-import { Pencil, ImageDown, Trash2, Share, MoveUpRight } from 'lucide-react';
+import {
+  Pencil,
+  ImageDown,
+  Trash2,
+  Share,
+  MoveUpRight,
+  Film,
+} from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import html2canvas from 'html2canvas';
 import { Popover } from './Popover';
@@ -97,6 +104,20 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
       >
         <MoveUpRight className="h-5 w-5" />
       </button>
+      <div className="group/menu relative">
+        <button
+          className={`cursor-pointer rounded-md p-2 transition-colors ${
+            selectedTool === 'gif'
+              ? 'bg-indigo-100 text-indigo-600'
+              : 'hover:bg-gray-100'
+          }`}
+        >
+          <Film className="h-5 w-5" />
+        </button>
+        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+          <Popover text="Add GIF" upper={false} />
+        </div>
+      </div>
       <div className="mx-2 h-6 w-px bg-gray-200" />
       <div className="group/menu relative">
         <button

@@ -34,7 +34,8 @@ export type ToolType =
   | 'image'
   | 'pen'
   | 'save'
-  | 'arrow';
+  | 'arrow'
+  | 'gif';
 
 export type ResizeHandle =
   | 'top-left'
