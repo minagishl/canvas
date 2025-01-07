@@ -939,6 +939,8 @@ export const Canvas = () => {
 
   const fetchRandomGif = async () => {
     try {
+      showTemporaryAlert('Fetching GIF...', setAlert);
+
       const apiUrl = new URL(import.meta.env.VITE_API_URL);
       const response = await fetch(`${apiUrl}gif`);
       const data = await response.json();
