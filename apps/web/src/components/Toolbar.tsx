@@ -126,6 +126,16 @@ export function Toolbar(): React.ReactElement {
       return;
     }
 
+    // Check for internet connection
+    if (!navigator.onLine) {
+      showTemporaryAlert(
+        'You are offline. Please check your internet connection.',
+        setAlert
+      );
+      setIsLoading(false);
+      return;
+    }
+
     // Must be completed
     setSelectedObjectId('');
 
