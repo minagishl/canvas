@@ -600,7 +600,7 @@ export const Canvas = () => {
         if (!ctx) return;
 
         ctx.drawImage(img, 0, 0, width, height);
-        const resizedImageData = canvas.toDataURL('image/jpeg', 0.8);
+        const resizedImageData = canvas.toDataURL('image/webp');
 
         // Save to cache
         const id = Math.random().toString(36).substr(2, 9);
