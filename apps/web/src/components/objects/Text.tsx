@@ -114,7 +114,6 @@ export const TextObject = React.memo(
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            elementRef.current?.blur();
           }
 
           if (e.key === 'Escape') {
