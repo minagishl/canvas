@@ -133,6 +133,13 @@ app.post('/', async (c) => {
     if (body.rotation !== undefined && typeof body.rotation !== 'number') {
       return c.json({ error: 'invalid rotation' }, 400);
     }
+
+    if (
+      body.originalUrl !== undefined &&
+      typeof body.originalUrl !== 'string'
+    ) {
+      return c.json({ error: 'invalid originalUrl' }, 400);
+    }
   }
 
   const id = uuidv7();
