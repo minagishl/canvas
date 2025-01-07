@@ -2,6 +2,8 @@ import { Pencil, ImageDown, Trash2, Share, MoveUpRight } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import html2canvas from 'html2canvas';
 import { Popover } from './Popover';
+import { showTemporaryAlert } from '../utils/alert';
+import { useAlertContext } from '../contexts/AlertContext';
 
 export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const {
@@ -11,13 +13,14 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
     setObjects,
     objects,
   } = useCanvasContext();
+  const { setAlert } = useAlertContext();
 
   const handleSaveImage = async () => {
     // Deselect the object
     setSelectedObjectId(null);
 
     if (objects.length === 0) {
-      alert('Canvas is empty!');
+      showTemporaryAlert('Canvas is empty!', setAlert);
       return;
     }
 

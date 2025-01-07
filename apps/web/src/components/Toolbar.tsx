@@ -15,6 +15,8 @@ import { isMobile } from 'react-device-detect';
 import { Popover } from './Popover';
 import { Menu } from './Menu';
 import { Loading } from './Loading';
+import { showTemporaryAlert } from '../utils/alert';
+import { useAlertContext } from '../contexts/AlertContext';
 
 const tools: {
   icon: typeof MousePointer2;
@@ -38,6 +40,7 @@ export function Toolbar(): React.ReactElement {
     selectedTool,
     setSelectedTool,
   } = useCanvasContext();
+  const { setAlert } = useAlertContext();
   const [isLoading, setIsLoading] = React.useState(false);
   const [isZooming, setIsZooming] = React.useState(false);
   const animationRef = useRef<number | null>(null);
@@ -117,8 +120,9 @@ export function Toolbar(): React.ReactElement {
 
     // Check if canvas is empty
     if (objects.length === 0) {
-      alert('Canvas is empty!');
+      showTemporaryAlert('Canvas is empty!', setAlert);
       setIsLoading(false);
+      return;
     }
 
     const apiUrl = new URL(import.meta.env.VITE_API_URL);
@@ -142,12 +146,12 @@ export function Toolbar(): React.ReactElement {
         url.searchParams.set('id', id);
         navigator.clipboard.writeText(url.toString());
         console.log('Canvas shared:', url.toString());
-        alert('Canvas shared! URL copied to clipboard');
+        showTemporaryAlert('Canvas shared! URL copied to clipboard', setAlert);
         setIsLoading(false);
       })
       .catch((error) => {
         console.error('Error sharing canvas:', error);
-        alert('Error sharing canvas');
+        showTemporaryAlert('Error sharing canvas', setAlert);
         setIsLoading(false);
       });
   };
