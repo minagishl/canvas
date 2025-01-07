@@ -165,6 +165,17 @@ export function Toolbar(): React.ReactElement {
     }, 500);
   };
 
+  const handleOnKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && selectedTool !== 'select') {
+      setSelectedTool('select');
+
+      const selectButton = document.getElementById('toolbar-select');
+      if (selectButton) {
+        selectButton.focus();
+      }
+    }
+  };
+
   return (
     <>
       <Loading hidden={!isLoading} />
@@ -174,6 +185,7 @@ export function Toolbar(): React.ReactElement {
           .map((Tool) => (
             <div key={Tool.name} className="group relative">
               <button
+                id={`toolbar-${Tool.name}`}
                 className={`cursor-pointer rounded-md p-2 transition-colors ${
                   selectedTool === Tool.name
                     ? 'bg-indigo-100 text-indigo-600'
@@ -184,6 +196,7 @@ export function Toolbar(): React.ReactElement {
                     setSelectedTool(Tool.name);
                   }
                 }}
+                onKeyDown={handleOnKeyDown}
               >
                 <Tool.icon className="h-5 w-5" />
               </button>
