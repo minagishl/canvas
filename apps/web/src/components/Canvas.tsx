@@ -113,7 +113,11 @@ export const Canvas = () => {
     if (selectedTool === 'select' && selectedObjectId) {
       // Resize handle detection
       const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-      if (selectedObject && selectedObject.type !== 'line') {
+      if (
+        selectedObject &&
+        selectedObject.type !== 'line' &&
+        selectedObject.type !== 'arrow'
+      ) {
         const handleSize = 8 / scale;
         const padding = 8 / scale;
 
@@ -218,28 +222,18 @@ export const Canvas = () => {
       return;
     }
 
-    if (isDragging && selectedTool === 'arrow') {
+    const isPen = selectedTool === 'pen';
+    if (isDragging && (isPen || selectedTool === 'arrow')) {
       const point = getCanvasPoint(e, canvasRef, offset, scale);
+
+      // Add points to the line object
+      if (isPen) {
+        setCurrentLine((prev) => [...prev, point]);
+      }
 
       setPreviewObject({
         id: 'preview',
-        type: 'arrow',
-        position: { x: 0, y: 0 },
-        width: 0,
-        height: 0,
-        fill: '#4f46e5',
-        points: [...currentLine, point],
-      });
-      return;
-    }
-
-    if (isDragging && selectedTool === 'pen') {
-      const point = getCanvasPoint(e, canvasRef, offset, scale);
-      setCurrentLine((prev) => [...prev, point]);
-
-      setPreviewObject({
-        id: 'preview',
-        type: 'line',
+        type: isPen ? 'line' : 'arrow',
         position: { x: 0, y: 0 },
         width: 0,
         height: 0,
