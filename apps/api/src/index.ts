@@ -48,7 +48,6 @@ interface TenorResponse {
 }
 
 app.get('/gif', async (c) => {
-  console.log(c.env.TENOR_API_KEY);
   const response = await fetch(
     `https://tenor.googleapis.com/v2/search?q=random&key=${c.env.TENOR_API_KEY}&limit=1&random=true`
   );
