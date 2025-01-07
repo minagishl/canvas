@@ -24,6 +24,7 @@ export type CanvasObject = {
   lineWidth?: number;
   italic?: boolean;
   rotation?: number;
+  originalUrl?: string;
 };
 
 export type ToolType =

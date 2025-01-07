@@ -109,6 +109,15 @@ export const Canvas = () => {
       return;
     }
 
+    if (selectedTool === 'gif') {
+      e.preventDefault();
+      e.stopPropagation();
+      const point = getCanvasPoint(e, canvasRef, offset, scale);
+      setImagePosition(point);
+      fetchRandomGif();
+      return;
+    }
+
     if (selectedTool === 'arrow') {
       setCurrentLine([point]);
       setIsDragging(true);
@@ -926,6 +935,47 @@ export const Canvas = () => {
         offset,
       });
       setTooltipPosition(position);
+    }
+  };
+
+  const fetchRandomGif = async () => {
+    try {
+      const apiUrl = new URL(import.meta.env.VITE_API_URL);
+      const response = await fetch(`${apiUrl}gif`);
+      const data = await response.json();
+      const gifUrl = data.results[0].media_formats.gif.url;
+
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+
+      img.onload = () => {
+        const maxSize = 500;
+        const ratio = Math.min(maxSize / img.width, maxSize / img.height);
+        const width = img.width * ratio;
+        const height = img.height * ratio;
+
+        if (!imagePosition) return;
+
+        const gifObject: CanvasObject = {
+          id: Math.random().toString(36).slice(2, 11),
+          type: 'image',
+          position: imagePosition,
+          width,
+          height,
+          fill: 'transparent',
+          originalUrl: gifUrl,
+        };
+
+        addObject(gifObject);
+        setImagePosition(null);
+        setSelectedTool('select');
+      };
+
+      img.src = gifUrl;
+    } catch (error) {
+      console.error('Error fetching GIF:', error);
+      showTemporaryAlert('Failed to fetch GIF', setAlert);
+      setSelectedTool('select');
     }
   };
 

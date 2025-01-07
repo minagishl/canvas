@@ -65,7 +65,11 @@ export const ImageObject = React.memo(
         onMouseDown={handleMouseDown}
       >
         <img
-          src={imageCache[obj.id] || obj.imageData}
+          src={
+            obj.originalUrl
+              ? obj.originalUrl
+              : imageCache[obj.id] || obj.imageData
+          }
           alt="canvas object"
           className="pointer-events-none h-full w-full object-contain"
           draggable={false}

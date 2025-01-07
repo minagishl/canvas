@@ -7,6 +7,7 @@ import { v7 as uuidv7 } from 'uuid';
 
 type Bindings = {
   DB: D1Database;
+  TENOR_API_KEY: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -40,6 +41,23 @@ function checkId(id: string): boolean {
 
 app.get('/', (c) => {
   return c.text('Hello Hono!');
+});
+
+interface TenorResponse {
+  results: Array<any>;
+}
+
+app.get('/gif', async (c) => {
+  console.log(c.env.TENOR_API_KEY);
+  const response = await fetch(
+    `https://tenor.googleapis.com/v2/search?q=random&key=${c.env.TENOR_API_KEY}&limit=1&random=true`
+  );
+  const data = (await response.json()) as TenorResponse;
+  if (!data) {
+    return c.json({ error: 'no gifs found' }, 404);
+  }
+
+  return c.json(data);
 });
 
 app.post('/', async (c) => {
