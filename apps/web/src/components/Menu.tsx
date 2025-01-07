@@ -1,6 +1,7 @@
 import { Pencil, ImageDown, Trash2, Share } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import html2canvas from 'html2canvas';
+import { Popover } from './Popover';
 
 export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const {
@@ -82,33 +83,45 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         <Pencil className="h-5 w-5" />
       </button>
       <div className="mx-2 h-6 w-px bg-gray-200" />
-      <button
-        className={`cursor-pointer rounded-md p-2 transition-colors ${
-          selectedTool === 'save'
-            ? 'bg-indigo-100 text-indigo-600'
-            : 'hover:bg-gray-100'
-        }`}
-        onClick={handleSaveImage}
-        title="Save as image"
-      >
-        <ImageDown className="h-5 w-5" />
-      </button>
+      <div className="group/menu relative">
+        <button
+          className={`cursor-pointer rounded-md p-2 transition-colors ${
+            selectedTool === 'save'
+              ? 'bg-indigo-100 text-indigo-600'
+              : 'hover:bg-gray-100'
+          }`}
+          onClick={handleSaveImage}
+        >
+          <ImageDown className="h-5 w-5" />
+        </button>
+        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+          <Popover text="Save image" upper={false} />
+        </div>
+      </div>
       {import.meta.env.VITE_API_URL && (
+        <div className="group/menu relative">
+          <button
+            className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
+            onClick={handleShareCanvas}
+          >
+            <Share className="h-5 w-5" />
+          </button>
+          <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+            <Popover text="Share canvas" upper={false} />
+          </div>
+        </div>
+      )}
+      <div className="group/menu relative">
         <button
           className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
-          onClick={handleShareCanvas}
-          title="Share"
+          onClick={handleClearCanvas}
         >
-          <Share className="h-5 w-5" />
+          <Trash2 className="h-5 w-5" />
         </button>
-      )}
-      <button
-        className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
-        onClick={handleClearCanvas}
-        title="Clear canvas"
-      >
-        <Trash2 className="h-5 w-5" />
-      </button>
+        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+          <Popover text="Delete all objects" upper={false} />
+        </div>
+      </div>
     </div>
   );
 }
