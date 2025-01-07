@@ -119,7 +119,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
             <Film className="h-5 w-5" />
           </button>
           <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-            <Popover text="Add GIF" upper={false} />
+            <Popover text="Add random GIF" upper={false} />
           </div>
         </div>
       )}
