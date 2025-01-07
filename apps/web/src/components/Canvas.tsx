@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useCanvasContext } from '../contexts/CanvasContext';
+import { useAlertContext } from '../contexts/AlertContext';
 import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 import { createPreviewObject } from '../utils/preview';
@@ -10,6 +11,8 @@ import { handleCopyObject } from '../utils/copy';
 import { handleDeleteObject, handleDeleteParms } from '../utils/delete';
 import { handleRestoreObjects } from '../utils/restore';
 import { calculateTooltipPosition } from '../utils/tooltip';
+import { showTemporaryAlert } from '../utils/alert';
+import { Alert } from './Alert';
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -27,6 +30,7 @@ export const Canvas = () => {
     selectedObjectId,
     setSelectedObjectId,
   } = useCanvasContext();
+  const { alert, setAlert } = useAlertContext();
   const [imagePosition, setImagePosition] = useState<Point | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
@@ -575,6 +579,12 @@ export const Canvas = () => {
     const file = e.target.files?.[0];
     if (!file || !imagePosition) return;
 
+    const isGif = file.type === 'image/gif';
+    if (isGif) {
+      showTemporaryAlert('GIF files are not supported', setAlert);
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (event) => {
       const imageData = event.target?.result as string;
@@ -926,6 +936,8 @@ export const Canvas = () => {
         accept="image/*"
         onChange={handleFileChange}
       />
+
+      <Alert message={alert} />
 
       {objects
         .filter((obj) => obj.type === 'text' || obj.type === 'image')
