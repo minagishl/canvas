@@ -11,6 +11,8 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
+const objectTypes = ['rectangle', 'circle', 'text', 'image', 'line', 'arrow'];
+
 app.use(
   '/*',
   cors({
@@ -56,7 +58,7 @@ app.post('/', async (c) => {
       return c.json({ error: 'invalid id' }, 400);
     }
 
-    if (!['rectangle', 'circle', 'text', 'image', 'line'].includes(body.type)) {
+    if (!objectTypes.includes(body.type)) {
       return c.json({ error: 'invalid type' }, 400);
     }
 
