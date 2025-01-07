@@ -79,12 +79,13 @@ export const drawObject = (
 
         // Drawing arrow lines
         ctx.beginPath();
+        ctx.lineWidth = object.lineWidth || 2 / scale;
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
 
         // Drawing arrow heads
-        const headLength = 20 / scale;
+        const headLength = 40 / scale;
         const angle = Math.atan2(end.y - start.y, end.x - start.x);
 
         ctx.beginPath();

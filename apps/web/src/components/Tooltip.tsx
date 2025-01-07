@@ -178,7 +178,11 @@ export function Tooltip({
       const selectedObject = prevObjects.find(
         (obj) => obj.id === selectedObjectId
       );
-      if (!selectedObject || selectedObject.type !== 'line') return prevObjects;
+      if (
+        !selectedObject ||
+        (selectedObject.type !== 'line' && selectedObject.type !== 'arrow')
+      )
+        return prevObjects;
 
       const widths = [2, 4, 6, 8, 10];
       const currentWidth = selectedObject.lineWidth || 2;
@@ -260,7 +264,8 @@ export function Tooltip({
               stroke="none"
             />
           </button>
-          {selectedObject?.type === 'line' && (
+          {(selectedObject?.type === 'line' ||
+            selectedObject?.type === 'arrow') && (
             <>
               <div className="group relative">
                 <button
