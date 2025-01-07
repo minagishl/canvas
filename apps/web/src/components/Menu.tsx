@@ -111,6 +111,9 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
               ? 'bg-indigo-100 text-indigo-600'
               : 'hover:bg-gray-100'
           }`}
+          onClick={() => {
+            setSelectedTool('gif');
+          }}
         >
           <Film className="h-5 w-5" />
         </button>
