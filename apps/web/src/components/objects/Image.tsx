@@ -33,7 +33,7 @@ export const ImageObject = React.memo(
       };
 
       if (elementRef.current) {
-        elementRef.current.style.transform = `translate(${-50}%, ${-50}%) translate3d(${
+        elementRef.current.style.transform = `translate(-50%, -50%) translate3d(${
           positionRef.current.x
         }px, ${positionRef.current.y}px, 0) rotate(${obj.rotation || 0}deg)`;
       }
