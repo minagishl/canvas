@@ -81,6 +81,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
       >
         <Pencil className="h-5 w-5" />
       </button>
+      <div className="mx-2 h-6 w-px bg-gray-200" />
       <button
         className={`cursor-pointer rounded-md p-2 transition-colors ${
           selectedTool === 'save'
