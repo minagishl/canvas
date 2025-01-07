@@ -20,24 +20,23 @@ import { ImageObject } from './objects/Image';
 
 // Components
 import { Tooltip } from './Tooltip';
-import { Toolbar } from './Toolbar';
 import { Alert } from './Alert';
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
-    scale,
+    setSelectedTool,
+    selectedTool,
+    setSelectedObjectId,
+    selectedObjectId,
     setScale,
-    offset,
+    scale,
     setOffset,
+    offset,
+    setObjects,
     objects,
     addObject,
-    selectedTool,
-    setSelectedTool,
-    setObjects,
-    selectedObjectId,
-    setSelectedObjectId,
   } = useCanvasContext();
   const { alert, setAlert } = useAlertContext();
   const [imagePosition, setImagePosition] = useState<Point | null>(null);
@@ -922,7 +921,6 @@ export const Canvas = () => {
       className="relative h-screen w-screen overflow-hidden"
       onContextMenu={(e) => e.preventDefault()}
     >
-      <Toolbar setIsEditingId={setIsEditingId} />
       <canvas
         ref={canvasRef}
         className={`fixed inset-0 left-0 top-0 ${
@@ -978,7 +976,7 @@ export const Canvas = () => {
                 offset={offset}
                 obj={obj as CanvasObject & { type: 'image' }}
                 key={obj.id}
-                isSelected={obj.id === selectedObjectId}
+                selectedObjectId={selectedObjectId}
                 isResizing={resizing !== null}
                 isDragging={isDragging}
                 imageCache={imageCache}
@@ -997,7 +995,7 @@ export const Canvas = () => {
                 offset={offset}
                 obj={obj as CanvasObject & { type: 'text' }}
                 key={obj.id}
-                isSelected={obj.id === selectedObjectId}
+                selectedObjectId={selectedObjectId}
                 isResizing={resizing !== null}
                 isEditingId={isEditingId}
                 isDragging={isDragging}

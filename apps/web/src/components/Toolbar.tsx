@@ -30,11 +30,7 @@ const tools: {
   { icon: ImageIcon, name: 'image', disabled: false },
 ];
 
-export function Toolbar({
-  setIsEditingId,
-}: {
-  setIsEditingId: React.Dispatch<React.SetStateAction<string>>;
-}): React.ReactElement {
+export function Toolbar(): React.ReactElement {
   const {
     objects,
     offset,
@@ -43,6 +39,7 @@ export function Toolbar({
     setScale,
     selectedTool,
     setSelectedTool,
+    setSelectedObjectId,
   } = useCanvasContext();
   const { setAlert } = useAlertContext();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -130,7 +127,7 @@ export function Toolbar({
     }
 
     // Must be completed
-    setIsEditingId('');
+    setSelectedObjectId('');
 
     setTimeout(() => {
       const apiUrl = new URL(import.meta.env.VITE_API_URL);

@@ -2,24 +2,24 @@ import React, { useRef, useEffect } from 'react';
 import { CanvasObject } from '../../types/canvas';
 
 interface ImageObjectProps {
-  obj: CanvasObject & { type: 'image' };
+  selectedObjectId: string | null;
   scale: number;
   offset: { x: number; y: number };
-  isSelected: boolean;
-  isDragging: boolean;
+  obj: CanvasObject & { type: 'image' };
   isResizing: boolean;
+  isDragging: boolean;
   imageCache: Record<string, string>;
   handleMouseDown: (e: React.MouseEvent, handle?: string) => void;
 }
 
 export const ImageObject = React.memo(
   ({
-    obj,
+    selectedObjectId,
     scale,
     offset,
-    isSelected,
-    isDragging,
+    obj,
     isResizing,
+    isDragging,
     imageCache,
     handleMouseDown,
   }: ImageObjectProps) => {
@@ -45,6 +45,8 @@ export const ImageObject = React.memo(
       offset.y,
       obj.rotation,
     ]);
+
+    const isSelected = selectedObjectId === obj.id;
 
     return (
       <div
@@ -114,7 +116,7 @@ export const ImageObject = React.memo(
       prevProps.scale === nextProps.scale &&
       prevProps.offset.x === nextProps.offset.x &&
       prevProps.offset.y === nextProps.offset.y &&
-      prevProps.isSelected === nextProps.isSelected &&
+      prevProps.selectedObjectId === nextProps.selectedObjectId &&
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.imageCache === nextProps.imageCache &&
       prevProps.obj.rotation === nextProps.obj.rotation

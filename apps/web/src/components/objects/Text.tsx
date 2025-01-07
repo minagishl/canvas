@@ -2,30 +2,30 @@ import React, { useRef, useEffect } from 'react';
 import { CanvasObject } from '../../types/canvas';
 
 interface TextObjectProps {
-  obj: CanvasObject & { type: 'text' };
   selectedTool: string;
+  selectedObjectId: string | null;
   scale: number;
   offset: { x: number; y: number };
-  isSelected: boolean;
+  obj: CanvasObject & { type: 'text' };
   isResizing: boolean;
   isEditingId: string;
   isDragging: boolean;
-  onMouseDown: (e: React.MouseEvent) => void;
   onTextChange: () => void;
+  onMouseDown: (e: React.MouseEvent) => void;
 }
 
 export const TextObject = React.memo(
   ({
     selectedTool,
+    selectedObjectId,
     scale,
     offset,
     obj,
-    isSelected,
     isResizing,
     isEditingId,
     isDragging,
-    onMouseDown,
     onTextChange,
+    onMouseDown,
   }: TextObjectProps) => {
     const elementRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef({ x: 0, y: 0 });
@@ -77,11 +77,11 @@ export const TextObject = React.memo(
       obj.rotation,
     ]);
 
-    // Update the text property of the object when the text changes
     useEffect(() => {
-      console.log(elementRef.current?.textContent);
       obj.text = elementRef.current?.textContent || '';
-    }, [isEditingId, obj]);
+    }, [selectedObjectId, obj]);
+
+    const isSelected = selectedObjectId === obj.id;
 
     return (
       <div
@@ -134,7 +134,7 @@ export const TextObject = React.memo(
       prevProps.scale === nextProps.scale &&
       prevProps.offset.x === nextProps.offset.x &&
       prevProps.offset.y === nextProps.offset.y &&
-      prevProps.isSelected === nextProps.isSelected &&
+      prevProps.selectedObjectId === nextProps.selectedObjectId &&
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.selectedTool === nextProps.selectedTool &&
       prevProps.obj.text === nextProps.obj.text &&
