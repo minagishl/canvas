@@ -363,8 +363,12 @@ export const Canvas = () => {
       ) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
 
-        // Special processing for line objects
-        if (selectedObject?.type === 'line' && selectedObject.points) {
+        // Special processing for line and arrow objects
+        if (
+          (selectedObject?.type === 'line' ||
+            selectedObject?.type === 'arrow') &&
+          selectedObject.points
+        ) {
           // Calculate the amount of movement
           const dx = currentPoint.x - dragOffset.x - selectedObject.position.x;
           const dy = currentPoint.y - dragOffset.y - selectedObject.position.y;
@@ -841,7 +845,7 @@ export const Canvas = () => {
   const findClickedObject = (point: Point) => {
     // Check line objects first
     const lineObject = objects.find((obj) => {
-      if (obj.type === 'line' && obj.points) {
+      if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
         return isPointNearLine(point, obj.points);
       }
       return false;
@@ -855,6 +859,7 @@ export const Canvas = () => {
     return objects.find(
       (obj) =>
         obj.type !== 'line' &&
+        obj.type !== 'arrow' &&
         point.x >= obj.position.x &&
         point.x <= obj.position.x + obj.width &&
         point.y >= obj.position.y &&
