@@ -806,7 +806,6 @@ export const Canvas = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditingId !== '') return;
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        console.log('Delete key pressed');
         handleDeleteObject(selectedObjectId, setObjects, setSelectedObjectId);
       }
 
