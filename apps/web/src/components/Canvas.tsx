@@ -22,6 +22,9 @@ import { ImageObject } from './objects/Image';
 import { Tooltip } from './Tooltip';
 import { Alert } from './Alert';
 
+// Hooks
+import { useWindowSize } from '../hooks/window';
+
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,6 +41,7 @@ export const Canvas = () => {
     objects,
     addObject,
   } = useCanvasContext();
+  const [width, height] = useWindowSize();
   const { alert, setAlert } = useAlertContext();
   const [imagePosition, setImagePosition] = useState<Point | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -64,8 +68,8 @@ export const Canvas = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
@@ -89,7 +93,16 @@ export const Canvas = () => {
     }
 
     ctx.restore();
-  }, [scale, offset, objects, previewObject, selectedTool, selectedObjectId]);
+  }, [
+    scale,
+    offset,
+    objects,
+    previewObject,
+    selectedTool,
+    selectedObjectId,
+    width,
+    height,
+  ]);
 
   const handleMouseDown = (
     e: React.MouseEvent,
