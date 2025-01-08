@@ -825,6 +825,10 @@ export const Canvas = () => {
 
       if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
         setCopyObjectId(selectedObjectId);
+        // Clear the clipboard
+        navigator.clipboard.writeText('').catch((error) => {
+          console.error('Error clearing clipboard:', error);
+        });
       }
 
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
@@ -832,8 +836,43 @@ export const Canvas = () => {
       }
 
       if (e.key === 'v' && (e.metaKey || e.ctrlKey)) {
-        if (!copyObjectId) return;
-        handleCopyObject(objects, copyObjectId, setObjects);
+        const clipboard = navigator.clipboard;
+
+        if (clipboard && clipboard.readText) {
+          clipboard.readText().then((data) => {
+            try {
+              if (/^[^{].*/.test(data)) {
+                const position = getCanvasPoint(
+                  {
+                    clientX: width / 2,
+                    clientY: height / 2,
+                  } as React.MouseEvent,
+                  canvasRef,
+                  offset,
+                  scale
+                );
+
+                const textObject: CanvasObject = {
+                  id: Math.random().toString(36).slice(2, 11),
+                  type: 'text',
+                  text: data,
+                  position,
+                  width: 200,
+                  height: 50,
+                  fill: '#4f46e5',
+                  weight: 400,
+                };
+
+                addObject(textObject);
+                return;
+              } else if (copyObjectId) {
+                handleCopyObject(objects, copyObjectId, setObjects);
+              }
+            } catch (error) {
+              console.error('Error pasting object:', error);
+            }
+          });
+        }
       }
     };
 
@@ -849,6 +888,10 @@ export const Canvas = () => {
     setSelectedObjectId,
     addObject,
     copyObjectId,
+    width,
+    height,
+    offset,
+    scale,
   ]);
 
   useEffect(() => {
