@@ -865,7 +865,7 @@ export const Canvas = () => {
         const selectedObject = objects.find(
           (obj) => obj.id === selectedObjectId
         );
-        if (selectedObject) {
+        if (selectedObject && selectedObject.type === 'text') {
           const newObjects = objects.map((obj) =>
             obj.id === selectedObjectId
               ? {
