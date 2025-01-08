@@ -16,7 +16,7 @@ const alert = tv({
 
 export function Alert({ message }: AlertProps) {
   return (
-    <div className={alert({ show: message !== '' })}>
+    <div className={alert({ show: message !== '' })} id="alert">
       <div className="flex w-fit flex-col items-center justify-center whitespace-nowrap p-2 px-4 font-sans">
         <p className="flex h-5 items-center justify-center text-center">
           {message}

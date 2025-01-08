@@ -35,9 +35,12 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
       try {
         // Get the canvas container
         const canvasContainer = document.querySelector(
-          '.relative.w-full.h-full'
+          '#root > div > div:first-child'
         );
-        if (!canvasContainer) return;
+
+        if (!canvasContainer) {
+          throw new Error('Canvas container not found');
+        }
 
         // Create a screenshot with html2canvas
         const canvas = await html2canvas(canvasContainer as HTMLElement, {
