@@ -42,8 +42,8 @@ export const Canvas = () => {
     objects,
     addObject,
   } = useCanvasContext();
-  const [width, height] = useWindowSize();
   const { alert, setAlert } = useAlertContext();
+  const [width, height] = useWindowSize();
   const [imagePosition, setImagePosition] = useState<Point | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
