@@ -9,6 +9,7 @@ import { copyObject } from '../utils/copy';
 import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
+import { findClickedObject } from '../utils/selection';
 
 // Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
@@ -222,7 +223,7 @@ export const Canvas = () => {
       }
 
       // When an object on the canvas is clicked
-      const clickedCanvasObject = findClickedObject(point);
+      const clickedCanvasObject = findClickedObject(point, objects);
 
       if (clickedCanvasObject) {
         setSelectedObjectId(clickedCanvasObject.id);
@@ -686,7 +687,7 @@ export const Canvas = () => {
     } else if (e.touches.length === 1) {
       const point = getTouchPoint(touch);
       if (selectedTool === 'select') {
-        const clickedObject = findClickedObject(point);
+        const clickedObject = findClickedObject(point, objects);
 
         if (clickedObject) {
           setSelectedObjectId(clickedObject.id);
@@ -918,68 +919,6 @@ export const Canvas = () => {
       setTooltipPosition(null);
     }
   }, [selectedObjectId, objects, scale, offset]);
-
-  const isPointNearLine = (
-    point: Point,
-    linePoints: LinePoint[],
-    threshold: number = 5
-  ): boolean => {
-    for (let i = 1; i < linePoints.length; i++) {
-      const start = linePoints[i - 1];
-      const end = linePoints[i];
-
-      // Calculate the distance between the line segment and the point
-      const a = end.y - start.y;
-      const b = start.x - end.x;
-      const c = end.x * start.y - start.x * end.y;
-
-      const distance =
-        Math.abs(a * point.x + b * point.y + c) / Math.sqrt(a * a + b * b);
-
-      // Check if the point is within the range of the line segment
-      const minX = Math.min(start.x, end.x) - threshold;
-      const maxX = Math.max(start.x, end.x) + threshold;
-      const minY = Math.min(start.y, end.y) - threshold;
-      const maxY = Math.max(start.y, end.y) + threshold;
-
-      if (
-        distance <= threshold &&
-        point.x >= minX &&
-        point.x <= maxX &&
-        point.y >= minY &&
-        point.y <= maxY
-      ) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const findClickedObject = (point: Point) => {
-    // Check line objects first
-    const reverseObjects = [...objects].reverse();
-    const lineObject = reverseObjects.find((obj) => {
-      if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
-        return isPointNearLine(point, obj.points);
-      }
-      return false;
-    });
-
-    if (lineObject !== undefined) {
-      return lineObject;
-    }
-
-    // Check other objects
-    return reverseObjects.find(
-      (obj) =>
-        obj.type !== 'line' &&
-        obj.type !== 'arrow' &&
-        point.x >= obj.position.x &&
-        point.x <= obj.position.x + obj.width &&
-        point.y >= obj.position.y &&
-        point.y <= obj.position.y + obj.height
-    );
-  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
