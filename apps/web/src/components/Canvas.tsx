@@ -4,8 +4,8 @@ import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
 import { handleRestoreObjects } from '../utils/restore';
-import { handleDeleteObject, handleDeleteParms } from '../utils/delete';
-import { handleCopyObject } from '../utils/copy';
+import { deleteObject, handleDeleteParms } from '../utils/delete';
+import { copyObject } from '../utils/copy';
 import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
@@ -820,7 +820,7 @@ export const Canvas = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditingId !== '') return;
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        handleDeleteObject(selectedObjectId, setObjects, setSelectedObjectId);
+        deleteObject(selectedObjectId, setObjects, setSelectedObjectId);
       }
 
       if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
@@ -869,7 +869,7 @@ export const Canvas = () => {
                 setSelectedObjectId(id);
                 return;
               } else if (copyObjectId) {
-                handleCopyObject(
+                copyObject(
                   objects,
                   copyObjectId,
                   setObjects,

@@ -1,6 +1,6 @@
 import { CanvasObject } from '../types/canvas';
 
-export const handleCopyObject = (
+export const copyObject = (
   objects: CanvasObject[],
   selectedObjectId: string | null,
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
