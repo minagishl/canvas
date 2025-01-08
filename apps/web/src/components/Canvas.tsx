@@ -842,6 +842,24 @@ export const Canvas = () => {
         handleRestoreObjects(objects, setObjects, setSelectedObjectId);
       }
 
+      // Italicize text with Cmd/Ctrl + I
+      if (e.key === 'i' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
+        const selectedObject = objects.find(
+          (obj) => obj.id === selectedObjectId
+        );
+        if (selectedObject && selectedObject.type === 'text') {
+          const newObjects = objects.map((obj) =>
+            obj.id === selectedObjectId
+              ? {
+                  ...obj,
+                  italic: !selectedObject.italic,
+                }
+              : obj
+          );
+          setObjects(newObjects);
+        }
+      }
+
       // Bold text with Cmd/Ctrl + B
       if (e.key === 'b' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
         const selectedObject = objects.find(
