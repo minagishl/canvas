@@ -56,6 +56,7 @@ export const Canvas = () => {
   const [currentLine, setCurrentLine] = useState<LinePoint[]>([]);
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [lastTouchDistance, setLastTouchDistance] = useState<number>(0);
+  const [copyObjectId, setCopyObjectId] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{
     x: number;
     y: number;
@@ -823,11 +824,16 @@ export const Canvas = () => {
       }
 
       if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
-        handleCopyObject(objects, selectedObjectId, setObjects);
+        setCopyObjectId(selectedObjectId);
       }
 
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
         handleRestoreObjects(objects, setObjects, setSelectedObjectId);
+      }
+
+      if (e.key === 'v' && (e.metaKey || e.ctrlKey)) {
+        if (!copyObjectId) return;
+        handleCopyObject(objects, copyObjectId, setObjects);
       }
     };
 
@@ -835,7 +841,15 @@ export const Canvas = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isEditingId, objects, selectedObjectId, setObjects, setSelectedObjectId]);
+  }, [
+    isEditingId,
+    objects,
+    selectedObjectId,
+    setObjects,
+    setSelectedObjectId,
+    addObject,
+    copyObjectId,
+  ]);
 
   useEffect(() => {
     if (selectedObjectId) {
