@@ -852,8 +852,10 @@ export const Canvas = () => {
                   scale
                 );
 
+                const id = Math.random().toString(36).slice(2, 11);
+
                 const textObject: CanvasObject = {
-                  id: Math.random().toString(36).slice(2, 11),
+                  id,
                   type: 'text',
                   text: data,
                   position,
@@ -864,9 +866,15 @@ export const Canvas = () => {
                 };
 
                 addObject(textObject);
+                setSelectedObjectId(id);
                 return;
               } else if (copyObjectId) {
-                handleCopyObject(objects, copyObjectId, setObjects);
+                handleCopyObject(
+                  objects,
+                  copyObjectId,
+                  setObjects,
+                  setSelectedObjectId
+                );
               }
             } catch (error) {
               console.error('Error pasting object:', error);

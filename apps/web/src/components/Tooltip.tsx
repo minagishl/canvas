@@ -386,7 +386,12 @@ export function Tooltip({
         <button
           className="rounded-md p-2 transition-colors hover:bg-gray-100"
           onClick={() =>
-            handleCopyObject(objects, selectedObjectId, setObjects)
+            handleCopyObject(
+              objects,
+              selectedObjectId,
+              setObjects,
+              setSelectedObjectId
+            )
           }
         >
           <Copy className="h-5 w-5" />
