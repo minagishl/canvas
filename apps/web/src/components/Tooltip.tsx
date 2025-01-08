@@ -16,6 +16,7 @@ import { Popover } from './Popover';
 import { tv } from 'tailwind-variants';
 import { copyObject } from '../utils/copy';
 import { deleteObject } from '../utils/delete';
+import { fontSize } from '../types/canvas';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -26,6 +27,8 @@ const popup = tv({
     },
   },
 });
+
+const fontSizeArray: fontSize[] = [12, 14, 16, 18, 20, 24, 30, 36];
 
 interface TooltipProps {
   position: { x: number; y: number } | null;
@@ -167,7 +170,7 @@ export function Tooltip({
     setObjects((prevObjects) =>
       prevObjects.map((obj) =>
         obj.id === selectedObjectId
-          ? { ...obj, fontSize: parseInt(e.target.value, 10) }
+          ? { ...obj, fontSize: parseInt(e.target.value, 10) as fontSize }
           : obj
       )
     );
@@ -355,7 +358,7 @@ export function Tooltip({
             value={selectedObject?.fontSize || 24}
             onChange={handleChangeFontSize}
           >
-            {[12, 14, 16, 18, 20, 24, 30, 36].map((size) => (
+            {fontSizeArray.map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>

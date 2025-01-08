@@ -8,6 +8,8 @@ export type LinePoint = {
   y: number;
 };
 
+export type fontSize = 12 | 14 | 16 | 18 | 20 | 24 | 30 | 36;
+
 export type CanvasObject = {
   id: string;
   type: 'rectangle' | 'circle' | 'text' | 'image' | 'line' | 'arrow';
@@ -18,7 +20,7 @@ export type CanvasObject = {
   text?: string;
   imageData?: string;
   weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
-  fontSize?: number;
+  fontSize?: fontSize;
   locked?: boolean;
   points?: LinePoint[];
   lineWidth?: number;
