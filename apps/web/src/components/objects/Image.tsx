@@ -130,6 +130,7 @@ export const ImageObject = React.memo(
       prevProps.offset.x === nextProps.offset.x &&
       prevProps.offset.y === nextProps.offset.y &&
       prevProps.selectedObjectId === nextProps.selectedObjectId &&
+      prevProps.isResizing === nextProps.isResizing &&
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.imageCache === nextProps.imageCache &&
       prevProps.obj.rotation === nextProps.obj.rotation
