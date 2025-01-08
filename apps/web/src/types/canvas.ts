@@ -10,6 +10,8 @@ export type LinePoint = {
 
 export type fontSize = 12 | 14 | 16 | 18 | 20 | 24 | 30 | 36;
 
+export type fontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+
 export type CanvasObject = {
   id: string;
   type: 'rectangle' | 'circle' | 'text' | 'image' | 'line' | 'arrow';
@@ -19,7 +21,7 @@ export type CanvasObject = {
   fill: string;
   text?: string;
   imageData?: string;
-  weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+  weight?: fontWeight;
   fontSize?: fontSize;
   locked?: boolean;
   points?: LinePoint[];

@@ -1,5 +1,11 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
+import {
+  Point,
+  CanvasObject,
+  ResizeHandle,
+  LinePoint,
+  fontWeight,
+} from '../types/canvas';
 
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
@@ -834,6 +840,25 @@ export const Canvas = () => {
 
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
         handleRestoreObjects(objects, setObjects, setSelectedObjectId);
+      }
+
+      // Bold text with Cmd/Ctrl + B
+      if (e.key === 'b' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
+        const selectedObject = objects.find(
+          (obj) => obj.id === selectedObjectId
+        );
+        if (selectedObject) {
+          const newObjects = objects.map((obj) =>
+            obj.id === selectedObjectId
+              ? {
+                  ...obj,
+                  weight:
+                    selectedObject.weight === 400 ? 600 : (400 as fontWeight),
+                }
+              : obj
+          );
+          setObjects(newObjects);
+        }
       }
 
       if (e.key === 'v' && (e.metaKey || e.ctrlKey)) {
