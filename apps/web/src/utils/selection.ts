@@ -38,24 +38,18 @@ export const isPointNearLine = (
 
 export const findClickedObject = (point: Point, objects: CanvasObject[]) => {
   const reverseObjects = [...objects].reverse();
-  const lineObject = reverseObjects.find((obj) => {
-    if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
-      return isPointNearLine(point, obj.points);
+  const clickedObject = reverseObjects.find((obj) => {
+    if (obj.type === 'line' || obj.type === 'arrow') {
+      return obj.points && isPointNearLine(point, obj.points);
+    } else {
+      return (
+        point.x >= obj.position.x &&
+        point.x <= obj.position.x + obj.width &&
+        point.y >= obj.position.y &&
+        point.y <= obj.position.y + obj.height
+      );
     }
-    return false;
   });
 
-  if (lineObject !== undefined) {
-    return lineObject;
-  }
-
-  return reverseObjects.find(
-    (obj) =>
-      obj.type !== 'line' &&
-      obj.type !== 'arrow' &&
-      point.x >= obj.position.x &&
-      point.x <= obj.position.x + obj.width &&
-      point.y >= obj.position.y &&
-      point.y <= obj.position.y + obj.height
-  );
+  return clickedObject;
 };
