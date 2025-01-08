@@ -4,12 +4,12 @@ import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
 import { handleRestoreObjects } from '../utils/restore';
-import { deleteObject, handleDeleteParms } from '../utils/delete';
-import { copyObject } from '../utils/copy';
-import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
-import { createPreviewObject } from '../utils/preview';
-import { calculateTooltipPosition } from '../utils/tooltip';
 import { findClickedObject } from '../utils/selection';
+import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
+import { deleteObject, handleDeleteParms } from '../utils/delete';
+import { createPreviewObject } from '../utils/preview';
+import { copyObject } from '../utils/copy';
+import { calculateTooltipPosition } from '../utils/tooltip';
 
 // Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
