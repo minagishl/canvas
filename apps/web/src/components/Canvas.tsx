@@ -957,19 +957,20 @@ export const Canvas = () => {
 
   const findClickedObject = (point: Point) => {
     // Check line objects first
-    const lineObject = objects.find((obj) => {
+    const reverseObjects = [...objects].reverse();
+    const lineObject = reverseObjects.find((obj) => {
       if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
         return isPointNearLine(point, obj.points);
       }
       return false;
     });
 
-    if (lineObject) {
+    if (lineObject !== undefined) {
       return lineObject;
     }
 
     // Check other objects
-    return objects.find(
+    return reverseObjects.find(
       (obj) =>
         obj.type !== 'line' &&
         obj.type !== 'arrow' &&
