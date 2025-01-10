@@ -264,7 +264,7 @@ export function Tooltip({
               className="rounded-md p-2 transition-colors hover:bg-gray-100"
               onClick={handleMoveDown}
             >
-              <Layers2 className="h-5 w-5 rotate-180 scale-x-[-1]" />
+              <Layers2 className="h-5 w-5 rotate-180" />
             </button>
             <div className={popup({ isTextObject })}>
               <Popover text="Move object down" upper={isTextObject} />
