@@ -21,7 +21,7 @@ import {
   rotateObject,
 } from '../utils/object';
 import { fontSize } from '../types/canvas';
-import { textEdit } from '../utils/text';
+import { textEdit, textToggleItalic } from '../utils/text';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -79,17 +79,7 @@ export function Tooltip({
 
   const handleItalicChange = () => {
     if (!selectedObjectId) return;
-
-    setObjects((prevObjects) => {
-      const selectedObject = prevObjects.find(
-        (obj) => obj.id === selectedObjectId
-      );
-      if (!selectedObject || selectedObject.type !== 'text') return prevObjects;
-
-      return prevObjects.map((obj) =>
-        obj.id === selectedObjectId ? { ...obj, italic: !obj.italic } : obj
-      );
-    });
+    textToggleItalic(objects, selectedObjectId, setObjects);
   };
 
   const handleWeightChange = () => {
