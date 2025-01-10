@@ -10,6 +10,16 @@ import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
 import { useAlertContext } from '../contexts/AlertContext';
 import { exportCanvasAsImage } from '../utils/canvas';
+import { tv } from 'tailwind-variants';
+
+const button = tv({
+  base: 'cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
+  variants: {
+    isSelected: {
+      true: 'bg-indigo-100 text-indigo-600',
+    },
+  },
+});
 
 export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const {
@@ -33,11 +43,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   return (
     <div className="animate-fade animate-duration-300 animate-once absolute left-1/2 top-2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-md bg-white p-2 shadow-md">
       <button
-        className={`cursor-pointer rounded-md p-2 transition-colors ${
-          selectedTool === 'pen'
-            ? 'bg-indigo-100 text-indigo-600'
-            : 'hover:bg-gray-100'
-        }`}
+        className={button({ isSelected: selectedTool === 'pen' })}
         onClick={() => {
           setSelectedTool('pen');
         }}
@@ -46,11 +52,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         <Pencil className="h-5 w-5" />
       </button>
       <button
-        className={`cursor-pointer rounded-md p-2 transition-colors ${
-          selectedTool === 'arrow'
-            ? 'bg-indigo-100 text-indigo-600'
-            : 'hover:bg-gray-100'
-        }`}
+        className={button({ isSelected: selectedTool === 'arrow' })}
         onClick={() => {
           setSelectedTool('arrow');
         }}
@@ -61,11 +63,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         import.meta.env.VITE_GIF_ENABLED === 'true' && (
           <div className="group/menu relative">
             <button
-              className={`cursor-pointer rounded-md p-2 transition-colors ${
-                selectedTool === 'gif'
-                  ? 'bg-indigo-100 text-indigo-600'
-                  : 'hover:bg-gray-100'
-              }`}
+              className={button({ isSelected: selectedTool === 'gif' })}
               onClick={() => {
                 setSelectedTool('gif');
               }}
@@ -80,11 +78,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
       <div className="mx-2 h-6 w-px bg-gray-200" />
       <div className="group/menu relative">
         <button
-          className={`cursor-pointer rounded-md p-2 transition-colors ${
-            selectedTool === 'save'
-              ? 'bg-indigo-100 text-indigo-600'
-              : 'hover:bg-gray-100'
-          }`}
+          className={button({ isSelected: selectedTool === 'save' })}
           onClick={handleSaveImage}
         >
           <ImageDown className="h-5 w-5" />
@@ -95,10 +89,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
       </div>
       {import.meta.env.VITE_API_URL && (
         <div className="group/menu relative">
-          <button
-            className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
-            onClick={handleShareCanvas}
-          >
+          <button className={button()} onClick={handleShareCanvas}>
             <Share className="h-5 w-5" />
           </button>
           <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
@@ -107,10 +98,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         </div>
       )}
       <div className="group/menu relative">
-        <button
-          className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
-          onClick={handleClearCanvas}
-        >
+        <button className={button()} onClick={handleClearCanvas}>
           <Trash2 className="h-5 w-5" />
         </button>
         <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
