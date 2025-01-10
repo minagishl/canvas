@@ -14,7 +14,7 @@ import {
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
 import { tv } from 'tailwind-variants';
-import { copyObject, deleteObject } from '../utils/object';
+import { copyObject, deleteObject, lockObject } from '../utils/object';
 import { fontSize } from '../types/canvas';
 
 const popup = tv({
@@ -177,12 +177,7 @@ export function Tooltip({
 
   const handleChangeLocked = () => {
     if (!selectedObjectId) return;
-
-    setObjects((prevObjects) =>
-      prevObjects.map((obj) =>
-        obj.id === selectedObjectId ? { ...obj, locked: !obj.locked } : obj
-      )
-    );
+    lockObject(selectedObjectId, setObjects);
   };
 
   const handleLineWidthChange = () => {
