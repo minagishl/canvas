@@ -34,26 +34,26 @@ export const TextObject = React.memo(
       return obj.fontSize === undefined ? 24 : obj.fontSize;
     };
 
-    const getLineHeight = () => {
+    const getLineHeight = (scale: number): string => {
       switch (obj.fontSize) {
         case 12:
-          return 16;
+          return `${16 * scale}px`;
         case 14:
-          return 20;
+          return `${20 * scale}px`;
         case 16:
-          return 24;
+          return `${24 * scale}px`;
         case 18:
-          return 28;
+          return `${28 * scale}px`;
         case 20:
-          return 28;
+          return `${28 * scale}px`;
         case 24:
-          return 32;
+          return `${32 * scale}px`;
         case 30:
-          return 36;
+          return `${36 * scale}px`;
         case 36:
-          return 40;
+          return `${40 * scale}px`;
         default:
-          return 32; // Because the default font size is 24px
+          return '1';
       }
     };
 
@@ -104,7 +104,7 @@ export const TextObject = React.memo(
           pointerEvents: isDragging ? 'none' : isResizing ? 'none' : 'auto',
           cursor: selectedTool === 'select' ? 'move' : 'default',
           fontWeight: obj.weight,
-          lineHeight: `${getLineHeight() * scale}px`,
+          lineHeight: getLineHeight(scale),
           whiteSpace: 'pre-wrap',
           maxWidth: 'fit-content',
           fontStyle: obj.italic ? 'italic' : 'normal',

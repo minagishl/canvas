@@ -27,7 +27,9 @@ const popup = tv({
   },
 });
 
-const fontSizeArray: fontSize[] = [12, 14, 16, 18, 20, 24, 30, 36];
+const fontSizeArray: fontSize[] = [
+  12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128,
+];
 
 interface TooltipProps {
   position: { x: number; y: number } | null;

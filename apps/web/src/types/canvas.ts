@@ -8,7 +8,20 @@ export type LinePoint = {
   y: number;
 };
 
-export type fontSize = 12 | 14 | 16 | 18 | 20 | 24 | 30 | 36;
+export type fontSize =
+  | 12
+  | 14
+  | 16
+  | 18
+  | 20
+  | 24
+  | 30
+  | 36
+  | 48
+  | 60
+  | 72
+  | 96
+  | 128;
 
 export type fontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
