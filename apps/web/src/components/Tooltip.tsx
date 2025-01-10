@@ -333,7 +333,11 @@ export function Tooltip({
               <Bold className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
-              <Popover text="Change font weight" upper={isTextObject} />
+              <Popover
+                text="Change font weight"
+                upper={isTextObject}
+                command="B"
+              />
             </div>
           </div>
           <div className="group relative">
