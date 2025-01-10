@@ -41,15 +41,6 @@ export const deleteObject = (
   setSelectedObjectId(null);
 };
 
-export const handleDeleteParms = (params: URLSearchParams) => {
-  // Remove the id parameter from URL without page reload
-  params.delete('id');
-  const newUrl =
-    window.location.pathname +
-    (params.toString() ? '?' + params.toString() : '');
-  window.history.replaceState({}, '', newUrl);
-};
-
 export const lockObject = (
   selectedObjectId: string | null,
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
