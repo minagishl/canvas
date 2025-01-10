@@ -22,7 +22,7 @@ export const createPreviewObject = (
   }
 
   return {
-    id: Math.random().toString(36).substr(2, 9),
+    id: Math.random().toString(36).slice(2, 11),
     type: tool === 'text' ? 'text' : tool === 'circle' ? 'circle' : 'rectangle',
     position: {
       x: Math.min(startPoint.x, endPoint.x),
