@@ -9,7 +9,6 @@ import {
 
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
-import { handleRestoreObjects } from '../utils/restore';
 import { findClickedObject } from '../utils/selection';
 import {
   drawObject,
@@ -17,7 +16,12 @@ import {
   getCanvasPoint,
   exportCanvasAsImage,
 } from '../utils/canvas';
-import { copyObject, deleteObject, lockObject } from '../utils/object';
+import {
+  copyObject,
+  deleteObject,
+  lockObject,
+  restoreObject,
+} from '../utils/object';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
 
@@ -844,7 +848,7 @@ export const Canvas = () => {
       }
 
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
-        handleRestoreObjects(objects, setObjects, setSelectedObjectId);
+        restoreObject(objects, setObjects, setSelectedObjectId);
       }
 
       // Italicize text with Cmd/Ctrl + I
