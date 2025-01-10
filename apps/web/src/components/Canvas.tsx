@@ -835,6 +835,10 @@ export const Canvas = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditingId !== '') return;
 
+      if ((e.key === '=' || e.key === '-') && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+      }
+
       if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteObject(selectedObjectId, setObjects, setSelectedObjectId);
       }
