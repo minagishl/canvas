@@ -1,11 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import {
-  Point,
-  CanvasObject,
-  ResizeHandle,
-  LinePoint,
-  fontWeight,
-} from '../types/canvas';
+import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
@@ -25,6 +19,7 @@ import {
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
 import { randomGif, loadImage } from '../utils/image';
+import { textToggleBold, textToggleItalic } from '../utils/text';
 
 // Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
@@ -858,39 +853,12 @@ export const Canvas = () => {
 
       // Italicize text with Cmd/Ctrl + I
       if (e.key === 'i' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
-        const selectedObject = objects.find(
-          (obj) => obj.id === selectedObjectId
-        );
-        if (selectedObject && selectedObject.type === 'text') {
-          const newObjects = objects.map((obj) =>
-            obj.id === selectedObjectId
-              ? {
-                  ...obj,
-                  italic: !selectedObject.italic,
-                }
-              : obj
-          );
-          setObjects(newObjects);
-        }
+        textToggleItalic(objects, selectedObjectId, setObjects);
       }
 
       // Bold text with Cmd/Ctrl + B
       if (e.key === 'b' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
-        const selectedObject = objects.find(
-          (obj) => obj.id === selectedObjectId
-        );
-        if (selectedObject && selectedObject.type === 'text') {
-          const newObjects = objects.map((obj) =>
-            obj.id === selectedObjectId
-              ? {
-                  ...obj,
-                  weight:
-                    selectedObject.weight === 400 ? 600 : (400 as fontWeight),
-                }
-              : obj
-          );
-          setObjects(newObjects);
-        }
+        textToggleBold(objects, selectedObjectId, setObjects);
       }
 
       if (e.key === 'v' && (e.metaKey || e.ctrlKey)) {
