@@ -14,8 +14,7 @@ import {
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
 import { tv } from 'tailwind-variants';
-import { copyObject } from '../utils/copy';
-import { deleteObject } from '../utils/delete';
+import { copyObject, deleteObject } from '../utils/object';
 import { fontSize } from '../types/canvas';
 
 const popup = tv({

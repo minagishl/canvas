@@ -12,9 +12,8 @@ import { showTemporaryAlert } from '../utils/alert';
 import { handleRestoreObjects } from '../utils/restore';
 import { findClickedObject } from '../utils/selection';
 import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
-import { deleteObject, handleDeleteParms } from '../utils/delete';
+import { copyObject, deleteObject } from '../utils/object';
 import { createPreviewObject } from '../utils/preview';
-import { copyObject } from '../utils/copy';
 import { calculateTooltipPosition } from '../utils/tooltip';
 
 // Contexts
@@ -962,6 +961,15 @@ export const Canvas = () => {
       setTooltipPosition(null);
     }
   }, [selectedObjectId, objects, scale, offset]);
+
+  const handleDeleteParms = (params: URLSearchParams) => {
+    // Remove the id parameter from URL without page reload
+    params.delete('id');
+    const newUrl =
+      window.location.pathname +
+      (params.toString() ? '?' + params.toString() : '');
+    window.history.replaceState({}, '', newUrl);
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
