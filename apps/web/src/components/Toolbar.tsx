@@ -204,7 +204,7 @@ export function Toolbar(): React.ReactElement {
   return (
     <>
       <Loading hidden={!isLoading} />
-      <div className="fixed left-1/2 top-4 z-50 flex -translate-x-1/2 select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg">
+      <div className="fixed left-1/2 top-4 z-50 flex max-w-96 -translate-x-1/2 select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg">
         {tools
           .filter((Tool) => !isMobile || Tool.name === 'select')
           .map((Tool) => (
@@ -246,7 +246,9 @@ export function Toolbar(): React.ReactElement {
             </div>
           </div>
         )}
-        <div className="mx-2 h-6 w-px bg-gray-200" />
+        <div className="relative flex h-6 w-4 items-center justify-center">
+          <div className="h-6 w-px bg-gray-200" />
+        </div>
         <div className="group relative">
           <button
             onClick={handleZoomOut}
