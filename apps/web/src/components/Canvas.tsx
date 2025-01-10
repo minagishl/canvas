@@ -970,6 +970,12 @@ export const Canvas = () => {
         e.preventDefault();
         exportCanvasAsImage(objects, setSelectedObjectId, setAlert);
       }
+
+      // Duplicate object with Cmd/Ctrl + D
+      if (e.key === 'd' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        copyObject(objects, selectedObjectId, setObjects, setSelectedObjectId);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
