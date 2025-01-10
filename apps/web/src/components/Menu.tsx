@@ -7,10 +7,9 @@ import {
   Film,
 } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
-import html2canvas from 'html2canvas';
 import { Popover } from './Popover';
-import { showTemporaryAlert } from '../utils/alert';
 import { useAlertContext } from '../contexts/AlertContext';
+import { exportCanvasAsImage } from '../utils/canvas';
 
 export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const {
@@ -23,56 +22,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const { setAlert } = useAlertContext();
 
   const handleSaveImage = async () => {
-    // Deselect the object
-    setSelectedObjectId(null);
-
-    if (objects.length === 0) {
-      showTemporaryAlert('Canvas is empty!', setAlert);
-      return;
-    }
-
-    setTimeout(async () => {
-      try {
-        // Get the canvas container
-        const canvasContainer = document.querySelector(
-          '#root > div > div:first-child'
-        );
-
-        if (!canvasContainer) {
-          throw new Error('Canvas container not found');
-        }
-
-        // Create a screenshot with html2canvas
-        const canvas = await html2canvas(canvasContainer as HTMLElement, {
-          backgroundColor: '#f9fafb',
-          scale: window.devicePixelRatio,
-          useCORS: true,
-        });
-
-        // Convert to Blob
-        const blob = await new Promise<Blob>((resolve) => {
-          canvas.toBlob((blob) => {
-            resolve(blob as Blob);
-          }, 'image/png');
-        });
-
-        // Create a download link
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `canvas-${new Date().toISOString().slice(0, -5)}.png`;
-
-        // Download the image
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Revoke the URL
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error('Error saving image:', error);
-      }
-    }, 100);
+    exportCanvasAsImage(objects, setSelectedObjectId, setAlert);
   };
 
   const handleClearCanvas = () => {
