@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Circle,
+  CircleOff,
   TextCursorInput,
   Bold,
   LockKeyhole,
@@ -22,6 +23,7 @@ import {
 } from '../utils/object';
 import { fontSize } from '../types/canvas';
 import { textEdit, textToggleItalic } from '../utils/text';
+import { imageToggleCircle } from '../utils/image';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -197,6 +199,11 @@ export function Tooltip({
     deleteObject(selectedObjectId, setObjects, setSelectedObjectId);
   };
 
+  const handleToggleCircle = () => {
+    if (!selectedObjectId) return;
+    imageToggleCircle(objects, selectedObjectId, setObjects);
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -315,6 +322,23 @@ export function Tooltip({
             ))}
           </select>
         </>
+      )}
+      {isImageObject && (
+        <div className="group relative">
+          <button
+            className="rounded-md p-2 transition-colors hover:bg-gray-100"
+            onClick={handleToggleCircle}
+          >
+            {selectedObject?.circle ? (
+              <CircleOff className="h-5 w-5 scale-x-[-1]" />
+            ) : (
+              <Circle className="h-5 w-5" />
+            )}
+          </button>
+          <div className={popup({ isTextObject })}>
+            <Popover text="Toggle circle" upper={isTextObject} />
+          </div>
+        </div>
       )}
       <div className="group relative">
         <button

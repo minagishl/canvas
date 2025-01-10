@@ -83,6 +83,9 @@ export const ImageObject = React.memo(
           className="pointer-events-none h-full w-full object-contain"
           draggable={false}
           loading="lazy"
+          style={{
+            borderRadius: obj.circle === true ? '100%' : '0',
+          }}
         />
         {isSelected && (
           <>
@@ -133,7 +136,8 @@ export const ImageObject = React.memo(
       prevProps.isResizing === nextProps.isResizing &&
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.imageCache === nextProps.imageCache &&
-      prevProps.obj.rotation === nextProps.obj.rotation
+      prevProps.obj.rotation === nextProps.obj.rotation &&
+      prevProps.obj.circle === nextProps.obj.circle
     );
   }
 );

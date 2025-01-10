@@ -1,4 +1,4 @@
-import { Point } from '../types/canvas';
+import { Point, CanvasObject } from '../types/canvas';
 import { showTemporaryAlert } from './alert';
 
 export const randomGif = async (
@@ -35,4 +35,23 @@ export const loadImage = (url: string): Promise<HTMLImageElement> => {
     img.onerror = () => reject(new Error('Failed to load image'));
     img.src = url;
   });
+};
+
+export const imageToggleCircle = (
+  objects: CanvasObject[],
+  selectedObjectId: string | null,
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+): void => {
+  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+  if (selectedObject && selectedObject.type === 'image') {
+    const newObjects = objects.map((obj) =>
+      obj.id === selectedObjectId
+        ? {
+            ...obj,
+            circle: !selectedObject.circle,
+          }
+        : obj
+    );
+    setObjects(newObjects);
+  }
 };

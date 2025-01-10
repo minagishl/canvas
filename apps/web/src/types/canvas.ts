@@ -42,6 +42,7 @@ export type CanvasObject = {
   italic?: boolean;
   rotation?: number;
   originalUrl?: string;
+  circle?: boolean;
 };
 
 export type ToolType =
