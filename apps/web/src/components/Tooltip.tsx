@@ -241,7 +241,7 @@ export function Tooltip({
     requestAnimationFrame(animate);
   };
 
-  const handleCopyObject = () => {
+  const handleDuplicateObject = () => {
     copyObject(objects, selectedObjectId, setObjects, setSelectedObjectId);
   };
 
@@ -398,12 +398,12 @@ export function Tooltip({
       <div className="group relative">
         <button
           className="rounded-md p-2 transition-colors hover:bg-gray-100"
-          onClick={handleCopyObject}
+          onClick={handleDuplicateObject}
         >
           <Copy className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>
-          <Popover text="Copy object" upper={isTextObject} />
+          <Popover text="Duplicate object" upper={isTextObject} command="D" />
         </div>
       </div>
       <div className="group relative">
