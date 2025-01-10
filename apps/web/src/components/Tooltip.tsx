@@ -16,6 +16,7 @@ import { Popover } from './Popover';
 import { tv } from 'tailwind-variants';
 import { copyObject, deleteObject, lockObject } from '../utils/object';
 import { fontSize } from '../types/canvas';
+import { textEdit } from '../utils/text';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -117,30 +118,7 @@ export function Tooltip({
   };
 
   const handleTextEdit = () => {
-    if (!selectedObjectId) return;
-
-    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-    if (!selectedObject || selectedObject.type !== 'text') return;
-
-    // Find and focus text elements
-    const textElement = document.querySelector(
-      `[data-object-id="${selectedObjectId}"]`
-    ) as HTMLElement;
-
-    if (textElement) {
-      setIsEditingId(selectedObjectId);
-
-      textElement.contentEditable = 'true';
-      textElement.focus();
-
-      // Move cursor to last line
-      const range = document.createRange();
-      const selection = window.getSelection();
-      range.selectNodeContents(textElement);
-      range.collapse(false);
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-    }
+    textEdit(selectedObjectId, objects, setIsEditingId);
   };
 
   const handleMoveDown = () => {
