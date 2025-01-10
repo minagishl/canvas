@@ -23,7 +23,7 @@ export function Popover({
   return (
     <div className={popover({ upper })}>
       <div className="flex w-fit flex-col items-center justify-center whitespace-nowrap p-2 px-4 font-sans">
-        <p className="flex h-5 items-center justify-center text-center">
+        <div className="flex h-5 items-center justify-center text-center">
           {command && (
             <div className="flex flex-row items-center justify-center">
               <Command className="h-3.5 w-3.5" />
@@ -33,7 +33,7 @@ export function Popover({
             </div>
           )}
           {text}
-        </p>
+        </div>
       </div>
     </div>
   );
