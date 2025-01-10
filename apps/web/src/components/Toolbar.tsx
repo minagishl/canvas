@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 import {
   MousePointer2,
   Square,
@@ -116,7 +116,7 @@ export function Toolbar(): React.ReactElement {
     };
   }, []);
 
-  const handleShareCanvas = () => {
+  const handleShareCanvas = useCallback(() => {
     setIsLoading(true);
 
     // Check if canvas is empty
@@ -173,7 +173,22 @@ export function Toolbar(): React.ReactElement {
           setIsLoading(false);
         });
     }, 500);
-  };
+  }, [objects, setAlert, setIsLoading, setSelectedObjectId]);
+
+  // Share canvas with Cmd/Ctrl + E
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleShareCanvas();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleShareCanvas]);
 
   const handleOnKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape' && selectedTool !== 'select') {
