@@ -29,7 +29,7 @@ export function Popover({
               <Command className="h-3.5 w-3.5" />
               <span className="px-0.5 pb-0.5">&#043;</span>
               {command}
-              <div className="mx-2 h-3 w-px bg-gray-200" />
+              <div className="mx-2.5 h-3 w-px bg-gray-200" />
             </div>
           )}
           {text}
