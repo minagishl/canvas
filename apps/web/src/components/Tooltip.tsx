@@ -11,6 +11,8 @@ import {
   Italic,
   RefreshCw,
   Layers2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
@@ -23,7 +25,7 @@ import {
 } from '../utils/object';
 import { fontSize } from '../types/canvas';
 import { textEdit, textToggleItalic } from '../utils/text';
-import { imageToggleCircle } from '../utils/image';
+import { imageToggleCircle, imageToggleSpoiler } from '../utils/image';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -204,6 +206,11 @@ export function Tooltip({
     imageToggleCircle(objects, selectedObjectId, setObjects);
   };
 
+  const handleToggleSpoiler = () => {
+    if (!selectedObjectId) return;
+    imageToggleSpoiler(objects, selectedObjectId, setObjects);
+  };
+
   if (!position) return null;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -324,21 +331,38 @@ export function Tooltip({
         </>
       )}
       {isImageObject && (
-        <div className="group relative">
-          <button
-            className="rounded-md p-2 transition-colors hover:bg-gray-100"
-            onClick={handleToggleCircle}
-          >
-            {selectedObject?.circle ? (
-              <CircleOff className="h-5 w-5 scale-x-[-1]" />
-            ) : (
-              <Circle className="h-5 w-5" />
-            )}
-          </button>
-          <div className={popup({ isTextObject })}>
-            <Popover text="Toggle circle" upper={isTextObject} />
+        <>
+          <div className="group relative">
+            <button
+              className="rounded-md p-2 transition-colors hover:bg-gray-100"
+              onClick={handleToggleCircle}
+            >
+              {selectedObject?.circle ? (
+                <CircleOff className="h-5 w-5 scale-x-[-1]" />
+              ) : (
+                <Circle className="h-5 w-5" />
+              )}
+            </button>
+            <div className={popup({ isTextObject })}>
+              <Popover text="Toggle circle" upper={isTextObject} />
+            </div>
           </div>
-        </div>
+          <div className="group relative">
+            <button
+              className="rounded-md p-2 transition-colors hover:bg-gray-100"
+              onClick={handleToggleSpoiler}
+            >
+              {selectedObject?.spoiler ? (
+                <EyeOff className="h-5 w-5 scale-x-[-1]" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+            <div className={popup({ isTextObject })}>
+              <Popover text="Toggle spoiler" upper={isTextObject} />
+            </div>
+          </div>
+        </>
       )}
       <div className="group relative">
         <button

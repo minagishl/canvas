@@ -55,3 +55,22 @@ export const imageToggleCircle = (
     setObjects(newObjects);
   }
 };
+
+export const imageToggleSpoiler = (
+  objects: CanvasObject[],
+  selectedObjectId: string | null,
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+): void => {
+  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+  if (selectedObject && selectedObject.type === 'image') {
+    const newObjects = objects.map((obj) =>
+      obj.id === selectedObjectId
+        ? {
+            ...obj,
+            spoiler: !selectedObject.spoiler,
+          }
+        : obj
+    );
+    setObjects(newObjects);
+  }
+};

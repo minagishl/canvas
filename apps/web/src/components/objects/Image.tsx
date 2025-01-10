@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { CanvasObject } from '../../types/canvas';
 
 interface ImageObjectProps {
@@ -23,6 +23,7 @@ export const ImageObject = React.memo(
     imageCache,
     handleMouseDown,
   }: ImageObjectProps) => {
+    const [isSpoiler, setIsSpoiler] = useState(true);
     const elementRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef({ x: 0, y: 0 });
 
@@ -48,6 +49,8 @@ export const ImageObject = React.memo(
 
     const isSelected = selectedObjectId === obj.id;
     const isOriginal = obj.originalUrl !== undefined;
+
+    console.log('spoiler', obj.spoiler);
 
     if (isOriginal) {
       const url = new URL(obj.originalUrl ?? '');
@@ -87,6 +90,25 @@ export const ImageObject = React.memo(
             borderRadius: obj.circle === true ? '100%' : '0',
           }}
         />
+
+        {obj.spoiler && (
+          <div className="absolute left-0 top-0 flex size-full items-center justify-center">
+            {isSpoiler && (
+              <>
+                <div className="absolute inset-0 bg-indigo-600" />
+                <button
+                  className="z-40 flex w-fit cursor-pointer flex-col items-center justify-center whitespace-nowrap rounded-md bg-white p-2 px-4 font-sans"
+                  onClick={() => setIsSpoiler(false)}
+                >
+                  <div className="flex h-5 items-center justify-center text-center">
+                    Show image
+                  </div>
+                </button>
+              </>
+            )}
+          </div>
+        )}
+
         {isSelected && (
           <>
             <div className="pointer-events-none absolute -inset-2.5 border-2 border-indigo-600" />
@@ -137,7 +159,9 @@ export const ImageObject = React.memo(
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.imageCache === nextProps.imageCache &&
       prevProps.obj.rotation === nextProps.obj.rotation &&
-      prevProps.obj.circle === nextProps.obj.circle
+      prevProps.obj.circle === nextProps.obj.circle &&
+      prevProps.obj.originalUrl === nextProps.obj.originalUrl &&
+      prevProps.obj.spoiler === nextProps.obj.spoiler
     );
   }
 );

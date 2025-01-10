@@ -43,6 +43,7 @@ export type CanvasObject = {
   rotation?: number;
   originalUrl?: string;
   circle?: boolean;
+  spoiler?: boolean;
 };
 
 export type ToolType =
