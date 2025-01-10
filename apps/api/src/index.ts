@@ -140,6 +140,10 @@ app.post('/', async (c) => {
     ) {
       return c.json({ error: 'invalid originalUrl' }, 400);
     }
+
+    if (body.circle !== undefined && typeof body.circle !== 'boolean') {
+      return c.json({ error: 'invalid circle status' }, 400);
+    }
   }
 
   const id = uuidv7();
