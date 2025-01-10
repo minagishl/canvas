@@ -17,17 +17,26 @@ import { Menu } from './Menu';
 import { Loading } from './Loading';
 import { showTemporaryAlert } from '../utils/alert';
 import { useAlertContext } from '../contexts/AlertContext';
+import { tv } from 'tailwind-variants';
+
+const button = tv({
+  base: 'cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
+  variants: {
+    isSelected: {
+      true: 'bg-indigo-100 text-indigo-600',
+    },
+  },
+});
 
 const tools: {
   icon: typeof MousePointer2;
   name: ToolType;
-  disabled: boolean;
 }[] = [
-  { icon: MousePointer2, name: 'select', disabled: false },
-  { icon: Square, name: 'rectangle', disabled: false },
-  { icon: Circle, name: 'circle', disabled: false },
-  { icon: Type, name: 'text', disabled: false },
-  { icon: ImageIcon, name: 'image', disabled: false },
+  { icon: MousePointer2, name: 'select' },
+  { icon: Square, name: 'rectangle' },
+  { icon: Circle, name: 'circle' },
+  { icon: Type, name: 'text' },
+  { icon: ImageIcon, name: 'image' },
 ];
 
 export function Toolbar(): React.ReactElement {
@@ -211,33 +220,17 @@ export function Toolbar(): React.ReactElement {
             <div key={Tool.name} className="group relative">
               <button
                 id={`toolbar-${Tool.name}`}
-                className={`cursor-pointer rounded-md p-2 transition-colors ${
-                  selectedTool === Tool.name
-                    ? 'bg-indigo-100 text-indigo-600'
-                    : 'hover:bg-gray-100'
-                } ${Tool.disabled && 'opacity-50'}`}
-                onClick={() => {
-                  if (!Tool.disabled) {
-                    setSelectedTool(Tool.name);
-                  }
-                }}
+                className={button({ isSelected: selectedTool === Tool.name })}
+                onClick={() => setSelectedTool(Tool.name)}
                 onKeyDown={handleOnKeyDown}
               >
                 <Tool.icon className="h-5 w-5" />
               </button>
-              {Tool.disabled && (
-                <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
-                  <Popover text={`${Tool.name} is disabled`} upper={false} />
-                </div>
-              )}
             </div>
           ))}
         {!isMobile && (
           <div className="group relative">
-            <button
-              key="more"
-              className="cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100"
-            >
+            <button key="more" className={button()}>
               <MoreHorizontal className="h-5 w-5" />
             </button>
             <div className="absolute left-1/2 hidden h-8 w-16 -translate-x-1/2 group-hover:block" />
