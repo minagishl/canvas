@@ -24,6 +24,7 @@ import {
 } from '../utils/object';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
+import { randomGif, loadImage } from '../utils/image';
 
 // Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
@@ -1041,38 +1042,15 @@ export const Canvas = () => {
 
   const fetchRandomGif = async () => {
     try {
-      if (!imagePosition) {
-        throw new Error('Image position not set');
-      }
-
-      showTemporaryAlert('Fetching GIF...', setAlert);
-
-      const apiUrl = new URL(import.meta.env.VITE_API_URL);
-      const response = await fetch(`${apiUrl}gif`);
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      const gifUrl = data.results[0].media_formats.gif.url;
-
-      const loadImage = (url: string): Promise<HTMLImageElement> => {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.crossOrigin = 'anonymous';
-          img.onload = () => resolve(img);
-          img.onerror = () => reject(new Error('Failed to load image'));
-          img.src = url;
-        });
-      };
-
+      const gifUrl = await randomGif(imagePosition, setAlert);
       const img = await loadImage(gifUrl);
 
       const maxSize = 500;
       const ratio = Math.min(maxSize / img.width, maxSize / img.height);
       const width = img.width * ratio;
       const height = img.height * ratio;
+
+      if (!imagePosition) return;
 
       const gifObject: CanvasObject = {
         id: Math.random().toString(36).slice(2, 11),
