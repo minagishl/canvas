@@ -12,7 +12,7 @@ import { showTemporaryAlert } from '../utils/alert';
 import { handleRestoreObjects } from '../utils/restore';
 import { findClickedObject } from '../utils/selection';
 import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
-import { copyObject, deleteObject } from '../utils/object';
+import { copyObject, deleteObject, lockObject } from '../utils/object';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
 
@@ -825,6 +825,7 @@ export const Canvas = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditingId !== '') return;
+
       if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteObject(selectedObjectId, setObjects, setSelectedObjectId);
       }
@@ -924,6 +925,11 @@ export const Canvas = () => {
             }
           });
         }
+      }
+      // Lock object with Cmd/Ctrl + Shift + L
+      if (e.key === 'l' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+        e.preventDefault();
+        lockObject(selectedObjectId, setObjects);
       }
     };
 
