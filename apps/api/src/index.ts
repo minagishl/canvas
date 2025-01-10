@@ -144,6 +144,10 @@ app.post('/', async (c) => {
     if (body.circle !== undefined && typeof body.circle !== 'boolean') {
       return c.json({ error: 'invalid circle status' }, 400);
     }
+
+    if (body.spoiler !== undefined && typeof body.spoiler !== 'boolean') {
+      return c.json({ error: 'invalid spoiler status' }, 400);
+    }
   }
 
   const id = uuidv7();
