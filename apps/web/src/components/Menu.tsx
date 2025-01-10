@@ -140,7 +140,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
           <ImageDown className="h-5 w-5" />
         </button>
         <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-          <Popover text="Save image" upper={false} />
+          <Popover text="Export as image" upper={false} command="E" />
         </div>
       </div>
       {import.meta.env.VITE_API_URL && (
@@ -152,7 +152,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
             <Share className="h-5 w-5" />
           </button>
           <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-            <Popover text="Share canvas" upper={false} />
+            <Popover text="Share canvas" upper={false} command="S" />
           </div>
         </div>
       )}
