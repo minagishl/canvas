@@ -4,7 +4,7 @@ export const textEdit = (
   selectedObjectId: string | null,
   objects: CanvasObject[],
   setIsEditingId: (id: string) => void
-) => {
+): void => {
   if (!selectedObjectId) return;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);

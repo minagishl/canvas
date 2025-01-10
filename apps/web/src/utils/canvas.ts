@@ -7,7 +7,7 @@ export const drawObject = (
   object: CanvasObject,
   selectedObjectId: string | null,
   scale: number
-) => {
+): void => {
   // Save the current context state
   ctx.save();
 
@@ -161,7 +161,7 @@ export const drawGrid = (
   height: number,
   offset: { x: number; y: number },
   scale: number
-) => {
+): void => {
   const gridSize = 40;
 
   // Calculate grid boundaries with buffer
@@ -212,7 +212,7 @@ export const drawRotationHandle = (
   ctx: CanvasRenderingContext2D,
   object: CanvasObject,
   scale: number
-) => {
+): void => {
   const padding = 20 / scale;
   ctx.fillStyle = '#ffffff';
   ctx.strokeStyle = '#4f46e5';
@@ -241,7 +241,7 @@ export const exportCanvasAsImage = (
   objects: CanvasObject[],
   setSelectedObjectId: (id: string | null) => void,
   setAlert: React.Dispatch<React.SetStateAction<string>>
-) => {
+): void => {
   // Deselect the object
   setSelectedObjectId(null);
 

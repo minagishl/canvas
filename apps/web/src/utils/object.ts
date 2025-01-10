@@ -5,7 +5,7 @@ export const copyObject = (
   selectedObjectId: string | null,
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
   setSelectedObjectId: (value: React.SetStateAction<string | null>) => void
-) => {
+): void => {
   if (!selectedObjectId) return;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
@@ -32,7 +32,7 @@ export const deleteObject = (
   selectedObjectId: string | null,
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
   setSelectedObjectId: React.Dispatch<React.SetStateAction<string | null>>
-) => {
+): void => {
   if (!selectedObjectId) return;
 
   setObjects((prevObjects) =>
@@ -44,7 +44,7 @@ export const deleteObject = (
 export const lockObject = (
   selectedObjectId: string | null,
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
-) => {
+): void => {
   if (!selectedObjectId) return;
 
   setObjects((prevObjects) =>
@@ -58,7 +58,7 @@ export const restoreObject = (
   objects: CanvasObject[],
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
   setSelectedObjectId: React.Dispatch<React.SetStateAction<string | null>>
-) => {
+): void => {
   const latestObject = objects[objects.length - 1];
   if (!latestObject) return;
 
@@ -75,7 +75,7 @@ export const rotateObject = (
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
   isRotating: boolean,
   setIsRotating: React.Dispatch<React.SetStateAction<boolean>>
-) => {
+): void => {
   if (!selectedObjectId || isRotating) return;
 
   setIsRotating(true);
