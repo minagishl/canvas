@@ -11,7 +11,12 @@ import {
 import { showTemporaryAlert } from '../utils/alert';
 import { handleRestoreObjects } from '../utils/restore';
 import { findClickedObject } from '../utils/selection';
-import { drawObject, drawGrid, getCanvasPoint } from '../utils/canvas';
+import {
+  drawObject,
+  drawGrid,
+  getCanvasPoint,
+  exportCanvasAsImage,
+} from '../utils/canvas';
 import { copyObject, deleteObject, lockObject } from '../utils/object';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
@@ -931,6 +936,12 @@ export const Canvas = () => {
         e.preventDefault();
         lockObject(selectedObjectId, setObjects);
       }
+
+      // Export canvas as image with Cmd/Ctrl + E
+      if (e.key === 'e' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        exportCanvasAsImage(objects, setSelectedObjectId, setAlert);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -949,6 +960,7 @@ export const Canvas = () => {
     height,
     offset,
     scale,
+    setAlert,
   ]);
 
   useEffect(() => {
