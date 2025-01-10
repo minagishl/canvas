@@ -348,7 +348,11 @@ export function Tooltip({
               <Italic className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
-              <Popover text="Change font style" upper={isTextObject} />
+              <Popover
+                text="Change font style"
+                upper={isTextObject}
+                command="I"
+              />
             </div>
           </div>
           <button
