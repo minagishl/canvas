@@ -68,3 +68,46 @@ export const restoreObject = (
 
   setSelectedObjectId(null);
 };
+
+export const rotateObject = (
+  selectedObjectId: string | null,
+  objects: CanvasObject[],
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
+  isRotating: boolean,
+  setIsRotating: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  if (!selectedObjectId || isRotating) return;
+
+  setIsRotating(true);
+
+  const startTime = performance.now();
+  const startRotation =
+    objects.find((obj) => obj.id === selectedObjectId)?.rotation || 0;
+  const duration = 300;
+
+  const animate = (currentTime: number) => {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+
+    setObjects((prevObjects) =>
+      prevObjects.map((obj) =>
+        obj.id === selectedObjectId
+          ? {
+              ...obj,
+              rotation: startRotation + ((progress * 30) % 360),
+            }
+          : obj
+      )
+    );
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+
+    if (progress >= 1) {
+      setIsRotating(false);
+    }
+  };
+
+  requestAnimationFrame(animate);
+};

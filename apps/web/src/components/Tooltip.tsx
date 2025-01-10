@@ -14,7 +14,12 @@ import {
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { Popover } from './Popover';
 import { tv } from 'tailwind-variants';
-import { copyObject, deleteObject, lockObject } from '../utils/object';
+import {
+  copyObject,
+  deleteObject,
+  lockObject,
+  rotateObject,
+} from '../utils/object';
 import { fontSize } from '../types/canvas';
 import { textEdit } from '../utils/text';
 
@@ -185,40 +190,13 @@ export function Tooltip({
   };
 
   const handleRotate = () => {
-    if (!selectedObjectId || isRotating) return;
-
-    setIsRotating(true);
-
-    const startTime = performance.now();
-    const startRotation =
-      objects.find((obj) => obj.id === selectedObjectId)?.rotation || 0;
-    const duration = 300;
-
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      setObjects((prevObjects) =>
-        prevObjects.map((obj) =>
-          obj.id === selectedObjectId
-            ? {
-                ...obj,
-                rotation: startRotation + ((progress * 30) % 360),
-              }
-            : obj
-        )
-      );
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-
-      if (progress >= 1) {
-        setIsRotating(false);
-      }
-    };
-
-    requestAnimationFrame(animate);
+    rotateObject(
+      selectedObjectId,
+      objects,
+      setObjects,
+      isRotating,
+      setIsRotating
+    );
   };
 
   const handleDuplicateObject = () => {
