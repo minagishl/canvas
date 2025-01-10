@@ -831,6 +831,34 @@ export const Canvas = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditingId !== '') return;
 
+      if (e.key === 'v') {
+        setSelectedTool('select');
+      }
+
+      if (e.key === 'r') {
+        setSelectedTool('rectangle');
+      }
+
+      if (e.key === 'c') {
+        setSelectedTool('circle');
+      }
+
+      if (e.key === 't') {
+        setSelectedTool('text');
+      }
+
+      if (e.key === 'i') {
+        setSelectedTool('image');
+      }
+
+      if (e.key === 'l') {
+        setSelectedTool('pen');
+      }
+
+      if (e.key === 'a') {
+        setSelectedTool('arrow');
+      }
+
       if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteObject(selectedObjectId, setObjects, setSelectedObjectId);
       }
@@ -961,6 +989,7 @@ export const Canvas = () => {
     offset,
     scale,
     setAlert,
+    setSelectedTool,
   ]);
 
   useEffect(() => {
