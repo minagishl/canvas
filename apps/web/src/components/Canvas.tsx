@@ -116,149 +116,196 @@ export const Canvas = () => {
     height,
   ]);
 
-  const handleMouseDown = (
-    e: React.MouseEvent,
-    resizeHandle?: ResizeHandle
-  ) => {
-    // Prevent the context menu from appearing
-    if (e.button === 2) {
-      e.preventDefault();
+  const fetchRandomGif = useCallback(async () => {
+    try {
+      const gifUrl = await randomGif(imagePosition, setAlert);
+      const img = await loadImage(gifUrl);
+
+      const maxSize = 500;
+      const ratio = Math.min(maxSize / img.width, maxSize / img.height);
+      const width = img.width * ratio;
+      const height = img.height * ratio;
+
+      if (!imagePosition) return;
+
+      const gifObject: CanvasObject = {
+        id: Math.random().toString(36).slice(2, 11),
+        type: 'image',
+        position: imagePosition,
+        width,
+        height,
+        fill: 'transparent',
+        originalUrl: gifUrl,
+      };
+
+      addObject(gifObject);
+      setImagePosition(null);
+      setSelectedTool('select');
+      showTemporaryAlert('GIF added successfully', setAlert);
+    } catch (error) {
+      console.error('Error fetching GIF:', error);
+      showTemporaryAlert(
+        error instanceof Error ? error.message : 'Failed to fetch GIF',
+        setAlert
+      );
+      setSelectedTool('select');
     }
+  }, [imagePosition, setAlert, addObject, setSelectedTool]);
 
-    const point = getCanvasPoint(e, canvasRef, offset, scale);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent, resizeHandle?: ResizeHandle) => {
+      // Prevent the context menu from appearing
+      if (e.button === 2) {
+        e.preventDefault();
+      }
 
-    if (resizeHandle && selectedObjectId) {
-      // If the resize handle is clicked
-      setResizing(resizeHandle);
-      setStartPoint(point);
-      return;
-    }
-
-    if (selectedTool === 'gif') {
-      e.preventDefault();
-      e.stopPropagation();
       const point = getCanvasPoint(e, canvasRef, offset, scale);
-      setImagePosition(point);
-      fetchRandomGif();
-      return;
-    }
 
-    if (selectedTool === 'arrow') {
-      setCurrentLine([point]);
-      setIsDragging(true);
-      return;
-    }
+      if (resizeHandle && selectedObjectId) {
+        // If the resize handle is clicked
+        setResizing(resizeHandle);
+        setStartPoint(point);
+        return;
+      }
 
-    if (selectedTool === 'pen') {
-      const point = getCanvasPoint(e, canvasRef, offset, scale);
-      setCurrentLine([point]);
-      setIsDragging(true);
-      return;
-    }
+      if (selectedTool === 'gif') {
+        e.preventDefault();
+        e.stopPropagation();
+        const point = getCanvasPoint(e, canvasRef, offset, scale);
+        setImagePosition(point);
+        fetchRandomGif();
+        return;
+      }
 
-    if (selectedTool === 'select' && selectedObjectId) {
-      // Resize handle detection
-      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-      if (
-        selectedObject &&
-        selectedObject.type !== 'line' &&
-        selectedObject.type !== 'arrow'
-      ) {
-        const handleSize = 8 / scale;
-        const padding = 8 / scale;
+      if (selectedTool === 'arrow') {
+        setCurrentLine([point]);
+        setIsDragging(true);
+        return;
+      }
 
-        const handles = {
-          'top-left': {
-            x: selectedObject.position.x - padding,
-            y: selectedObject.position.y - padding,
-          },
-          'top-right': {
-            x: selectedObject.position.x + selectedObject.width + padding,
-            y: selectedObject.position.y - padding,
-          },
-          'bottom-left': {
-            x: selectedObject.position.x - padding,
-            y: selectedObject.position.y + selectedObject.height + padding,
-          },
-          'bottom-right': {
-            x: selectedObject.position.x + selectedObject.width + padding,
-            y: selectedObject.position.y + selectedObject.height + padding,
-          },
-        };
+      if (selectedTool === 'pen') {
+        const point = getCanvasPoint(e, canvasRef, offset, scale);
+        setCurrentLine([point]);
+        setIsDragging(true);
+        return;
+      }
 
-        // Check the distance to each handle
-        for (const [handle, pos] of Object.entries(handles) as [
-          ResizeHandle,
-          Point,
-        ][]) {
-          const distance = Math.hypot(point.x - pos.x, point.y - pos.y);
-          if (distance <= handleSize) {
-            setResizing(handle);
+      if (selectedTool === 'select' && selectedObjectId) {
+        // Resize handle detection
+        const selectedObject = objects.find(
+          (obj) => obj.id === selectedObjectId
+        );
+        if (
+          selectedObject &&
+          selectedObject.type !== 'line' &&
+          selectedObject.type !== 'arrow'
+        ) {
+          const handleSize = 8 / scale;
+          const padding = 8 / scale;
+
+          const handles = {
+            'top-left': {
+              x: selectedObject.position.x - padding,
+              y: selectedObject.position.y - padding,
+            },
+            'top-right': {
+              x: selectedObject.position.x + selectedObject.width + padding,
+              y: selectedObject.position.y - padding,
+            },
+            'bottom-left': {
+              x: selectedObject.position.x - padding,
+              y: selectedObject.position.y + selectedObject.height + padding,
+            },
+            'bottom-right': {
+              x: selectedObject.position.x + selectedObject.width + padding,
+              y: selectedObject.position.y + selectedObject.height + padding,
+            },
+          };
+
+          // Check the distance to each handle
+          for (const [handle, pos] of Object.entries(handles) as [
+            ResizeHandle,
+            Point,
+          ][]) {
+            const distance = Math.hypot(point.x - pos.x, point.y - pos.y);
+            if (distance <= handleSize) {
+              setResizing(handle);
+              setStartPoint(point);
+              return;
+            }
+          }
+        }
+      }
+
+      if (selectedTool === 'select') {
+        setIsEditingId('');
+        // Clicking on a text or image object
+        const clickedHTMLObject = e.target as HTMLElement;
+        const isHTMLObject =
+          clickedHTMLObject.tagName === 'DIV' ||
+          clickedHTMLObject.tagName === 'IMG';
+
+        if (isHTMLObject) {
+          // When an HTML element (text or image) is clicked
+          const objectId = clickedHTMLObject
+            .closest('[data-object-id]')
+            ?.getAttribute('data-object-id');
+          if (objectId) {
+            e.preventDefault(); // Prevent text selection
+            e.stopPropagation(); // Prevent event propagation to canvas
+            setSelectedObjectId(objectId);
+            setIsDragging(true);
             setStartPoint(point);
+
+            const clickedObject = objects.find((obj) => obj.id === objectId);
+            if (clickedObject) {
+              setDragOffset({
+                x: point.x - clickedObject.position.x,
+                y: point.y - clickedObject.position.y,
+              });
+            }
             return;
           }
         }
-      }
-    }
 
-    if (selectedTool === 'select') {
-      setIsEditingId('');
-      // Clicking on a text or image object
-      const clickedHTMLObject = e.target as HTMLElement;
-      const isHTMLObject =
-        clickedHTMLObject.tagName === 'DIV' ||
-        clickedHTMLObject.tagName === 'IMG';
+        // When an object on the canvas is clicked
+        const clickedCanvasObject = findClickedObject(point, objects);
 
-      if (isHTMLObject) {
-        // When an HTML element (text or image) is clicked
-        const objectId = clickedHTMLObject
-          .closest('[data-object-id]')
-          ?.getAttribute('data-object-id');
-        if (objectId) {
-          e.preventDefault(); // Prevent text selection
-          e.stopPropagation(); // Prevent event propagation to canvas
-          setSelectedObjectId(objectId);
+        if (clickedCanvasObject) {
+          setSelectedObjectId(clickedCanvasObject.id);
           setIsDragging(true);
           setStartPoint(point);
+          setDragOffset({
+            x: point.x - clickedCanvasObject.position.x,
+            y: point.y - clickedCanvasObject.position.y,
+          });
+        } else {
+          setSelectedObjectId(null);
 
-          const clickedObject = objects.find((obj) => obj.id === objectId);
-          if (clickedObject) {
-            setDragOffset({
-              x: point.x - clickedObject.position.x,
-              y: point.y - clickedObject.position.y,
-            });
+          // Left click does nothing (current status)
+          if (!isDragging && e.buttons === 1) {
+            return;
           }
-          return;
+
+          setIsPanning(true);
+          setPanStart({ x: e.clientX, y: e.clientY });
         }
-      }
-
-      // When an object on the canvas is clicked
-      const clickedCanvasObject = findClickedObject(point, objects);
-
-      if (clickedCanvasObject) {
-        setSelectedObjectId(clickedCanvasObject.id);
-        setIsDragging(true);
-        setStartPoint(point);
-        setDragOffset({
-          x: point.x - clickedCanvasObject.position.x,
-          y: point.y - clickedCanvasObject.position.y,
-        });
       } else {
-        setSelectedObjectId(null);
-
-        // Left click does nothing (current status)
-        if (!isDragging && e.buttons === 1) {
-          return;
-        }
-
-        setIsPanning(true);
-        setPanStart({ x: e.clientX, y: e.clientY });
+        setStartPoint(point);
+        setIsDragging(true);
       }
-    } else {
-      setStartPoint(point);
-      setIsDragging(true);
-    }
-  };
+    },
+    [
+      offset,
+      scale,
+      selectedObjectId,
+      selectedTool,
+      fetchRandomGif,
+      objects,
+      setSelectedObjectId,
+      isDragging,
+    ]
+  );
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isPanning && panStart && (e.buttons === 2 || e.buttons === 4)) {
@@ -1005,42 +1052,6 @@ export const Canvas = () => {
         offset,
       });
       setTooltipPosition(position);
-    }
-  };
-
-  const fetchRandomGif = async () => {
-    try {
-      const gifUrl = await randomGif(imagePosition, setAlert);
-      const img = await loadImage(gifUrl);
-
-      const maxSize = 500;
-      const ratio = Math.min(maxSize / img.width, maxSize / img.height);
-      const width = img.width * ratio;
-      const height = img.height * ratio;
-
-      if (!imagePosition) return;
-
-      const gifObject: CanvasObject = {
-        id: Math.random().toString(36).slice(2, 11),
-        type: 'image',
-        position: imagePosition,
-        width,
-        height,
-        fill: 'transparent',
-        originalUrl: gifUrl,
-      };
-
-      addObject(gifObject);
-      setImagePosition(null);
-      setSelectedTool('select');
-      showTemporaryAlert('GIF added successfully', setAlert);
-    } catch (error) {
-      console.error('Error fetching GIF:', error);
-      showTemporaryAlert(
-        error instanceof Error ? error.message : 'Failed to fetch GIF',
-        setAlert
-      );
-      setSelectedTool('select');
     }
   };
 
