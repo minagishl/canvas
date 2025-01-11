@@ -1,6 +1,7 @@
 import { CanvasObject, Point } from '../types/canvas';
 import html2canvas from 'html2canvas';
 import { showTemporaryAlert } from './alert';
+import { GRID_SIZE } from './constants';
 
 export const drawObject = (
   ctx: CanvasRenderingContext2D,
@@ -162,21 +163,19 @@ export const drawGrid = (
   offset: { x: number; y: number },
   scale: number
 ): void => {
-  const gridSize = 40;
-
   // Calculate grid boundaries with buffer
-  const startX = Math.floor(-offset.x / scale / gridSize) * gridSize;
-  const startY = Math.floor(-offset.y / scale / gridSize) * gridSize;
+  const startX = Math.floor(-offset.x / scale / GRID_SIZE) * GRID_SIZE;
+  const startY = Math.floor(-offset.y / scale / GRID_SIZE) * GRID_SIZE;
   const endX =
-    Math.ceil((width / scale - offset.x / scale) / gridSize) * gridSize;
+    Math.ceil((width / scale - offset.x / scale) / GRID_SIZE) * GRID_SIZE;
   const endY =
-    Math.ceil((height / scale - offset.y / scale) / gridSize) * gridSize;
+    Math.ceil((height / scale - offset.y / scale) / GRID_SIZE) * GRID_SIZE;
 
   ctx.strokeStyle = '#e5e7eb';
   ctx.lineWidth = 0.5;
 
   // Draw vertical lines
-  for (let x = startX; x <= endX; x += gridSize) {
+  for (let x = startX; x <= endX; x += GRID_SIZE) {
     ctx.beginPath();
     ctx.moveTo(x, startY);
     ctx.lineTo(x, endY);
@@ -184,7 +183,7 @@ export const drawGrid = (
   }
 
   // Draw horizontal lines
-  for (let y = startY; y <= endY; y += gridSize) {
+  for (let y = startY; y <= endY; y += GRID_SIZE) {
     ctx.beginPath();
     ctx.moveTo(startX, y);
     ctx.lineTo(endX, y);
