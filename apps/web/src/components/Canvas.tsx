@@ -471,10 +471,6 @@ export const Canvas = () => {
       ) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
 
-        const snappedPoint = snapToGridEnabled
-          ? snapToGrid(currentPoint)
-          : currentPoint;
-
         // Special processing for line and arrow objects
         if (
           (selectedObject?.type === 'line' ||
@@ -514,16 +510,36 @@ export const Canvas = () => {
           // Update the reference point for the next movement
           setStartPoint(currentPoint);
         } else {
-          const newX = snappedPoint.x - dragOffset.x;
-          const newY = snappedPoint.y - dragOffset.y;
+          if (snapToGridEnabled) {
+            // Calculate the new position of the object
+            const newPosition = {
+              x: currentPoint.x - dragOffset.x,
+              y: currentPoint.y - dragOffset.y,
+            };
 
-          const updatedObjects = objects.map((obj) =>
-            obj.id === selectedObjectId
-              ? { ...obj, position: { x: newX, y: newY } }
-              : obj
-          );
+            // nap the position to the grid
+            const snappedPosition = snapToGrid(newPosition);
 
-          setObjects(updatedObjects);
+            const updatedObjects = objects.map((obj) =>
+              obj.id === selectedObjectId
+                ? { ...obj, position: snappedPosition }
+                : obj
+            );
+
+            setObjects(updatedObjects);
+          } else {
+            // If grid snap is disabled, process as usual
+            const newX = currentPoint.x - dragOffset.x;
+            const newY = currentPoint.y - dragOffset.y;
+
+            const updatedObjects = objects.map((obj) =>
+              obj.id === selectedObjectId
+                ? { ...obj, position: { x: newX, y: newY } }
+                : obj
+            );
+
+            setObjects(updatedObjects);
+          }
         }
       } else if (startPoint && selectedTool !== 'image') {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
