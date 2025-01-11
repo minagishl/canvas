@@ -20,6 +20,7 @@ import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
 import { randomGif, loadImage } from '../utils/image';
 import { textToggleBold, textToggleItalic } from '../utils/text';
+import { snapToGrid } from '../utils/grid';
 
 // Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
@@ -68,6 +69,7 @@ export const Canvas = () => {
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [lastTouchDistance, setLastTouchDistance] = useState<number>(0);
   const [copyObjectId, setCopyObjectId] = useState<string | null>(null);
+  const [snapToGridEnabled, setSnapToGridEnabled] = useState<boolean>(true);
   const [tooltipPosition, setTooltipPosition] = useState<{
     x: number;
     y: number;
@@ -469,6 +471,10 @@ export const Canvas = () => {
       ) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
 
+        const snappedPoint = snapToGridEnabled
+          ? snapToGrid(currentPoint)
+          : currentPoint;
+
         // Special processing for line and arrow objects
         if (
           (selectedObject?.type === 'line' ||
@@ -508,23 +514,28 @@ export const Canvas = () => {
           // Update the reference point for the next movement
           setStartPoint(currentPoint);
         } else {
-          // Normal object movement process (existing code)
-          const newX = currentPoint.x - dragOffset.x;
-          const newY = currentPoint.y - dragOffset.y;
+          const newX = snappedPoint.x - dragOffset.x;
+          const newY = snappedPoint.y - dragOffset.y;
 
           const updatedObjects = objects.map((obj) =>
             obj.id === selectedObjectId
               ? { ...obj, position: { x: newX, y: newY } }
               : obj
           );
+
           setObjects(updatedObjects);
         }
       } else if (startPoint && selectedTool !== 'image') {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
+
+        const snappedPoint = snapToGridEnabled
+          ? snapToGrid(currentPoint)
+          : currentPoint;
+
         const preview = createPreviewObject(
           selectedTool,
-          startPoint,
-          currentPoint,
+          snapToGridEnabled ? snapToGrid(startPoint) : startPoint,
+          snappedPoint,
           e.shiftKey
         );
         setPreviewObject(preview);
@@ -601,8 +612,6 @@ export const Canvas = () => {
       return;
     }
 
-    const isShiftPressed = e.shiftKey; // Get Shift key status
-
     if (selectedTool !== 'select' && !isPanning) {
       if (!startPoint) {
         setIsDragging(false);
@@ -622,12 +631,20 @@ export const Canvas = () => {
       }
 
       const endPoint = getCanvasPoint(e, canvasRef, offset, scale);
+      const snappedStartPoint = snapToGridEnabled
+        ? snapToGrid(startPoint)
+        : startPoint;
+      const snappedEndPoint = snapToGridEnabled
+        ? snapToGrid(endPoint)
+        : endPoint;
+
       const newObject = createPreviewObject(
         selectedTool,
-        startPoint,
-        endPoint,
-        isShiftPressed
+        snappedStartPoint,
+        snappedEndPoint,
+        e.shiftKey
       );
+
       addObject(newObject);
       setSelectedTool('select');
       setIsDragging(false);
@@ -985,6 +1002,16 @@ export const Canvas = () => {
         e.preventDefault();
         copyObject(objects, selectedObjectId, setObjects, setSelectedObjectId);
       }
+
+      // Grid snap toggle with Cmd/Ctrl + G
+      if (e.key === 'g' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setSnapToGridEnabled((prev) => !prev);
+        showTemporaryAlert(
+          `Grid snap ${snapToGridEnabled ? 'disabled' : 'enabled'}`,
+          setAlert
+        );
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -1005,6 +1032,7 @@ export const Canvas = () => {
     scale,
     setAlert,
     setSelectedTool,
+    snapToGridEnabled,
   ]);
 
   useEffect(() => {
