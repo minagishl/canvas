@@ -50,8 +50,6 @@ export const ImageObject = React.memo(
     const isSelected = selectedObjectId === obj.id;
     const isOriginal = obj.originalUrl !== undefined;
 
-    console.log('spoiler', obj.spoiler);
-
     if (isOriginal) {
       const url = new URL(obj.originalUrl ?? '');
       // Only allow images from tenor
