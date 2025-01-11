@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
+import { GRID_SIZE } from '../utils/constants';
 
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
@@ -322,6 +323,11 @@ export const Canvas = () => {
     ]
   );
 
+  const snapToGridSize = (size: number): number => {
+    const gridSize = GRID_SIZE / 4;
+    return Math.round(size / gridSize) * gridSize;
+  };
+
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isPanning && panStart && (e.buttons === 2 || e.buttons === 4)) {
       const deltaX = e.clientX - panStart.x;
@@ -440,6 +446,17 @@ export const Canvas = () => {
         // Minimum Size Limit
         const minSize = 20;
         if (newWidth >= minSize && newHeight >= minSize) {
+          // If grid snap is enabled, snap the position and size
+          if (
+            import.meta.env.VITE_RESIZE_SNAP_ENABLED === 'true' &&
+            snapToGridEnabled
+          ) {
+            newPosition.x = snapToGrid(newPosition).x;
+            newPosition.y = snapToGrid(newPosition).y;
+            newWidth = snapToGridSize(newWidth);
+            newHeight = snapToGridSize(newHeight);
+          }
+
           const updatedObjects = objects.map((obj) =>
             obj.id === selectedObjectId
               ? {
