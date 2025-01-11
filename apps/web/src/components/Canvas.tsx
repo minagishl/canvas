@@ -69,7 +69,7 @@ export const Canvas = () => {
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [lastTouchDistance, setLastTouchDistance] = useState<number>(0);
   const [copyObjectId, setCopyObjectId] = useState<string | null>(null);
-  const [snapToGridEnabled, setSnapToGridEnabled] = useState<boolean>(true);
+  const [snapToGridEnabled, setSnapToGridEnabled] = useState<boolean>(false);
   const [tooltipPosition, setTooltipPosition] = useState<{
     x: number;
     y: number;
