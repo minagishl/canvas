@@ -339,253 +339,281 @@ export const Canvas = () => {
     return Math.round(size / gridSize) * gridSize;
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isPanning && panStart && (e.buttons === 2 || e.buttons === 4)) {
-      const deltaX = e.clientX - panStart.x;
-      const deltaY = e.clientY - panStart.y;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (isPanning && panStart && (e.buttons === 2 || e.buttons === 4)) {
+        const deltaX = e.clientX - panStart.x;
+        const deltaY = e.clientY - panStart.y;
 
-      setOffset({
-        x: offset.x + deltaX,
-        y: offset.y + deltaY,
-      });
+        setOffset({
+          x: offset.x + deltaX,
+          y: offset.y + deltaY,
+        });
 
-      setPanStart({ x: e.clientX, y: e.clientY });
-      return;
-    }
-
-    const isPen = selectedTool === 'pen';
-    if (isDragging && (isPen || selectedTool === 'arrow')) {
-      const point = getCanvasPoint(e, canvasRef, offset, scale);
-
-      // Add points to the line object
-      if (isPen) {
-        setCurrentLine((prev) => [...prev, point]);
+        setPanStart({ x: e.clientX, y: e.clientY });
+        return;
       }
 
-      setPreviewObject({
-        id: 'preview',
-        type: isPen ? 'line' : 'arrow',
-        position: { x: 0, y: 0 },
-        width: 0,
-        height: 0,
-        fill: '#4f46e5',
-        points: [...currentLine, point],
-      });
-      return;
-    }
+      const isPen = selectedTool === 'pen';
+      if (isDragging && (isPen || selectedTool === 'arrow')) {
+        const point = getCanvasPoint(e, canvasRef, offset, scale);
 
-    if (resizing && selectedObjectId && startPoint) {
-      const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
-      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-
-      // Prevent resizing of locked objects
-      if (selectedObject?.locked) return;
-
-      if (selectedObject) {
-        const dx = currentPoint.x - startPoint.x;
-        const dy = currentPoint.y - startPoint.y;
-
-        const newPosition = { ...selectedObject.position };
-        let newWidth = selectedObject.width;
-        let newHeight = selectedObject.height;
-
-        // Maintain aspect ratio when Shift key is pressed
-        if (e.shiftKey || selectedObject.type === 'image') {
-          const aspectRatio = selectedObject.width / selectedObject.height;
-
-          // Processing changes according to the position of the resizing handle
-          switch (resizing) {
-            case 'bottom-right': {
-              const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-              newWidth = selectedObject.width + maxDelta * Math.sign(dx);
-              newHeight = newWidth / aspectRatio;
-              break;
-            }
-            case 'bottom-left': {
-              const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-              newWidth = selectedObject.width - maxDelta * Math.sign(dx);
-              newHeight = newWidth / aspectRatio;
-              newPosition.x =
-                selectedObject.position.x + (selectedObject.width - newWidth);
-              break;
-            }
-            case 'top-right': {
-              const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-              newWidth = selectedObject.width + maxDelta * Math.sign(dx);
-              newHeight = newWidth / aspectRatio;
-              newPosition.y =
-                selectedObject.position.y + (selectedObject.height - newHeight);
-              break;
-            }
-            case 'top-left': {
-              const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-              newWidth = selectedObject.width - maxDelta * Math.sign(dx);
-              newHeight = newWidth / aspectRatio;
-              newPosition.x =
-                selectedObject.position.x + (selectedObject.width - newWidth);
-              newPosition.y =
-                selectedObject.position.y + (selectedObject.height - newHeight);
-              break;
-            }
-          }
-        } else {
-          // Normal resizing process
-          switch (resizing) {
-            case 'top-left':
-              newPosition.x = selectedObject.position.x + dx;
-              newPosition.y = selectedObject.position.y + dy;
-              newWidth = selectedObject.width - dx;
-              newHeight = selectedObject.height - dy;
-              break;
-            case 'top-right':
-              newPosition.y = selectedObject.position.y + dy;
-              newWidth = selectedObject.width + dx;
-              newHeight = selectedObject.height - dy;
-              break;
-            case 'bottom-left':
-              newPosition.x = selectedObject.position.x + dx;
-              newWidth = selectedObject.width - dx;
-              newHeight = selectedObject.height + dy;
-              break;
-            case 'bottom-right':
-              newWidth = selectedObject.width + dx;
-              newHeight = selectedObject.height + dy;
-              break;
-          }
+        // Add points to the line object
+        if (isPen) {
+          setCurrentLine((prev) => [...prev, point]);
         }
 
-        // Minimum Size Limit
-        const minSize = 20;
-        if (newWidth >= minSize && newHeight >= minSize) {
-          // If grid snap is enabled, snap the position and size
-          if (
-            import.meta.env.VITE_RESIZE_SNAP_ENABLED === 'true' &&
-            snapToGridEnabled
-          ) {
-            newPosition.x = snapToGrid(newPosition).x;
-            newPosition.y = snapToGrid(newPosition).y;
-            newWidth = snapToGridSize(newWidth);
-            newHeight = snapToGridSize(newHeight);
-          }
-
-          const updatedObjects = objects.map((obj) =>
-            obj.id === selectedObjectId
-              ? {
-                  ...obj,
-                  position: newPosition,
-                  width: newWidth,
-                  height: newHeight,
-                }
-              : obj
-          );
-          setObjects(updatedObjects);
-          setStartPoint(currentPoint);
-        }
+        setPreviewObject({
+          id: 'preview',
+          type: isPen ? 'line' : 'arrow',
+          position: { x: 0, y: 0 },
+          width: 0,
+          height: 0,
+          fill: '#4f46e5',
+          points: [...currentLine, point],
+        });
+        return;
       }
-      return;
-    }
 
-    if (isDragging) {
-      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-
-      // Prevent movement of locked objects
-      if (selectedObject?.locked) return;
-
-      if (
-        selectedTool === 'select' &&
-        selectedObjectId &&
-        startPoint &&
-        e.buttons === 1
-      ) {
+      if (resizing && selectedObjectId && startPoint) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
-
-        // Special processing for line and arrow objects
-        if (
-          (selectedObject?.type === 'line' ||
-            selectedObject?.type === 'arrow') &&
-          selectedObject.points
-        ) {
-          // Calculate the amount of movement
-          const dx = currentPoint.x - dragOffset.x - selectedObject.position.x;
-          const dy = currentPoint.y - dragOffset.y - selectedObject.position.y;
-
-          const updatedObjects = objects.map((obj) => {
-            if (obj.id === selectedObjectId) {
-              // Move all points
-              const newPoints = obj.points!.map((point) => ({
-                x: point.x + dx,
-                y: point.y + dy,
-              }));
-
-              // Calculate the new bounding box
-              const minX = Math.min(...newPoints.map((p) => p.x));
-              const maxX = Math.max(...newPoints.map((p) => p.x));
-              const minY = Math.min(...newPoints.map((p) => p.y));
-              const maxY = Math.max(...newPoints.map((p) => p.y));
-
-              return {
-                ...obj,
-                position: { x: minX, y: minY },
-                width: maxX - minX,
-                height: maxY - minY,
-                points: newPoints,
-              };
-            }
-            return obj;
-          });
-
-          setObjects(updatedObjects);
-          // Update the reference point for the next movement
-          setStartPoint(currentPoint);
-        } else {
-          if (snapToGridEnabled) {
-            // Calculate the new position of the object
-            const newPosition = {
-              x: currentPoint.x - dragOffset.x,
-              y: currentPoint.y - dragOffset.y,
-            };
-
-            // nap the position to the grid
-            const snappedPosition = snapToGrid(newPosition);
-
-            const updatedObjects = objects.map((obj) =>
-              obj.id === selectedObjectId
-                ? { ...obj, position: snappedPosition }
-                : obj
-            );
-
-            setObjects(updatedObjects);
-          } else {
-            // If grid snap is disabled, process as usual
-            const newX = currentPoint.x - dragOffset.x;
-            const newY = currentPoint.y - dragOffset.y;
-
-            const updatedObjects = objects.map((obj) =>
-              obj.id === selectedObjectId
-                ? { ...obj, position: { x: newX, y: newY } }
-                : obj
-            );
-
-            setObjects(updatedObjects);
-          }
-        }
-      } else if (startPoint && selectedTool !== 'image') {
-        const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
-
-        const snappedPoint = snapToGridEnabled
-          ? snapToGrid(currentPoint)
-          : currentPoint;
-
-        const preview = createPreviewObject(
-          selectedTool,
-          snapToGridEnabled ? snapToGrid(startPoint) : startPoint,
-          snappedPoint,
-          e.shiftKey
+        const selectedObject = objects.find(
+          (obj) => obj.id === selectedObjectId
         );
-        setPreviewObject(preview);
+
+        // Prevent resizing of locked objects
+        if (selectedObject?.locked) return;
+
+        if (selectedObject) {
+          const dx = currentPoint.x - startPoint.x;
+          const dy = currentPoint.y - startPoint.y;
+
+          const newPosition = { ...selectedObject.position };
+          let newWidth = selectedObject.width;
+          let newHeight = selectedObject.height;
+
+          // Maintain aspect ratio when Shift key is pressed
+          if (e.shiftKey || selectedObject.type === 'image') {
+            const aspectRatio = selectedObject.width / selectedObject.height;
+
+            // Processing changes according to the position of the resizing handle
+            switch (resizing) {
+              case 'bottom-right': {
+                const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+                newWidth = selectedObject.width + maxDelta * Math.sign(dx);
+                newHeight = newWidth / aspectRatio;
+                break;
+              }
+              case 'bottom-left': {
+                const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+                newWidth = selectedObject.width - maxDelta * Math.sign(dx);
+                newHeight = newWidth / aspectRatio;
+                newPosition.x =
+                  selectedObject.position.x + (selectedObject.width - newWidth);
+                break;
+              }
+              case 'top-right': {
+                const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+                newWidth = selectedObject.width + maxDelta * Math.sign(dx);
+                newHeight = newWidth / aspectRatio;
+                newPosition.y =
+                  selectedObject.position.y +
+                  (selectedObject.height - newHeight);
+                break;
+              }
+              case 'top-left': {
+                const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
+                newWidth = selectedObject.width - maxDelta * Math.sign(dx);
+                newHeight = newWidth / aspectRatio;
+                newPosition.x =
+                  selectedObject.position.x + (selectedObject.width - newWidth);
+                newPosition.y =
+                  selectedObject.position.y +
+                  (selectedObject.height - newHeight);
+                break;
+              }
+            }
+          } else {
+            // Normal resizing process
+            switch (resizing) {
+              case 'top-left':
+                newPosition.x = selectedObject.position.x + dx;
+                newPosition.y = selectedObject.position.y + dy;
+                newWidth = selectedObject.width - dx;
+                newHeight = selectedObject.height - dy;
+                break;
+              case 'top-right':
+                newPosition.y = selectedObject.position.y + dy;
+                newWidth = selectedObject.width + dx;
+                newHeight = selectedObject.height - dy;
+                break;
+              case 'bottom-left':
+                newPosition.x = selectedObject.position.x + dx;
+                newWidth = selectedObject.width - dx;
+                newHeight = selectedObject.height + dy;
+                break;
+              case 'bottom-right':
+                newWidth = selectedObject.width + dx;
+                newHeight = selectedObject.height + dy;
+                break;
+            }
+          }
+
+          // Minimum Size Limit
+          const minSize = 20;
+          if (newWidth >= minSize && newHeight >= minSize) {
+            // If grid snap is enabled, snap the position and size
+            if (
+              import.meta.env.VITE_RESIZE_SNAP_ENABLED === 'true' &&
+              snapToGridEnabled
+            ) {
+              newPosition.x = snapToGrid(newPosition).x;
+              newPosition.y = snapToGrid(newPosition).y;
+              newWidth = snapToGridSize(newWidth);
+              newHeight = snapToGridSize(newHeight);
+            }
+
+            const updatedObjects = objects.map((obj) =>
+              obj.id === selectedObjectId
+                ? {
+                    ...obj,
+                    position: newPosition,
+                    width: newWidth,
+                    height: newHeight,
+                  }
+                : obj
+            );
+            setObjects(updatedObjects);
+            setStartPoint(currentPoint);
+          }
+        }
+        return;
       }
-    }
-  };
+
+      if (isDragging) {
+        const selectedObject = objects.find(
+          (obj) => obj.id === selectedObjectId
+        );
+
+        // Prevent movement of locked objects
+        if (selectedObject?.locked) return;
+
+        if (
+          selectedTool === 'select' &&
+          selectedObjectId &&
+          startPoint &&
+          e.buttons === 1
+        ) {
+          const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
+
+          // Special processing for line and arrow objects
+          if (
+            (selectedObject?.type === 'line' ||
+              selectedObject?.type === 'arrow') &&
+            selectedObject.points
+          ) {
+            // Calculate the amount of movement
+            const dx =
+              currentPoint.x - dragOffset.x - selectedObject.position.x;
+            const dy =
+              currentPoint.y - dragOffset.y - selectedObject.position.y;
+
+            const updatedObjects = objects.map((obj) => {
+              if (obj.id === selectedObjectId) {
+                // Move all points
+                const newPoints = obj.points!.map((point) => ({
+                  x: point.x + dx,
+                  y: point.y + dy,
+                }));
+
+                // Calculate the new bounding box
+                const minX = Math.min(...newPoints.map((p) => p.x));
+                const maxX = Math.max(...newPoints.map((p) => p.x));
+                const minY = Math.min(...newPoints.map((p) => p.y));
+                const maxY = Math.max(...newPoints.map((p) => p.y));
+
+                return {
+                  ...obj,
+                  position: { x: minX, y: minY },
+                  width: maxX - minX,
+                  height: maxY - minY,
+                  points: newPoints,
+                };
+              }
+              return obj;
+            });
+
+            setObjects(updatedObjects);
+            // Update the reference point for the next movement
+            setStartPoint(currentPoint);
+          } else {
+            if (snapToGridEnabled) {
+              // Calculate the new position of the object
+              const newPosition = {
+                x: currentPoint.x - dragOffset.x,
+                y: currentPoint.y - dragOffset.y,
+              };
+
+              // nap the position to the grid
+              const snappedPosition = snapToGrid(newPosition);
+
+              const updatedObjects = objects.map((obj) =>
+                obj.id === selectedObjectId
+                  ? { ...obj, position: snappedPosition }
+                  : obj
+              );
+
+              setObjects(updatedObjects);
+            } else {
+              // If grid snap is disabled, process as usual
+              const newX = currentPoint.x - dragOffset.x;
+              const newY = currentPoint.y - dragOffset.y;
+
+              const updatedObjects = objects.map((obj) =>
+                obj.id === selectedObjectId
+                  ? { ...obj, position: { x: newX, y: newY } }
+                  : obj
+              );
+
+              setObjects(updatedObjects);
+            }
+          }
+        } else if (startPoint && selectedTool !== 'image') {
+          const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
+
+          const snappedPoint = snapToGridEnabled
+            ? snapToGrid(currentPoint)
+            : currentPoint;
+
+          const preview = createPreviewObject(
+            selectedTool,
+            snapToGridEnabled ? snapToGrid(startPoint) : startPoint,
+            snappedPoint,
+            e.shiftKey
+          );
+          setPreviewObject(preview);
+        }
+      }
+    },
+    [
+      currentLine,
+      dragOffset.x,
+      dragOffset.y,
+      isDragging,
+      isPanning,
+      objects,
+      offset,
+      panStart,
+      resizing,
+      scale,
+      selectedObjectId,
+      selectedTool,
+      setObjects,
+      setOffset,
+      snapToGridEnabled,
+      startPoint,
+    ]
+  );
 
   const handleMouseUp = (e: React.MouseEvent) => {
     if (selectedTool === 'arrow' && currentLine.length > 0) {
