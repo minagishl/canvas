@@ -9,13 +9,16 @@ export const isPointNearLine = (
     const start = linePoints[i - 1];
     const end = linePoints[i];
 
-    // Calculate the distance between the line segment and the point
+    // alculate the coefficients of the line segment
     const a = end.y - start.y;
     const b = start.x - end.x;
     const c = end.x * start.y - start.x * end.y;
 
-    const distance =
-      Math.abs(a * point.x + b * point.y + c) / Math.sqrt(a * a + b * b);
+    // Calculate the denominator of the distance calculation outside the loop
+    const denominator = Math.sqrt(a * a + b * b);
+
+    // Calculate the distance
+    const distance = Math.abs(a * point.x + b * point.y + c) / denominator;
 
     // Check if the point is within the range of the line segment
     const minX = Math.min(start.x, end.x) - threshold;
@@ -41,15 +44,15 @@ export const findClickedObject = (
   objects: CanvasObject[]
 ): CanvasObject | null => {
   const reverseObjects = [...objects].reverse();
+
   return (
     reverseObjects.find((obj) => {
-      if (obj.type === 'line' || obj.type === 'arrow') {
-        return obj.points && isPointNearLine(point, obj.points);
+      if (obj.type === 'image' || obj.type === 'text') {
+        return false;
       }
 
-      // Images and text do nothing.
-      if (obj.type === 'image' || obj.type === 'text') {
-        return null;
+      if (obj.type === 'line' || obj.type === 'arrow') {
+        return obj.points && isPointNearLine(point, obj.points);
       }
 
       return (
