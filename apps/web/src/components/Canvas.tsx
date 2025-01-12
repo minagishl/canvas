@@ -93,18 +93,29 @@ export const Canvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Get device pixel ratio
+    const dpr = window.devicePixelRatio || 1;
+
+    // Set the logical size of the canvas
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+
+    // Scale canvas buffer size to device pixel ratio
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = width;
-    canvas.height = height;
+    // Scaling to device pixel ratio
+    ctx.scale(dpr, dpr);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, width, height);
     ctx.save();
     ctx.translate(offset.x, offset.y);
     ctx.scale(scale, scale);
 
-    drawGrid(ctx, canvas.width, canvas.height, offset, scale);
+    drawGrid(ctx, width, height, offset, scale);
 
     // Drawing objects other than text
     objects
