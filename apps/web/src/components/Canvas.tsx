@@ -790,10 +790,8 @@ export const Canvas = () => {
     const file = e.target.files?.[0];
     if (!file || !imagePosition) return;
 
-    const isGif = file.type === 'image/gif';
-    const isSvg = file.type === 'image/svg+xml';
-    if (isGif || isSvg) {
-      showTemporaryAlert('GIF and SVG files are not supported', setAlert);
+    if (file.type === 'image/gif') {
+      showTemporaryAlert('GIF files are not supported', setAlert);
       return;
     }
 
