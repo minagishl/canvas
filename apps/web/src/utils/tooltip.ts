@@ -13,31 +13,43 @@ export const calculateTooltipPosition = ({
   scale,
   offset,
 }: CalculateTooltipPositionProps): Point => {
-  let x: number, y: number;
+  // Calculate base position with scale and offset
+  const object = selectedObject;
+  const baseX = object.position.x * scale + offset.x;
+  const baseY = object.position.y * scale + offset.y;
 
-  if (selectedObject.type === 'text') {
-    const textElement = document.querySelector(
-      `[data-object-id="${selectedObjectId}"]`
-    ) as HTMLElement;
+  let x: number;
+  let y: number;
 
-    if (textElement) {
-      const textHeight = textElement.offsetHeight;
-      x = selectedObject.position.x * scale + offset.x;
-      y = selectedObject.position.y * scale + offset.y - textHeight / 2;
-    } else {
-      x = selectedObject.position.x * scale + offset.x;
-      y = selectedObject.position.y * scale + offset.y;
+  // Determine position based on object type
+  switch (object.type) {
+    case 'text': {
+      const textElement = document.querySelector(
+        `[data-object-id="${selectedObjectId}"]`
+      ) as HTMLElement;
+
+      if (textElement) {
+        const textHeight = textElement.offsetHeight;
+        x = baseX;
+        y = baseY - textHeight / 2;
+      } else {
+        x = baseX;
+        y = baseY;
+      }
+      break;
     }
-  } else if (selectedObject.type === 'image') {
-    x = selectedObject.position.x * scale + offset.x;
-    y =
-      (selectedObject.position.y - selectedObject.height / 2) * scale +
-      offset.y -
-      8;
-  } else {
-    x =
-      (selectedObject.position.x + selectedObject.width / 2) * scale + offset.x;
-    y = selectedObject.position.y * scale + offset.y - 8;
+
+    case 'image': {
+      x = baseX;
+      y = (object.position.y - object.height / 2) * scale + offset.y - 8;
+      break;
+    }
+
+    default: {
+      x = (object.position.x + object.width / 2) * scale + offset.x;
+      y = baseY - 8;
+      break;
+    }
   }
 
   return { x, y };
