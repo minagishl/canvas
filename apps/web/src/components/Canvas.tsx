@@ -790,6 +790,12 @@ export const Canvas = () => {
     const file = e.target.files?.[0];
     if (!file || !imagePosition) return;
 
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+      showTemporaryAlert('Please select an image file', setAlert);
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (event) => {
       let imageData = event.target?.result as string;
