@@ -790,14 +790,9 @@ export const Canvas = () => {
     const file = e.target.files?.[0];
     if (!file || !imagePosition) return;
 
-    if (file.type === 'image/gif') {
-      showTemporaryAlert('GIF files are not supported', setAlert);
-      return;
-    }
-
     const reader = new FileReader();
     reader.onload = (event) => {
-      const imageData = event.target?.result as string;
+      let imageData = event.target?.result as string;
 
       const img = new Image();
       img.onload = () => {
@@ -813,12 +808,15 @@ export const Canvas = () => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        ctx.drawImage(img, 0, 0, width, height);
-        const resizedImageData = canvas.toDataURL('image/webp');
+        // For non-GIF images, resize and convert to WebP
+        if (!file.type.includes('gif')) {
+          ctx.drawImage(img, 0, 0, width, height);
+          imageData = canvas.toDataURL('image/webp');
+        }
 
         // Save to cache
         const id = Math.random().toString(36).slice(2, 11);
-        setImageCache((prev) => ({ ...prev, [id]: resizedImageData }));
+        setImageCache((prev) => ({ ...prev, [id]: imageData }));
 
         const imageObject: CanvasObject = {
           id,
@@ -827,11 +825,12 @@ export const Canvas = () => {
           width,
           height,
           fill: 'transparent',
-          imageData: resizedImageData,
+          imageData,
         };
 
         addObject(imageObject);
         setImagePosition(null);
+        setSelectedTool('select');
       };
       img.src = imageData;
     };
