@@ -127,19 +127,24 @@ export const drawObject = (
       ctx.strokeStyle = '#4f46e5';
       ctx.lineWidth = 1.5 / scale;
 
+      const space = -1 / scale;
+
       const corners = [
-        { x: object.position.x - padding, y: object.position.y - padding },
         {
-          x: object.position.x + object.width + padding,
-          y: object.position.y - padding,
+          x: object.position.x - padding - space,
+          y: object.position.y - padding - space,
         },
         {
-          x: object.position.x - padding,
-          y: object.position.y + object.height + padding,
+          x: object.position.x + object.width + padding + space,
+          y: object.position.y - padding - space,
         },
         {
-          x: object.position.x + object.width + padding,
-          y: object.position.y + object.height + padding,
+          x: object.position.x - padding - space,
+          y: object.position.y + object.height + padding + space,
+        },
+        {
+          x: object.position.x + object.width + padding + space,
+          y: object.position.y + object.height + padding + space,
         },
       ];
 
