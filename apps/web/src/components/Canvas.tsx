@@ -79,6 +79,7 @@ export const Canvas = () => {
   // Confirm reload / tab deletion.
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (objects.length === 0) return;
       e.preventDefault();
     };
 
@@ -87,7 +88,7 @@ export const Canvas = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+  }, [objects]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
