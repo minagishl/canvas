@@ -3,7 +3,7 @@ import { CanvasObject, Point, LinePoint } from '../types/canvas';
 export const isPointNearLine = (
   point: Point,
   linePoints: LinePoint[],
-  threshold: number = 5
+  threshold: number = 10
 ): boolean => {
   for (let i = 1; i < linePoints.length; i++) {
     const start = linePoints[i - 1];
@@ -47,11 +47,26 @@ export const findClickedObject = (
 
   return (
     reverseObjects.find((obj) => {
+      if (obj.type === 'arrow') {
+        // Allow selection even within bounding boxes
+        const { position, width, height } = obj;
+        const x = position.x;
+        const y = position.y;
+
+        const isInBounds =
+          point.x >= x &&
+          point.x <= x + width &&
+          point.y >= y &&
+          point.y <= y + height;
+
+        return isInBounds || (obj.points && isPointNearLine(point, obj.points));
+      }
+
       if (obj.type === 'image' || obj.type === 'text') {
         return false;
       }
 
-      if (obj.type === 'line' || obj.type === 'arrow') {
+      if (obj.type === 'line') {
         return obj.points && isPointNearLine(point, obj.points);
       }
 
