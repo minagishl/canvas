@@ -125,7 +125,7 @@ export const drawObject = (
       const handleSize = 8 / scale;
       ctx.fillStyle = '#ffffff';
       ctx.strokeStyle = '#4f46e5';
-      ctx.lineWidth = 1 / scale;
+      ctx.lineWidth = 1.5 / scale;
 
       const corners = [
         { x: object.position.x - padding, y: object.position.y - padding },
