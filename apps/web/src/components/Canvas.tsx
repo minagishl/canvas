@@ -620,12 +620,19 @@ export const Canvas = () => {
       const point = getCanvasPoint(e, canvasRef, offset, scale);
 
       if (currentLine.length === 1) {
+        // alculate the bounding box using the start and end points
+        const [start] = currentLine;
+        const minX = Math.min(start.x, point.x);
+        const maxX = Math.max(start.x, point.x);
+        const minY = Math.min(start.y, point.y);
+        const maxY = Math.max(start.y, point.y);
+
         const newArrow: CanvasObject = {
           id: Math.random().toString(36).slice(2, 11),
           type: 'arrow',
-          position: { x: 0, y: 0 },
-          width: 0,
-          height: 0,
+          position: { x: minX, y: minY },
+          width: maxX - minX,
+          height: maxY - minY,
           fill: '#4f46e5',
           points: [...currentLine, point],
         };
