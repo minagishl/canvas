@@ -28,23 +28,34 @@ export const ImageObject = React.memo(
     const positionRef = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
-      positionRef.current = {
+      // Calculate the current position
+      const newPosition = {
         x: obj.position.x * scale + offset.x,
         y: obj.position.y * scale + offset.y,
       };
 
-      if (elementRef.current) {
-        elementRef.current.style.transform = `translate(-50%, -50%) translate3d(${
-          positionRef.current.x
-        }px, ${positionRef.current.y}px, 0) rotate(${obj.rotation || 0}deg)`;
+      // Only update if the position is different from the previous one
+      if (
+        positionRef.current.x !== newPosition.x ||
+        positionRef.current.y !== newPosition.y
+      ) {
+        positionRef.current = newPosition;
+
+        if (elementRef.current) {
+          elementRef.current.style.transform = `
+            translate(-50%, -50%)
+            translate3d(${newPosition.x}px, ${newPosition.y}px, 0)
+            rotate(${obj.rotation || 0}deg)
+          `;
+        }
       }
     }, [
       obj.position.x,
       obj.position.y,
+      obj.rotation,
       scale,
       offset.x,
       offset.y,
-      obj.rotation,
     ]);
 
     const isSelected = selectedObjectId === obj.id;
