@@ -169,8 +169,9 @@ export const drawGrid = (
   scale: number
 ): void => {
   // Calculate grid boundaries with buffer
-  const startX = Math.floor(-offset.x / scale / GRID_SIZE) * GRID_SIZE;
-  const startY = Math.floor(-offset.y / scale / GRID_SIZE) * GRID_SIZE;
+  const scaledGridSize = GRID_SIZE * scale;
+  const startX = Math.floor(-offset.x / scaledGridSize) * GRID_SIZE;
+  const startY = Math.floor(-offset.y / scaledGridSize) * GRID_SIZE;
   const endX =
     Math.ceil((width / scale - offset.x / scale) / GRID_SIZE) * GRID_SIZE;
   const endY =
