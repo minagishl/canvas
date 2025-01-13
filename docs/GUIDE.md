@@ -14,6 +14,7 @@
 | Ctrl/Cmd + `E`   | Export as image                           |
 | Ctrl/Cmd + `S`   | Share canvas                              |
 | Ctrl/Cmd + `G`   | Toggle grid snap                          |
+| Ctrl/Cmd + `/`   | Show/hide menu                            |
 | Escape           | Return to selection tool                  |
 
 ## Tips
