@@ -5,15 +5,15 @@
 | Key              | Function                                  |
 | ---------------- | ----------------------------------------- |
 | Delete/Backspace | Delete selected object                    |
-| Ctrl/Cmd + C     | Copy object                               |
-| Ctrl/Cmd + V     | Paste object                              |
-| Ctrl/Cmd + Z     | Undo (only removes newly created objects) |
-| Ctrl/Cmd + B     | Make text bold                            |
-| Ctrl/Cmd + I     | Make text italic                          |
-| Ctrl/Cmd + L     | Lock object                               |
-| Ctrl/Cmd + E     | Export as image                           |
-| Ctrl/Cmd + S     | Share canvas                              |
-| Ctrl/Cmd + G     | Toggle grid snap                          |
+| Ctrl/Cmd + `C`   | Copy object                               |
+| Ctrl/Cmd + `V`   | Paste object                              |
+| Ctrl/Cmd + `Z`   | Undo (only removes newly created objects) |
+| Ctrl/Cmd + `B`   | Make text bold                            |
+| Ctrl/Cmd + `I`   | Make text italic                          |
+| Ctrl/Cmd + `L`   | Lock object                               |
+| Ctrl/Cmd + `E`   | Export as image                           |
+| Ctrl/Cmd + `S`   | Share canvas                              |
+| Ctrl/Cmd + `G`   | Toggle grid snap                          |
 | Escape           | Return to selection tool                  |
 
 ## Tips
