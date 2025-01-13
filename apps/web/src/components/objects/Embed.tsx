@@ -69,7 +69,13 @@ export const EmbedObject = React.memo(
           height: obj.height * scale,
           willChange: 'transform',
           cursor: 'default',
-          pointerEvents: isDragging ? 'none' : isResizing ? 'none' : 'auto',
+          pointerEvents: isSelected
+            ? isDragging
+              ? 'none'
+              : isResizing
+                ? 'none'
+                : 'auto'
+            : 'auto',
         }}
         onMouseDown={handleMouseDown}
       >
@@ -78,7 +84,13 @@ export const EmbedObject = React.memo(
           title="embed"
           className="h-full w-full"
           style={{
-            pointerEvents: 'none',
+            pointerEvents: isSelected
+              ? isDragging
+                ? 'none'
+                : isResizing
+                  ? 'none'
+                  : 'auto'
+              : 'none',
           }}
         />
 
