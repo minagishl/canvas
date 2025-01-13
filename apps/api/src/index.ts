@@ -12,7 +12,15 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-const objectTypes = ['rectangle', 'circle', 'text', 'image', 'line', 'arrow'];
+const objectTypes = [
+  'rectangle',
+  'circle',
+  'text',
+  'image',
+  'line',
+  'arrow',
+  'embed',
+];
 
 app.use(
   '/*',
@@ -147,6 +155,10 @@ app.post('/', async (c) => {
 
     if (body.spoiler !== undefined && typeof body.spoiler !== 'boolean') {
       return c.json({ error: 'invalid spoiler status' }, 400);
+    }
+
+    if (body.embedUrl !== undefined && typeof body.embedUrl !== 'string') {
+      return c.json({ error: 'invalid embedUrl' }, 400);
     }
   }
 
