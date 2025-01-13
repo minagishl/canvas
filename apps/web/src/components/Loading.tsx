@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants';
 import { Loader2 } from 'lucide-react';
 
 const loading = tv({
-  base: 'fixed top-4 right-4 z-50 flex select-none items-center rounded-xl bg-white p-2 shadow-lg',
+  base: 'fixed top-4 right-4 z-40 flex select-none items-center rounded-xl bg-white p-2 shadow-lg',
   variants: {
     hidden: {
       true: 'hidden',

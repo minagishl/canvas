@@ -106,7 +106,7 @@ export const ImageObject = React.memo(
               <>
                 <div className="absolute inset-0 bg-indigo-600" />
                 <button
-                  className="z-40 flex w-fit cursor-pointer flex-col items-center justify-center whitespace-nowrap rounded-md bg-white p-2 px-4 font-sans"
+                  className="z-30 flex w-fit cursor-pointer flex-col items-center justify-center whitespace-nowrap rounded-md bg-white p-2 px-4 font-sans"
                   onClick={() => setIsSpoiler(false)}
                 >
                   <div className="flex h-5 items-center justify-center text-center">

@@ -213,7 +213,7 @@ export function Toolbar(): React.ReactElement {
   return (
     <>
       <Loading hidden={!isLoading} />
-      <div className="fixed left-1/2 top-4 z-50 flex max-w-96 -translate-x-1/2 select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg">
+      <div className="fixed left-1/2 top-4 z-40 flex max-w-96 -translate-x-1/2 select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg">
         {tools
           .filter((Tool) => !isMobile || Tool.name === 'select')
           .map((Tool) => (

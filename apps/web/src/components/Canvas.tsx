@@ -36,6 +36,7 @@ import { ImageObject } from './objects/Image';
 // Components
 import { Tooltip } from './Tooltip';
 import { Alert } from './Alert';
+import { Modal } from './Modal';
 
 // Hooks
 import { useWindowSize } from '../hooks/window';
@@ -62,6 +63,7 @@ export const Canvas = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
   const [isEditingId, setIsEditingId] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [panStart, setPanStart] = useState<Point | null>(null);
   const [resizing, setResizing] = useState<ResizeHandle>(null);
@@ -1119,6 +1121,12 @@ export const Canvas = () => {
           setAlert
         );
       }
+
+      if (e.key === '/' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsModalOpen(!isModalOpen);
+        setSelectedTool('select');
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -1140,6 +1148,8 @@ export const Canvas = () => {
     setAlert,
     setSelectedTool,
     snapToGridEnabled,
+    setIsModalOpen,
+    isModalOpen,
   ]);
 
   useEffect(() => {
@@ -1319,6 +1329,8 @@ export const Canvas = () => {
 
           return null;
         })}
+
+      {isModalOpen && <Modal close={() => setIsModalOpen(false)} />}
     </div>
   );
 };
