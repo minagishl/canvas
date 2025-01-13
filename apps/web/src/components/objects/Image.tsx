@@ -25,7 +25,6 @@ export const ImageObject = React.memo(
   }: ImageObjectProps) => {
     const [isSpoiler, setIsSpoiler] = useState(true);
     const elementRef = useRef<HTMLDivElement>(null);
-    const positionRef = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
       // Calculate the current position
@@ -34,20 +33,12 @@ export const ImageObject = React.memo(
         y: obj.position.y * scale + offset.y,
       };
 
-      // Only update if the position is different from the previous one
-      if (
-        positionRef.current.x !== newPosition.x ||
-        positionRef.current.y !== newPosition.y
-      ) {
-        positionRef.current = newPosition;
-
-        if (elementRef.current) {
-          elementRef.current.style.transform = `
+      if (elementRef.current) {
+        elementRef.current.style.transform = `
             translate(-50%, -50%)
             translate3d(${newPosition.x}px, ${newPosition.y}px, 0)
             rotate(${obj.rotation || 0}deg)
           `;
-        }
       }
     }, [
       obj.position.x,

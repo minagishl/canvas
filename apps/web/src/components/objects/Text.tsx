@@ -143,7 +143,8 @@ export const TextObject = React.memo(
       prevProps.onMouseDown === nextProps.onMouseDown &&
       prevProps.obj.fill === nextProps.obj.fill &&
       prevProps.obj.fontSize === nextProps.obj.fontSize &&
-      prevProps.obj.italic === nextProps.obj.italic
+      prevProps.obj.italic === nextProps.obj.italic &&
+      prevProps.obj.rotation === nextProps.obj.rotation
     );
   }
 );
