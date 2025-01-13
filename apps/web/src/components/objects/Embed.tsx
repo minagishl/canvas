@@ -142,7 +142,8 @@ export const EmbedObject = React.memo(
       prevProps.selectedObjectId === nextProps.selectedObjectId &&
       prevProps.isResizing === nextProps.isResizing &&
       prevProps.isDragging === nextProps.isDragging &&
-      prevProps.obj.rotation === nextProps.obj.rotation
+      prevProps.obj.rotation === nextProps.obj.rotation &&
+      prevProps.obj.embedUrl === nextProps.obj.embedUrl
     );
   }
 );
