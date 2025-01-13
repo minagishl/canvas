@@ -216,6 +216,7 @@ export function Tooltip({
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
   const isTextObject = selectedObject?.type === 'text';
   const isImageObject = selectedObject?.type === 'image';
+  const isEmbedObject = selectedObject?.type === 'embed';
 
   return (
     <div
@@ -228,7 +229,7 @@ export function Tooltip({
         pointerEvents: isDragging ? 'none' : 'auto',
       }}
     >
-      {!isImageObject && (
+      {!isImageObject && !isEmbedObject && (
         <>
           <button
             className="rounded-md p-2 transition-colors hover:bg-gray-100"

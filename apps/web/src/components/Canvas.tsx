@@ -22,12 +22,14 @@ import { calculateTooltipPosition } from '../utils/tooltip';
 import { randomGif, loadImage } from '../utils/image';
 import { textToggleBold, textToggleItalic } from '../utils/text';
 import { snapToGrid } from '../utils/grid';
+import { convertYouTubeUrlToEmbed } from '../utils/embed';
 
 // Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { useAlertContext } from '../contexts/AlertContext';
 
 // Objects
+import { EmbedObject } from './objects/Embed';
 import { TextObject } from './objects/Text';
 import { ImageObject } from './objects/Image';
 
@@ -120,7 +122,10 @@ export const Canvas = () => {
 
     // Drawing objects other than text
     objects
-      .filter((obj) => obj.type !== 'text' && obj.type !== 'image')
+      .filter(
+        (obj) =>
+          obj.type !== 'text' && obj.type !== 'image' && obj.type !== 'embed'
+      )
       .forEach((object) => {
         drawObject(ctx, object, selectedObjectId, scale);
       });
@@ -394,7 +399,11 @@ export const Canvas = () => {
           let newHeight = selectedObject.height;
 
           // Maintain aspect ratio when Shift key is pressed
-          if (e.shiftKey || selectedObject.type === 'image') {
+          if (
+            e.shiftKey ||
+            selectedObject.type === 'image' ||
+            selectedObject.type === 'embed'
+          ) {
             const aspectRatio = selectedObject.width / selectedObject.height;
 
             // Processing changes according to the position of the resizing handle
@@ -1040,18 +1049,33 @@ export const Canvas = () => {
 
                 const id = Math.random().toString(36).slice(2, 11);
 
-                const textObject: CanvasObject = {
-                  id,
-                  type: 'text',
-                  text: data,
-                  position,
-                  width: 200,
-                  height: 50,
-                  fill: '#4f46e5',
-                  weight: 400,
-                };
+                let object: CanvasObject | null = null;
+                const embedUrl = convertYouTubeUrlToEmbed(data);
 
-                addObject(textObject);
+                if (embedUrl !== null) {
+                  object = {
+                    id,
+                    type: 'embed',
+                    position,
+                    width: 400,
+                    height: 225,
+                    fill: 'transparent',
+                    embedUrl,
+                  };
+                } else {
+                  object = {
+                    id,
+                    type: 'text',
+                    text: data,
+                    position,
+                    width: 200,
+                    height: 50,
+                    fill: '#4f46e5',
+                    weight: 400,
+                  };
+                }
+
+                addObject(object);
                 setSelectedObjectId(id);
                 return;
               } else if (copyObjectId) {
@@ -1231,7 +1255,10 @@ export const Canvas = () => {
       <Alert message={alert} />
 
       {objects
-        .filter((obj) => obj.type === 'text' || obj.type === 'image')
+        .filter(
+          (obj) =>
+            obj.type === 'text' || obj.type === 'image' || obj.type === 'embed'
+        )
         .map((obj) => {
           if (obj.type === 'image') {
             return (
@@ -1269,6 +1296,23 @@ export const Canvas = () => {
                     handleMouseDown(e);
                   }
                 }}
+              />
+            );
+          }
+
+          if (obj.type === 'embed') {
+            return (
+              <EmbedObject
+                scale={scale}
+                offset={offset}
+                obj={obj as CanvasObject & { type: 'embed' }}
+                key={obj.id}
+                selectedObjectId={selectedObjectId}
+                isResizing={resizing !== null}
+                isDragging={isDragging}
+                handleMouseDown={(e, handle) =>
+                  handleMouseDown(e, handle as ResizeHandle)
+                }
               />
             );
           }

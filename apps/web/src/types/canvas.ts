@@ -27,7 +27,7 @@ export type fontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
 export type CanvasObject = {
   id: string;
-  type: 'rectangle' | 'circle' | 'text' | 'image' | 'line' | 'arrow';
+  type: 'rectangle' | 'circle' | 'text' | 'image' | 'line' | 'arrow' | 'embed';
   position: Point;
   width: number;
   height: number;
@@ -44,6 +44,7 @@ export type CanvasObject = {
   originalUrl?: string;
   circle?: boolean;
   spoiler?: boolean;
+  embedUrl?: string;
 };
 
 export type ToolType =

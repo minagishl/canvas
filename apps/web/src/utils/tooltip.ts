@@ -39,7 +39,8 @@ export const calculateTooltipPosition = ({
       break;
     }
 
-    case 'image': {
+    case 'image':
+    case 'embed': {
       x = baseX;
       y = (object.position.y - object.height / 2) * scale + offset.y - 8;
       break;
