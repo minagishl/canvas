@@ -1182,6 +1182,13 @@ export const Canvas = () => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
 
+    if (window.gtag) {
+      window.gtag('event', 'view_item', {
+        items: id,
+        event_category: 'canvas',
+      });
+    }
+
     if (id) {
       const apiUrl = new URL(import.meta.env.VITE_API_URL);
       fetch(`${apiUrl.href}${id}`)

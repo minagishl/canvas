@@ -266,6 +266,12 @@ export const exportCanvasAsImage = (
         throw new Error('Canvas container not found');
       }
 
+      if (window.gtag) {
+        window.gtag('event', 'save_image', {
+          event_category: 'canvas',
+        });
+      }
+
       // Create a screenshot with html2canvas
       const canvas = await html2canvas(canvasContainer as HTMLElement, {
         backgroundColor: '#f9fafb',

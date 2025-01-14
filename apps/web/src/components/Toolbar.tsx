@@ -55,6 +55,16 @@ export function Toolbar(): React.ReactElement {
   const [isZooming, setIsZooming] = React.useState(false);
   const animationRef = useRef<number | null>(null);
 
+  const handleToolSelect = (tool: ToolType) => {
+    setSelectedTool(tool);
+    if (window.gtag) {
+      window.gtag('event', 'select_tool', {
+        tool_type: tool,
+        event_category: 'canvas',
+      });
+    }
+  };
+
   const handleZoom = (
     zoomFactor: number,
     minScale: number,
@@ -165,6 +175,13 @@ export function Toolbar(): React.ReactElement {
           }
         })
         .then((data) => {
+          if (window.gtag) {
+            window.gtag('event', 'share_canvas', {
+              id: data.id,
+              event_category: 'canvas',
+            });
+          }
+
           const id = data.id;
           const url = new URL(window.location.href);
           url.searchParams.set('id', id);
@@ -201,7 +218,7 @@ export function Toolbar(): React.ReactElement {
 
   const handleOnKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape' && selectedTool !== 'select') {
-      setSelectedTool('select');
+      handleToolSelect('select');
 
       const selectButton = document.getElementById('toolbar-select');
       if (selectButton) {
@@ -221,7 +238,7 @@ export function Toolbar(): React.ReactElement {
               <button
                 id={`toolbar-${Tool.name}`}
                 className={button({ isSelected: selectedTool === Tool.name })}
-                onClick={() => setSelectedTool(Tool.name)}
+                onClick={() => handleToolSelect(Tool.name)}
                 onKeyDown={handleOnKeyDown}
               >
                 <Tool.icon className="h-5 w-5" />

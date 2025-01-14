@@ -11,6 +11,7 @@ import { Popover } from './Popover';
 import { useAlertContext } from '../contexts/AlertContext';
 import { exportCanvasAsImage } from '../utils/canvas';
 import { tv } from 'tailwind-variants';
+import { type ToolType } from '../types/canvas';
 
 const button = tv({
   base: 'cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
@@ -31,6 +32,16 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   } = useCanvasContext();
   const { setAlert } = useAlertContext();
 
+  const handleToolSelect = (tool: ToolType) => {
+    setSelectedTool(tool);
+    if (window.gtag) {
+      window.gtag('event', 'select_tool', {
+        tool_type: tool,
+        event_category: 'canvas',
+      });
+    }
+  };
+
   const handleSaveImage = async () => {
     exportCanvasAsImage(objects, setSelectedObjectId, setAlert);
   };
@@ -45,7 +56,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
       <button
         className={button({ isSelected: selectedTool === 'pen' })}
         onClick={() => {
-          setSelectedTool('pen');
+          handleToolSelect('pen');
         }}
         title="Pen"
       >
@@ -54,7 +65,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
       <button
         className={button({ isSelected: selectedTool === 'arrow' })}
         onClick={() => {
-          setSelectedTool('arrow');
+          handleToolSelect('arrow');
         }}
       >
         <MoveUpRight className="h-5 w-5" />
@@ -65,7 +76,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
             <button
               className={button({ isSelected: selectedTool === 'gif' })}
               onClick={() => {
-                setSelectedTool('gif');
+                handleToolSelect('gif');
               }}
             >
               <Film className="h-5 w-5" />
