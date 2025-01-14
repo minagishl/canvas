@@ -22,23 +22,18 @@ This Privacy Policy explains how we collect, use, and share information when you
 
 We use Google Analytics 4 (GA4) to analyze app usage and improve our services. The following types of information may be collected through GA4:
 
-Device information (e.g., device type, operating system)
-
-Usage data (e.g., pages viewed, time spent on the app)
-
-IP address (anonymized where possible)
-
-Cookies and similar tracking technologies
+- Device information (e.g., device type, operating system)
+- Usage data (e.g., pages viewed, time spent on the app)
+- IP address (anonymized where possible)
+- Cookies and similar tracking technologies
 
 ### 3. How We Use Collected Information
 
 The information collected through GA4 is used for the following purposes:
 
-To improve the app’s functionality and user experience
-
-To understand user behavior and preferences
-
-To enhance the security and performance of the app
+- To improve the app’s functionality and user experience
+- To understand user behavior and preferences
+- To enhance the security and performance of the app
 
 ### 4. Third-Party Data Sharing
 
@@ -54,11 +49,9 @@ Our app uses cookies and similar technologies to improve user experience and ana
 
 You have the right to:
 
-Access the data we collect about you
-
-Request the correction or deletion of your personal data
-
-Opt out of Google Analytics tracking by using the following tool: https://tools.google.com/dlpage/gaoptout
+- Access the data we collect about you
+- Request the correction or deletion of your personal data
+- Opt out of Google Analytics tracking by using the following tool: https://tools.google.com/dlpage/gaoptout
 
 ### 7. Data Retention
 
@@ -72,6 +65,6 @@ We may update this Privacy Policy from time to time. Any changes will be posted 
 
 If you have any questions about this Privacy Policy, please contact us at:
 
-Email: minagishl@icloud.com
+- Email: minagishl@icloud.com
 
 This document outlines the key terms of using our app and how we handle user privacy. We encourage users to review these policies regularly to stay informed.
