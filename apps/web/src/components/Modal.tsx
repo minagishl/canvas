@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Github, BookMarked, X, BookOpen } from 'lucide-react';
 import { Popover } from './Popover';
 
@@ -48,6 +49,19 @@ const defaultItems: Items[] = [
 ];
 
 export const Modal = ({ items = defaultItems, close }: ModalProps) => {
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        close();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
+
   return (
     <>
       <div
