@@ -1,5 +1,5 @@
 import { CanvasObject, Point } from '../types/canvas';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import { showTemporaryAlert } from './alert';
 import { GRID_SIZE } from './constants';
 
@@ -272,34 +272,24 @@ export const exportCanvasAsImage = (
         });
       }
 
-      // Create a screenshot with html2canvas
-      const canvas = await html2canvas(canvasContainer as HTMLElement, {
+      toPng(canvasContainer as HTMLElement, {
         backgroundColor: '#f9fafb',
-        scale: window.devicePixelRatio,
-        useCORS: true,
-      });
+      })
+        .then(function (dataUrl) {
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = `canvas-${new Date().toISOString().slice(0, -5)}.png`;
 
-      // Convert to Blob
-      const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => {
-          resolve(blob as Blob);
-        }, 'image/png');
-      });
-
-      // Create a download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `canvas-${new Date().toISOString().slice(0, -5)}.png`;
-
-      // Download the image
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // Revoke the URL
-      URL.revokeObjectURL(url);
+          // Download the image
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch(function (error) {
+          console.error('Error exporting image:', error);
+        });
     } catch (error) {
+      showTemporaryAlert('Error saving image!', setAlert);
       console.error('Error saving image:', error);
     }
   }, 100);

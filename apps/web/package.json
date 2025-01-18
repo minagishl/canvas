@@ -10,7 +10,7 @@
     "format": "prettier --write ./src"
   },
   "dependencies": {
-    "html2canvas": "^1.4.1",
+    "html-to-image": "^1.11.11",
     "lucide-react": "^0.469.0",
     "react": "^19.0.0",
     "react-device-detect": "^2.2.3",
