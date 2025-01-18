@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 import { GRID_SIZE } from '../utils/constants';
+import { CanvasDataSchema } from '../schema';
 
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
@@ -1195,7 +1196,13 @@ export const Canvas = () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.content) {
-            setObjects(objects.concat(data.content));
+            try {
+              const validatedData = CanvasDataSchema.parse(data);
+              setObjects(objects.concat(validatedData.content));
+            } catch (error) {
+              console.error('Invalid canvas data:', error);
+              showTemporaryAlert('Invalid canvas data format', setAlert);
+            }
           }
         })
         .catch((error) => {

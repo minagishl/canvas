@@ -25,9 +25,21 @@ export type fontSize =
 
 export type fontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
+export const ObjectTypes = [
+  'rectangle',
+  'circle',
+  'text',
+  'image',
+  'line',
+  'arrow',
+  'embed',
+] as const;
+
+export type ObjectType = (typeof ObjectTypes)[number];
+
 export type CanvasObject = {
   id: string;
-  type: 'rectangle' | 'circle' | 'text' | 'image' | 'line' | 'arrow' | 'embed';
+  type: ObjectType;
   position: Point;
   width: number;
   height: number;
