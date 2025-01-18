@@ -48,7 +48,10 @@ const defaultItems: Items[] = [
   },
 ];
 
-export const Modal = ({ items = defaultItems, close }: ModalProps) => {
+export function Modal({
+  items = defaultItems,
+  close,
+}: ModalProps): React.ReactElement {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -87,4 +90,4 @@ export const Modal = ({ items = defaultItems, close }: ModalProps) => {
       </div>
     </>
   );
-};
+}
