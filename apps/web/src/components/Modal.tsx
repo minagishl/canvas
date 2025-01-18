@@ -1,4 +1,4 @@
-import { Github, BookMarked, X } from 'lucide-react';
+import { Github, BookMarked, X, BookOpen } from 'lucide-react';
 import { Popover } from './Popover';
 
 const navigateToUrl = (url: string) => {
@@ -29,6 +29,14 @@ const defaultItems: Items[] = [
     onClick: () =>
       navigateToUrl(
         'https://github.com/minagishl/canvas/blob/main/docs/GUIDE.md'
+      ),
+  },
+  {
+    icon: <BookOpen className="h-5 w-5" />,
+    text: 'Terms & Privacy',
+    onClick: () =>
+      navigateToUrl(
+        'https://github.com/minagishl/canvas/blob/main/docs/TERMS_AND_PRIVACY.md'
       ),
   },
   {
