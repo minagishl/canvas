@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 import { GRID_SIZE } from '../utils/constants';
 import { CanvasDataSchema } from '../schema';
+import { parseAsync } from 'valibot';
 
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
@@ -1194,11 +1195,11 @@ export const Canvas = () => {
       const apiUrl = new URL(import.meta.env.VITE_API_URL);
       fetch(`${apiUrl.href}${id}`)
         .then((response) => response.json())
-        .then((data) => {
+        .then(async (data) => {
           if (data.content) {
             try {
-              const validatedData = CanvasDataSchema.parse(data);
-              setObjects(objects.concat(validatedData.content));
+              const result = await parseAsync(CanvasDataSchema, data);
+              setObjects(objects.concat(result.content as CanvasObject[]));
             } catch (error) {
               console.error('Invalid canvas data:', error);
               showTemporaryAlert('Invalid canvas data format', setAlert);

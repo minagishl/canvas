@@ -1,25 +1,25 @@
-import { z } from 'zod';
-import { ObjectTypes, CanvasObject } from './types/canvas';
+import * as v from 'valibot';
+import { ObjectTypes } from './types/canvas';
 
-export const PointSchema = z.object({
-  x: z.number(),
-  y: z.number(),
+export const PointSchema = v.object({
+  x: v.number(),
+  y: v.number(),
 });
 
-export const CanvasObjectSchema = z.object({
-  id: z.string(),
-  type: z.enum(ObjectTypes),
+export const CanvasObjectSchema = v.object({
+  id: v.string(),
+  type: v.picklist(ObjectTypes),
   position: PointSchema,
-  width: z.number(),
-  height: z.number(),
-  fill: z.string().optional(),
-  text: z.string().optional(),
-  weight: z.number().optional(),
-  points: z.array(PointSchema).optional(),
-  embedUrl: z.string().optional(),
-  src: z.string().optional(),
+  width: v.number(),
+  height: v.number(),
+  fill: v.optional(v.string()),
+  text: v.optional(v.string()),
+  weight: v.optional(v.number()),
+  points: v.optional(v.array(PointSchema)),
+  embedUrl: v.optional(v.string()),
+  src: v.optional(v.string()),
 });
 
-export const CanvasDataSchema = z.object({
-  content: z.array(CanvasObjectSchema) as z.ZodType<CanvasObject[]>,
+export const CanvasDataSchema = v.object({
+  content: v.array(CanvasObjectSchema),
 });
