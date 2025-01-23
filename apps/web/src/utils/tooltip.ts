@@ -58,12 +58,14 @@ export const calculateTooltipPosition = ({
     }
   }
 
-  // Adjust tooltips so they do not extend beyond the left and right edges
-  const tooltipHalfWidth = tooltipWidth / 2;
-  if (x + tooltipHalfWidth > windowWidth - 16) {
-    x = windowWidth - tooltipHalfWidth - 16;
-  } else if (x - tooltipHalfWidth < 16) {
-    x = tooltipHalfWidth + 16;
+  if (import.meta.env.VITE_AUTO_POSITION_TOOLTIP === 'true') {
+    // Adjust tooltips so they do not extend beyond the left and right edges
+    const tooltipHalfWidth = tooltipWidth / 2;
+    if (x + tooltipHalfWidth > windowWidth - 16) {
+      x = windowWidth - tooltipHalfWidth - 16;
+    } else if (x - tooltipHalfWidth < 16) {
+      x = tooltipHalfWidth + 16;
+    }
   }
 
   return { x, y };
