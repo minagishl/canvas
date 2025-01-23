@@ -18,6 +18,11 @@ export const calculateTooltipPosition = ({
   const baseX = object.position.x * scale + offset.x;
   const baseY = object.position.y * scale + offset.y;
 
+  // Get tooltip and window dimensions
+  const tooltip = document.querySelector('#tooltip') as HTMLElement;
+  const tooltipWidth = tooltip?.offsetWidth ?? 0;
+  const windowWidth = window.innerWidth;
+
   let x: number;
   let y: number;
 
@@ -51,6 +56,14 @@ export const calculateTooltipPosition = ({
       y = baseY - 8;
       break;
     }
+  }
+
+  // Adjust tooltips so they do not extend beyond the left and right edges
+  const tooltipHalfWidth = tooltipWidth / 2;
+  if (x + tooltipHalfWidth > windowWidth - 16) {
+    x = windowWidth - tooltipHalfWidth - 16;
+  } else if (x - tooltipHalfWidth < 16) {
+    x = tooltipHalfWidth + 16;
   }
 
   return { x, y };
