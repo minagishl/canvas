@@ -98,10 +98,7 @@ export const handleObjectResize = ({
   const minSize = 20;
   if (newWidth >= minSize && newHeight >= minSize) {
     // If grid snap is enabled, snap the position and size
-    if (
-      import.meta.env.VITE_RESIZE_SNAP_ENABLED === 'true' &&
-      snapToGridEnabled
-    ) {
+    if (snapToGridEnabled) {
       newPosition.x = snapToGrid(newPosition).x;
       newPosition.y = snapToGrid(newPosition).y;
       newWidth = snapToGridSize(newWidth);
