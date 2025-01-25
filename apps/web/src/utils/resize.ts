@@ -1,5 +1,6 @@
 import { CanvasObject, Point, ResizeHandle } from '../types/canvas';
 import { snapToGrid, snapToGridSize } from './grid';
+import { MIN_OBJECT_SIZE } from './constants';
 
 interface ResizeObjectParams {
   selectedObject: CanvasObject;
@@ -95,14 +96,29 @@ export const handleObjectResize = ({
   }
 
   // Minimum Size Limit
-  const minSize = 20;
-  if (newWidth >= minSize && newHeight >= minSize) {
+  if (newWidth >= MIN_OBJECT_SIZE && newHeight >= MIN_OBJECT_SIZE) {
     // If grid snap is enabled, snap the position and size
     if (snapToGridEnabled) {
       newPosition.x = snapToGrid(newPosition).x;
       newPosition.y = snapToGrid(newPosition).y;
       newWidth = snapToGridSize(newWidth);
       newHeight = snapToGridSize(newHeight);
+    }
+  }
+
+  // Apply minimum size limit
+  if (newWidth < MIN_OBJECT_SIZE) {
+    newWidth = MIN_OBJECT_SIZE;
+    if (resizeHandle && resizeHandle.includes('left')) {
+      newPosition.x =
+        selectedObject.position.x + selectedObject.width - MIN_OBJECT_SIZE;
+    }
+  }
+  if (newHeight < MIN_OBJECT_SIZE) {
+    newHeight = MIN_OBJECT_SIZE;
+    if (resizeHandle && resizeHandle.includes('top')) {
+      newPosition.y =
+        selectedObject.position.y + selectedObject.height - MIN_OBJECT_SIZE;
     }
   }
 

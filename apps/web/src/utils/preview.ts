@@ -1,4 +1,5 @@
 import { CanvasObject, Point, ToolType } from '../types/canvas';
+import { MIN_OBJECT_SIZE } from './constants';
 
 export const createPreviewObject = (
   tool: ToolType,
@@ -26,8 +27,8 @@ export const createPreviewObject = (
       x: Math.min(startPoint.x, endPoint.x),
       y: Math.min(startPoint.y, endPoint.y),
     },
-    width,
-    height,
+    width: Math.max(MIN_OBJECT_SIZE, width),
+    height: Math.max(MIN_OBJECT_SIZE, height),
     fill: '#4f46e5',
     text: tool === 'text' ? '' : undefined,
     weight: 400,
