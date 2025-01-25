@@ -4,6 +4,7 @@ export function convertYouTubeUrlToEmbed(url: string): string | null {
     /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/, // Normal URL
     /(?:https?:\/\/)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/, // www. None
     /(?:https?:\/\/)?youtu\.be\/([a-zA-Z0-9_-]+)/, // youtu.be short URL
+    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/, // YouTube Shorts
   ];
 
   for (const pattern of regexPatterns) {
