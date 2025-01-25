@@ -11,6 +11,7 @@ import {
   setupAndRenderCanvas,
   getCanvasPoint,
   exportCanvasAsImage,
+  shareCanvasAsURL,
 } from '../utils/canvas';
 import {
   copyObject,
@@ -38,6 +39,7 @@ import { ImageObject } from './objects/Image';
 import { Tooltip } from './Tooltip';
 import { Alert } from './Alert';
 import { Modal } from './Modal';
+import { Loading } from './Loading';
 
 // Hooks
 import { useWindowSize } from '../hooks/window';
@@ -61,6 +63,7 @@ export const Canvas = () => {
   const { alert, setAlert } = useAlertContext();
   const [width, height] = useWindowSize();
   const [imagePosition, setImagePosition] = useState<Point | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
   const [isEditingId, setIsEditingId] = useState<string>('');
@@ -1069,6 +1072,15 @@ export const Canvas = () => {
         setIsModalOpen(!isModalOpen);
         setSelectedTool('select');
       }
+
+      if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        shareCanvasAsURL(objects, {
+          setIsLoading,
+          setSelectedObjectId,
+          setAlert,
+        });
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -1218,6 +1230,7 @@ export const Canvas = () => {
       />
 
       <Alert message={alert} />
+      <Loading hidden={!isLoading} />
 
       {objects
         .filter(

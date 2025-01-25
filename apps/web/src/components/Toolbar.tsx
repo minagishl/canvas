@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback } from 'react';
 import {
   MousePointer2,
   Square,
@@ -142,21 +142,6 @@ export function Toolbar(): React.ReactElement {
       }
     };
   }, []);
-
-  // Share canvas with Cmd/Ctrl + E
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        handleShareCanvas();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleShareCanvas]);
 
   const handleOnKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape' && selectedTool !== 'select') {
