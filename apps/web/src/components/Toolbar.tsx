@@ -15,7 +15,7 @@ import { isMobile } from 'react-device-detect';
 import { Popover } from './Popover';
 import { Menu } from './Menu';
 import { Loading } from './Loading';
-import { showTemporaryAlert } from '../utils/alert';
+import { shareCanvasAsURL } from '../utils/canvas';
 import { useAlertContext } from '../contexts/AlertContext';
 import { tv } from 'tailwind-variants';
 
@@ -127,6 +127,14 @@ export function Toolbar(): React.ReactElement {
     handleZoom(-0.1, 0.7, 2);
   };
 
+  const handleShareCanvas = useCallback(() => {
+    shareCanvasAsURL(objects, {
+      setIsLoading,
+      setSelectedObjectId,
+      setAlert,
+    });
+  }, [objects, setIsLoading, setSelectedObjectId, setAlert]);
+
   React.useEffect(() => {
     return () => {
       if (animationRef.current !== null) {
@@ -134,72 +142,6 @@ export function Toolbar(): React.ReactElement {
       }
     };
   }, []);
-
-  const handleShareCanvas = useCallback(() => {
-    setIsLoading(true);
-
-    // Check if canvas is empty
-    if (objects.length === 0) {
-      showTemporaryAlert('Canvas is empty!', setAlert);
-      setIsLoading(false);
-      return;
-    }
-
-    // Check for internet connection
-    if (!navigator.onLine) {
-      showTemporaryAlert(
-        'You are offline. Please check your internet connection.',
-        setAlert
-      );
-      setIsLoading(false);
-      return;
-    }
-
-    // Must be completed
-    setSelectedObjectId('');
-
-    setTimeout(() => {
-      const apiUrl = new URL(import.meta.env.VITE_API_URL);
-      fetch(`${apiUrl.href}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(objects),
-      })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error('Error sharing canvas');
-          }
-        })
-        .then((data) => {
-          if (window.gtag) {
-            window.gtag('event', 'share_canvas', {
-              id: data.id,
-              event_category: 'canvas',
-            });
-          }
-
-          const id = data.id;
-          const url = new URL(window.location.href);
-          url.searchParams.set('id', id);
-          navigator.clipboard.writeText(url.toString());
-          console.log('Canvas shared:', url.toString());
-          showTemporaryAlert(
-            'Canvas shared! URL copied to clipboard',
-            setAlert
-          );
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error('Error sharing canvas:', error);
-          showTemporaryAlert('Error sharing canvas', setAlert);
-          setIsLoading(false);
-        });
-    }, 500);
-  }, [objects, setAlert, setIsLoading, setSelectedObjectId]);
 
   // Share canvas with Cmd/Ctrl + E
   useEffect(() => {

@@ -349,3 +349,68 @@ export const exportCanvasAsImage = (
     }
   }, 100);
 };
+
+interface ShareCanvasOptions {
+  setIsLoading: (loading: boolean) => void;
+  setSelectedObjectId: (id: string | null) => void;
+  setAlert: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const shareCanvasAsURL = async (
+  objects: CanvasObject[],
+  { setIsLoading, setSelectedObjectId, setAlert }: ShareCanvasOptions
+): Promise<void> => {
+  setIsLoading(true);
+
+  try {
+    // Check if canvas is empty
+    if (objects.length === 0) {
+      showTemporaryAlert('Canvas is empty!', setAlert);
+      return;
+    }
+
+    // Check for internet connection
+    if (!navigator.onLine) {
+      showTemporaryAlert(
+        'You are offline. Please check your internet connection.',
+        setAlert
+      );
+      return;
+    }
+
+    setSelectedObjectId(null);
+
+    const apiUrl = new URL(import.meta.env.VITE_API_URL);
+    const response = await fetch(`${apiUrl.href}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(objects),
+    });
+
+    if (!response.ok) {
+      throw new Error('Error sharing canvas');
+    }
+
+    const data = await response.json();
+
+    if (window.gtag) {
+      window.gtag('event', 'share_canvas', {
+        id: data.id,
+        event_category: 'canvas',
+      });
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('id', data.id);
+    await navigator.clipboard.writeText(url.toString());
+
+    showTemporaryAlert('Canvas shared! URL copied to clipboard', setAlert);
+  } catch (error) {
+    console.error('Error sharing canvas:', error);
+    showTemporaryAlert('Error sharing canvas', setAlert);
+  } finally {
+    setIsLoading(false);
+  }
+};
