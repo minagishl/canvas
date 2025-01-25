@@ -8,8 +8,7 @@ import { parseAsync } from 'valibot';
 import { showTemporaryAlert } from '../utils/alert';
 import { findClickedObject } from '../utils/selection';
 import {
-  drawObject,
-  drawGrid,
+  setupAndRenderCanvas,
   getCanvasPoint,
   exportCanvasAsImage,
 } from '../utils/canvas';
@@ -98,50 +97,18 @@ export const Canvas = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    // Get device pixel ratio
-    const dpr = window.devicePixelRatio || 1;
-
-    // Set the logical size of the canvas
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-
-    // Scale canvas buffer size to device pixel ratio
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Scaling to device pixel ratio
-    ctx.scale(dpr, dpr);
-
-    ctx.clearRect(0, 0, width, height);
-    ctx.save();
-    ctx.translate(offset.x, offset.y);
-    ctx.scale(scale, scale);
-
-    drawGrid(ctx, width, height, offset, scale);
-
-    // Drawing objects other than text
-    objects
-      .filter(
-        (obj) =>
-          obj.type !== 'text' && obj.type !== 'image' && obj.type !== 'embed'
-      )
-      .forEach((object) => {
-        drawObject(ctx, object, selectedObjectId, scale);
-      });
-
-    // Draw preview object
-    if (previewObject && selectedTool !== 'select') {
-      ctx.globalAlpha = 0.6;
-      drawObject(ctx, previewObject, null, scale);
-      ctx.globalAlpha = 1;
-    }
-
-    ctx.restore();
+    if (canvas)
+      setupAndRenderCanvas(
+        canvas,
+        objects,
+        selectedObjectId,
+        previewObject,
+        selectedTool,
+        offset,
+        scale,
+        width,
+        height
+      );
   }, [
     scale,
     offset,
