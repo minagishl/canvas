@@ -71,3 +71,11 @@ export const handlePaste = (
     });
   }
 };
+
+export const handleCopy = async (value: string): Promise<void> => {
+  const clipboard = navigator.clipboard;
+
+  if (clipboard && clipboard.writeText) {
+    await clipboard.writeText(value);
+  }
+};

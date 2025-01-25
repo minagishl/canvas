@@ -2,6 +2,7 @@ import { CanvasObject, Point } from '../types/canvas';
 import { toPng } from 'html-to-image';
 import { showTemporaryAlert } from './alert';
 import { GRID_SIZE } from './constants';
+import { handleCopy } from './clipboard';
 
 export const setupAndRenderCanvas = (
   canvas: HTMLCanvasElement,
@@ -404,7 +405,7 @@ export const shareCanvasAsURL = async (
 
     const url = new URL(window.location.href);
     url.searchParams.set('id', data.id);
-    await navigator.clipboard.writeText(url.toString());
+    await handleCopy(url.toString());
 
     showTemporaryAlert('Canvas shared! URL copied to clipboard', setAlert);
   } catch (error) {
