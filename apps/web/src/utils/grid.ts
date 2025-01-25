@@ -9,3 +9,8 @@ export const snapToGrid = (point: Point): Point => {
     y: Math.round(point.y / gridSize) * gridSize,
   };
 };
+
+export const snapToGridSize = (size: number): number => {
+  const gridSize = GRID_SIZE / 4;
+  return Math.round(size / gridSize) * gridSize;
+};
