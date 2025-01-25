@@ -20,7 +20,7 @@ import {
 } from '../utils/object';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
-import { randomGif, loadImage } from '../utils/image';
+import { fetchRandomGif } from '../utils/image';
 import { textToggleBold, textToggleItalic } from '../utils/text';
 import { snapToGrid } from '../utils/grid';
 import { convertYouTubeUrlToEmbed } from '../utils/embed';
@@ -120,42 +120,6 @@ export const Canvas = () => {
     height,
   ]);
 
-  const fetchRandomGif = useCallback(async () => {
-    try {
-      const gifUrl = await randomGif(imagePosition, setAlert);
-      const img = await loadImage(gifUrl);
-
-      const maxSize = 500;
-      const ratio = Math.min(maxSize / img.width, maxSize / img.height);
-      const width = img.width * ratio;
-      const height = img.height * ratio;
-
-      if (!imagePosition) return;
-
-      const gifObject: CanvasObject = {
-        id: Math.random().toString(36).slice(2, 11),
-        type: 'image',
-        position: imagePosition,
-        width,
-        height,
-        fill: 'transparent',
-        originalUrl: gifUrl,
-      };
-
-      addObject(gifObject);
-      setImagePosition(null);
-      setSelectedTool('select');
-      showTemporaryAlert('GIF added successfully', setAlert);
-    } catch (error) {
-      console.error('Error fetching GIF:', error);
-      showTemporaryAlert(
-        error instanceof Error ? error.message : 'Failed to fetch GIF',
-        setAlert
-      );
-      setSelectedTool('select');
-    }
-  }, [imagePosition, setAlert, addObject, setSelectedTool]);
-
   const handleMouseDown = useCallback(
     (e: React.MouseEvent, resizeHandle?: ResizeHandle) => {
       // Prevent the context menu from appearing
@@ -177,7 +141,13 @@ export const Canvas = () => {
         e.stopPropagation();
         const point = getCanvasPoint(e, canvasRef, offset, scale);
         setImagePosition(point);
-        fetchRandomGif();
+        fetchRandomGif(
+          imagePosition,
+          setAlert,
+          addObject,
+          setImagePosition,
+          setSelectedTool
+        );
         return;
       }
 
@@ -304,7 +274,10 @@ export const Canvas = () => {
       scale,
       selectedObjectId,
       selectedTool,
-      fetchRandomGif,
+      imagePosition,
+      setAlert,
+      addObject,
+      setSelectedTool,
       objects,
       setSelectedObjectId,
       isDragging,

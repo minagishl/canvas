@@ -1,5 +1,48 @@
 import { Point, CanvasObject } from '../types/canvas';
 import { showTemporaryAlert } from './alert';
+import { type ToolType } from '../types/canvas';
+
+export const fetchRandomGif = async (
+  imagePosition: Point | null,
+  setAlert: React.Dispatch<React.SetStateAction<string>>,
+  addObject: (object: CanvasObject) => void,
+  setImagePosition: (position: Point | null) => void,
+  setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>
+): Promise<void> => {
+  try {
+    const gifUrl = await randomGif(imagePosition, setAlert);
+    const img = await loadImage(gifUrl);
+
+    const maxSize = 500;
+    const ratio = Math.min(maxSize / img.width, maxSize / img.height);
+    const width = img.width * ratio;
+    const height = img.height * ratio;
+
+    if (!imagePosition) return;
+
+    const gifObject: CanvasObject = {
+      id: Math.random().toString(36).slice(2, 11),
+      type: 'image',
+      position: imagePosition,
+      width,
+      height,
+      fill: 'transparent',
+      originalUrl: gifUrl,
+    };
+
+    addObject(gifObject);
+    setImagePosition(null);
+    setSelectedTool('select');
+    showTemporaryAlert('GIF added successfully', setAlert);
+  } catch (error) {
+    console.error('Error fetching GIF:', error);
+    showTemporaryAlert(
+      error instanceof Error ? error.message : 'Failed to fetch GIF',
+      setAlert
+    );
+    setSelectedTool('select');
+  }
+};
 
 export const randomGif = async (
   imagePosition: Point | null,
