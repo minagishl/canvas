@@ -38,34 +38,30 @@ export const handleObjectResize = ({
     switch (resizeHandle) {
       case 'bottom-right': {
         const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-        newWidth = selectedObject.width + maxDelta * Math.sign(dx);
+        const sign = Math.sign(dx + dy);
+        newWidth = selectedObject.width + maxDelta * sign;
         newHeight = newWidth / aspectRatio;
         break;
       }
       case 'bottom-left': {
         const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-        newWidth = selectedObject.width - maxDelta * Math.sign(dx);
+        const sign = Math.sign(-dx + dy);
+        newWidth = selectedObject.width + maxDelta * sign;
         newHeight = newWidth / aspectRatio;
-        newPosition.x =
-          selectedObject.position.x + (selectedObject.width - newWidth);
         break;
       }
       case 'top-right': {
         const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-        newWidth = selectedObject.width + maxDelta * Math.sign(dx);
+        const sign = Math.sign(dx - dy);
+        newWidth = selectedObject.width + maxDelta * sign;
         newHeight = newWidth / aspectRatio;
-        newPosition.y =
-          selectedObject.position.y + (selectedObject.height - newHeight);
         break;
       }
       case 'top-left': {
         const maxDelta = Math.max(Math.abs(dx), Math.abs(dy));
-        newWidth = selectedObject.width - maxDelta * Math.sign(dx);
+        const sign = -Math.sign(dx + dy);
+        newWidth = selectedObject.width + maxDelta * sign;
         newHeight = newWidth / aspectRatio;
-        newPosition.x =
-          selectedObject.position.x + (selectedObject.width - newWidth);
-        newPosition.y =
-          selectedObject.position.y + (selectedObject.height - newHeight);
         break;
       }
     }
