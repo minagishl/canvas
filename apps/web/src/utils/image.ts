@@ -117,3 +117,76 @@ export const imageToggleSpoiler = (
     setObjects(newObjects);
   }
 };
+
+interface HandleFileChangeProps {
+  file: File | undefined;
+  imagePosition: Point | null;
+  setImageCache: (
+    value: React.SetStateAction<{ [key: string]: string }>
+  ) => void;
+  addObject: (object: CanvasObject) => void;
+  setImagePosition: (value: React.SetStateAction<Point | null>) => void;
+  setSelectedTool: (value: React.SetStateAction<ToolType>) => void;
+  setAlert: (value: React.SetStateAction<string>) => void;
+}
+
+export const handleFileChange = async ({
+  file,
+  imagePosition,
+  setImageCache,
+  addObject,
+  setImagePosition,
+  setSelectedTool,
+  setAlert,
+}: HandleFileChangeProps): Promise<void> => {
+  if (!file || !imagePosition) return;
+
+  if (!file.type.startsWith('image/')) {
+    showTemporaryAlert('Please select an image file', setAlert);
+    return;
+  }
+
+  let imageData = await new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (event) => resolve(event.target?.result as string);
+    reader.readAsDataURL(file);
+  });
+
+  const img = new Image();
+  img.onload = () => {
+    const maxSize = 500;
+    const ratio = Math.min(maxSize / img.width, maxSize / img.height);
+    const width = img.width * ratio;
+    const height = img.height * ratio;
+
+    // For non-GIF images, optimize to WebP
+    if (!file.type.includes('gif')) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.drawImage(img, 0, 0, width, height);
+      imageData = canvas.toDataURL('image/webp');
+    }
+
+    const id = Math.random().toString(36).slice(2, 11);
+    setImageCache((prev) => ({ ...prev, [id]: imageData }));
+
+    addObject({
+      id,
+      type: 'image',
+      position: imagePosition,
+      width,
+      height,
+      fill: 'transparent',
+      imageData,
+    });
+
+    setImagePosition(null);
+    setSelectedTool('select');
+  };
+
+  img.src = imageData;
+};

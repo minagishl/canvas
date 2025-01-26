@@ -20,7 +20,7 @@ import {
 } from '../utils/object';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
-import { fetchRandomGif } from '../utils/image';
+import { fetchRandomGif, handleFileChange } from '../utils/image';
 import { textToggleBold, textToggleItalic } from '../utils/text';
 import { snapToGrid } from '../utils/grid';
 import { handlePaste } from '../utils/clipboard';
@@ -649,61 +649,17 @@ export const Canvas = () => {
     };
   }, [handleWheel]);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !imagePosition) return;
-
-    // Check if file is an image
-    if (!file.type.startsWith('image/')) {
-      showTemporaryAlert('Please select an image file', setAlert);
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      let imageData = event.target?.result as string;
-
-      const img = new Image();
-      img.onload = () => {
-        // Image resizing process
-        const canvas = document.createElement('canvas');
-        const maxSize = 500;
-        const ratio = Math.min(maxSize / img.width, maxSize / img.height);
-        const width = img.width * ratio;
-        const height = img.height * ratio;
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        // For non-GIF images, resize and convert to WebP
-        if (!file.type.includes('gif')) {
-          ctx.drawImage(img, 0, 0, width, height);
-          imageData = canvas.toDataURL('image/webp');
-        }
-
-        // Save to cache
-        const id = Math.random().toString(36).slice(2, 11);
-        setImageCache((prev) => ({ ...prev, [id]: imageData }));
-
-        const imageObject: CanvasObject = {
-          id,
-          type: 'image',
-          position: imagePosition,
-          width,
-          height,
-          fill: 'transparent',
-          imageData,
-        };
-
-        addObject(imageObject);
-        setImagePosition(null);
-        setSelectedTool('select');
-      };
-      img.src = imageData;
-    };
-    reader.readAsDataURL(file);
+    handleFileChange({
+      file,
+      imagePosition,
+      setImageCache,
+      addObject,
+      setImagePosition,
+      setSelectedTool,
+      setAlert,
+    });
   };
 
   // Add touch event handlers
@@ -1084,7 +1040,7 @@ export const Canvas = () => {
         ref={fileInputRef}
         style={{ display: 'none' }}
         accept="image/*"
-        onChange={handleFileChange}
+        onChange={handleFileInputChange}
       />
 
       <Alert message={alert} />
