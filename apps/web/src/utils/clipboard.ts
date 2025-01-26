@@ -2,8 +2,9 @@ import { Point, CanvasObject } from '../types/canvas';
 import { convertYouTubeUrlToEmbed } from './embed';
 import { copyObject } from './object';
 import { getCanvasPoint } from './canvas';
+import { handleFileChange } from './image';
 
-export const handlePaste = (
+export const handlePaste = async (
   width: number,
   height: number,
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
@@ -15,61 +16,86 @@ export const handlePaste = (
   copyObjectId: string | null,
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
 ) => {
-  const clipboard = navigator.clipboard;
+  try {
+    // Retrieve items from the clipboard
+    const items = await navigator.clipboard.read();
+    const position = getCanvasPoint(
+      {
+        clientX: width / 2,
+        clientY: height / 2,
+      } as React.MouseEvent,
+      canvasRef,
+      offset,
+      scale
+    );
 
-  if (clipboard && clipboard.readText) {
-    clipboard.readText().then((data) => {
-      try {
-        if (/^[^{].*/.test(data)) {
-          const position = getCanvasPoint(
-            {
-              clientX: width / 2,
-              clientY: height / 2,
-            } as React.MouseEvent,
-            canvasRef,
-            offset,
-            scale
-          );
-
-          const id = Math.random().toString(36).slice(2, 11);
-
-          let object: CanvasObject | null = null;
-          const embedUrl = convertYouTubeUrlToEmbed(data);
-
-          if (embedUrl !== null) {
-            object = {
-              id,
-              type: 'embed',
-              position,
-              width: 400,
-              height: 225,
-              fill: 'transparent',
-              embedUrl,
-            };
-          } else {
-            object = {
-              id,
-              type: 'text',
-              text: data,
-              position,
-              width: 200,
-              height: 50,
-              fill: '#4f46e5',
-              weight: 400,
-            };
-          }
-
-          addObject(object);
-          setSelectedObjectId(id);
-          return;
-        } else if (copyObjectId) {
-          copyObject(objects, copyObjectId, setObjects, setSelectedObjectId);
-        }
-      } catch (error) {
-        console.error('Error pasting object:', error);
+    for (const item of items) {
+      // Check image type
+      if (
+        item.types.includes('image/png') ||
+        item.types.includes('image/jpeg') ||
+        item.types.includes('image/gif')
+      ) {
+        const blob = await item.getType(
+          item.types.find((type) => type.startsWith('image/'))!
+        );
+        handleFileChange({
+          file: new File([blob], 'image', { type: blob.type }),
+          imagePosition: position,
+          setImageCache: () => {},
+          addObject,
+          setImagePosition: () => {},
+          setSelectedTool: () => {},
+          setAlert: () => {},
+        });
       }
+    }
+
+    // If no image is found, perform existing text paste process
+    const text = await navigator.clipboard.readText();
+    if (text && /^[^{].*/.test(text)) {
+      // Processing of existing text and YouTube URLs
+      handleTextPaste(text, position, addObject, setSelectedObjectId);
+    } else if (copyObjectId) {
+      copyObject(objects, copyObjectId, setObjects, setSelectedObjectId);
+    }
+  } catch (error) {
+    console.error('Error pasting:', error);
+  }
+};
+
+const handleTextPaste = (
+  text: string,
+  position: Point,
+  addObject: (object: CanvasObject) => void,
+  setSelectedObjectId: (value: React.SetStateAction<string | null>) => void
+) => {
+  const id = Math.random().toString(36).slice(2, 11);
+  const embedUrl = convertYouTubeUrlToEmbed(text);
+
+  if (embedUrl !== null) {
+    addObject({
+      id,
+      type: 'embed',
+      position,
+      width: 400,
+      height: 225,
+      fill: 'transparent',
+      embedUrl,
+    });
+  } else {
+    addObject({
+      id,
+      type: 'text',
+      text,
+      position,
+      width: 200,
+      height: 50,
+      fill: '#4f46e5',
+      weight: 400,
     });
   }
+  setSelectedObjectId(id);
 };
 
 export const handleCopy = async (value: string): Promise<void> => {
