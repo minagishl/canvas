@@ -27,6 +27,12 @@ export const ImageObject = React.memo(
     const elementRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+      if (obj.spoiler) {
+        setIsSpoiler(true);
+      }
+    }, [obj.spoiler]);
+
+    useEffect(() => {
       // Calculate the current position
       const newPosition = {
         x: obj.position.x * scale + offset.x,
