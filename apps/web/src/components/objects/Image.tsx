@@ -94,17 +94,30 @@ export const ImageObject = React.memo(
           loading="lazy"
           style={{
             borderRadius: obj.circle === true ? '100%' : '0',
+            opacity: obj.spoiler && isSpoiler ? 0 : 1,
           }}
         />
 
         {obj.spoiler && (
-          <div className="absolute left-0 top-0 flex size-full items-center justify-center">
+          <div
+            className="absolute left-0 top-0 flex size-full items-center justify-center"
+            style={{
+              pointerEvents: isSpoiler ? 'auto' : 'none',
+            }}
+          >
             {isSpoiler && (
               <>
-                <div className="absolute inset-0 bg-indigo-600" />
+                <div
+                  className="absolute inset-0 bg-indigo-600"
+                  style={{ zIndex: 1 }}
+                />
                 <button
-                  className="z-30 flex w-fit cursor-pointer flex-col items-center justify-center whitespace-nowrap rounded-md bg-white p-2 px-4 font-sans"
-                  onClick={() => setIsSpoiler(false)}
+                  className="relative flex w-fit cursor-pointer flex-col items-center justify-center whitespace-nowrap rounded-md bg-white p-2 px-4 font-sans"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsSpoiler(false);
+                  }}
+                  style={{ zIndex: 2 }}
                 >
                   <div className="flex h-5 items-center justify-center text-center">
                     Show image
