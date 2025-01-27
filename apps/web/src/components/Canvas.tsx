@@ -25,6 +25,11 @@ import { textToggleBold, textToggleItalic } from '../utils/text';
 import { snapToGrid } from '../utils/grid';
 import { handlePaste } from '../utils/clipboard';
 import { handleObjectResize } from '../utils/resize';
+import {
+  getTouchPoint,
+  getTouchDistance,
+  getTouchCenter,
+} from '../utils/touch';
 
 // Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
@@ -673,7 +678,7 @@ export const Canvas = () => {
       const distance = getTouchDistance(e.touches);
       setLastTouchDistance(distance);
     } else if (e.touches.length === 1) {
-      const point = getTouchPoint(touch);
+      const point = getTouchPoint(touch, canvasRef, offset, scale);
       if (selectedTool === 'select') {
         const clickedObject = findClickedObject(point, objects);
 
@@ -720,7 +725,7 @@ export const Canvas = () => {
       const touch = e.touches[0];
       if (isDragging) {
         if (selectedTool === 'select' && selectedObjectId && startPoint) {
-          const currentPoint = getTouchPoint(touch);
+          const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
           const newX = currentPoint.x - dragOffset.x;
           const newY = currentPoint.y - dragOffset.y;
 
@@ -731,7 +736,7 @@ export const Canvas = () => {
           );
           setObjects(updatedObjects);
         } else if (startPoint) {
-          const currentPoint = getTouchPoint(touch);
+          const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
           const preview = createPreviewObject(
             selectedTool,
             startPoint,
@@ -771,37 +776,12 @@ export const Canvas = () => {
 
     if (touchDuration < 200 && !isDragging && selectedTool === 'image') {
       const touch = e.changedTouches[0];
-      const point = getTouchPoint(touch);
+      const point = getTouchPoint(touch, canvasRef, offset, scale);
       setImagePosition(point);
       fileInputRef.current?.click();
     }
 
     setLastTouchDistance(0);
-  };
-
-  // Utility functions
-  const getTouchPoint = (touch: React.Touch): Point => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: (touch.clientX - rect.left - offset.x) / scale,
-      y: (touch.clientY - rect.top - offset.y) / scale,
-    };
-  };
-
-  const getTouchDistance = (touches: React.TouchList): number => {
-    const dx = touches[1].clientX - touches[0].clientX;
-    const dy = touches[1].clientY - touches[0].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  };
-
-  const getTouchCenter = (touches: React.TouchList): Point => {
-    return {
-      x: (touches[0].clientX + touches[1].clientX) / 2,
-      y: (touches[0].clientY + touches[1].clientY) / 2,
-    };
   };
 
   // Delete an object with the Delete key
