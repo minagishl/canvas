@@ -20,31 +20,122 @@ const objectTypes = [
   'line',
   'arrow',
   'embed',
-];
+] as const;
 
-app.use(
-  '/*',
-  cors({
-    origin: '*', // Allow all origins
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'],
-    exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
-    maxAge: 600,
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: '*',
+  allowMethods: ['GET', 'POST', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+  exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+  maxAge: 600,
+  credentials: true,
+};
 
-function checkId(id: string): boolean {
-  // Check UUID v7
-  if (
-    !/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+app.use('/*', cors(corsOptions));
+
+// Validation functions
+const validators = {
+  checkId(id: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
       id
-    )
-  ) {
-    return false;
+    );
+  },
+
+  checkPosition(position: any): boolean {
+    return (
+      position &&
+      typeof position.x === 'number' &&
+      typeof position.y === 'number'
+    );
+  },
+
+  checkDimensions(width: any, height: any): boolean {
+    return typeof width === 'number' && typeof height === 'number';
+  },
+
+  checkWeight(weight: any): boolean {
+    if (weight === undefined) return true;
+    return [100, 200, 300, 400, 500, 600, 700, 800, 900].includes(weight);
+  },
+
+  checkTypeFields(obj: any, type: string, field: string): boolean {
+    if (obj[field] === undefined) return true;
+
+    const typeValidations: Record<string, (value: any) => boolean> = {
+      string: (value) => typeof value === 'string',
+      number: (value) => typeof value === 'number',
+      boolean: (value) => typeof value === 'boolean',
+      array: (value) => Array.isArray(value),
+    };
+
+    const fieldTypes: Record<string, string> = {
+      circle: 'boolean',
+      embedUrl: 'string',
+      fontSize: 'number',
+      imageData: 'string',
+      italic: 'boolean',
+      lineWidth: 'number',
+      locked: 'boolean',
+      originalUrl: 'string',
+      points: 'array',
+      rotation: 'number',
+      spoiler: 'boolean',
+      text: 'string',
+    };
+
+    return typeValidations[fieldTypes[field]]?.(obj[field]) ?? false;
+  },
+};
+
+// Object validation
+function validateObject(obj: any): { isValid: boolean; error?: string } {
+  if (!obj.id) {
+    return { isValid: false, error: 'invalid id' };
   }
 
-  return true;
+  if (!objectTypes.includes(obj.type)) {
+    return { isValid: false, error: 'invalid type' };
+  }
+
+  if (!validators.checkPosition(obj.position)) {
+    return { isValid: false, error: 'invalid position' };
+  }
+
+  if (!validators.checkDimensions(obj.width, obj.height)) {
+    return { isValid: false, error: 'invalid dimensions' };
+  }
+
+  if (typeof obj.fill !== 'string') {
+    return { isValid: false, error: 'invalid fill' };
+  }
+
+  // Type check for each field
+  const fieldsToValidate = [
+    'text',
+    'imageData',
+    'fontSize',
+    'lineWidth',
+    'locked',
+    'italic',
+    'rotation',
+    'circle',
+    'spoiler',
+    'points',
+    'embedUrl',
+    'originalUrl',
+  ];
+
+  for (const field of fieldsToValidate) {
+    if (!validators.checkTypeFields(obj, obj.type, field)) {
+      return { isValid: false, error: `invalid ${field}` };
+    }
+  }
+
+  if (!validators.checkWeight(obj.weight)) {
+    return { isValid: false, error: 'invalid weight' };
+  }
+
+  return { isValid: true };
 }
 
 app.get('/', (c) => {
@@ -79,86 +170,9 @@ app.post('/', async (c) => {
   }
 
   for (const body of bodies) {
-    if (!body.id) {
-      return c.json({ error: 'invalid id' }, 400);
-    }
-
-    if (!objectTypes.includes(body.type)) {
-      return c.json({ error: 'invalid type' }, 400);
-    }
-
-    if (
-      !body.position ||
-      typeof body.position.x !== 'number' ||
-      typeof body.position.y !== 'number'
-    ) {
-      return c.json({ error: 'invalid position' }, 400);
-    }
-
-    if (typeof body.width !== 'number' || typeof body.height !== 'number') {
-      return c.json({ error: 'invalid dimensions' }, 400);
-    }
-
-    if (typeof body.fill !== 'string') {
-      return c.json({ error: 'invalid fill' }, 400);
-    }
-
-    if (body.text !== undefined && typeof body.text !== 'string') {
-      return c.json({ error: 'invalid text' }, 400);
-    }
-
-    if (body.imageData !== undefined && typeof body.imageData !== 'string') {
-      return c.json({ error: 'invalid imageData' }, 400);
-    }
-
-    if (
-      body.weight !== undefined &&
-      ![100, 200, 300, 400, 500, 600, 700, 800, 900].includes(body.weight)
-    ) {
-      return c.json({ error: 'invalid weight' }, 400);
-    }
-
-    if (body.fontSize !== undefined && typeof body.fontSize !== 'number') {
-      return c.json({ error: 'invalid fontSize' }, 400);
-    }
-
-    if (body.locked !== undefined && typeof body.locked !== 'boolean') {
-      return c.json({ error: 'invalid locked status' }, 400);
-    }
-
-    if (body.points !== undefined && !Array.isArray(body.points)) {
-      return c.json({ error: 'invalid points' }, 400);
-    }
-
-    if (body.lineWidth !== undefined && typeof body.lineWidth !== 'number') {
-      return c.json({ error: 'invalid lineWidth' }, 400);
-    }
-
-    if (body.italic !== undefined && typeof body.italic !== 'boolean') {
-      return c.json({ error: 'invalid italic status' }, 400);
-    }
-
-    if (body.rotation !== undefined && typeof body.rotation !== 'number') {
-      return c.json({ error: 'invalid rotation' }, 400);
-    }
-
-    if (
-      body.originalUrl !== undefined &&
-      typeof body.originalUrl !== 'string'
-    ) {
-      return c.json({ error: 'invalid originalUrl' }, 400);
-    }
-
-    if (body.circle !== undefined && typeof body.circle !== 'boolean') {
-      return c.json({ error: 'invalid circle status' }, 400);
-    }
-
-    if (body.spoiler !== undefined && typeof body.spoiler !== 'boolean') {
-      return c.json({ error: 'invalid spoiler status' }, 400);
-    }
-
-    if (body.embedUrl !== undefined && typeof body.embedUrl !== 'string') {
-      return c.json({ error: 'invalid embedUrl' }, 400);
+    const validation = validateObject(body);
+    if (!validation.isValid) {
+      return c.json({ error: validation.error }, 400);
     }
   }
 
@@ -181,7 +195,7 @@ app.get('/:id', async (c) => {
   }
 
   // Check UUID v7
-  if (!checkId(id)) {
+  if (!validators.checkId(id)) {
     return c.json({ error: 'invalid id' }, 400);
   }
 

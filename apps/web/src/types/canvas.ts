@@ -44,19 +44,19 @@ export type CanvasObject = {
   width: number;
   height: number;
   fill: string;
-  text?: string;
-  imageData?: string;
-  weight?: fontWeight;
-  fontSize?: fontSize;
-  locked?: boolean;
-  points?: LinePoint[];
-  lineWidth?: number;
-  italic?: boolean;
-  rotation?: number;
-  originalUrl?: string;
   circle?: boolean;
-  spoiler?: boolean;
   embedUrl?: string;
+  fontSize?: fontSize;
+  imageData?: string;
+  italic?: boolean;
+  lineWidth?: number;
+  locked?: boolean;
+  originalUrl?: string;
+  points?: LinePoint[];
+  rotation?: number;
+  spoiler?: boolean;
+  text?: string;
+  weight?: fontWeight;
 };
 
 export type ToolType =
