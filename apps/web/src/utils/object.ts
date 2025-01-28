@@ -111,3 +111,53 @@ export const rotateObject = (
 
   requestAnimationFrame(animate);
 };
+
+export function upObject(
+  objects: CanvasObject[],
+  selectedObjectId: string | null,
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+): void {
+  if (!selectedObjectId) return;
+
+  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+  if (!selectedObject) return;
+
+  setObjects((prevObjects) =>
+    prevObjects.map((obj) =>
+      obj.id === selectedObjectId
+        ? {
+            ...obj,
+            position: {
+              ...obj.position,
+              y: obj.position.y - 10,
+            },
+          }
+        : obj
+    )
+  );
+}
+
+export function downObject(
+  objects: CanvasObject[],
+  selectedObjectId: string | null,
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+): void {
+  if (!selectedObjectId) return;
+
+  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+  if (!selectedObject) return;
+
+  setObjects((prevObjects) =>
+    prevObjects.map((obj) =>
+      obj.id === selectedObjectId
+        ? {
+            ...obj,
+            position: {
+              ...obj.position,
+              y: obj.position.y + 10,
+            },
+          }
+        : obj
+    )
+  );
+}

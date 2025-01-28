@@ -17,6 +17,8 @@ import {
   deleteObject,
   lockObject,
   restoreObject,
+  upObject,
+  downObject,
 } from '../utils/object';
 import { createPreviewObject } from '../utils/preview';
 import { calculateTooltipPosition } from '../utils/tooltip';
@@ -880,6 +882,16 @@ export const Canvas = () => {
           setSelectedObjectId,
           setAlert,
         });
+      }
+
+      if (e.key === 'ArrowUp' && selectedObjectId) {
+        e.preventDefault();
+        upObject(objects, selectedObjectId, setObjects);
+      }
+
+      if (e.key === 'ArrowDown' && selectedObjectId) {
+        e.preventDefault();
+        downObject(objects, selectedObjectId, setObjects);
       }
     };
 
