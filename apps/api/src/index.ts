@@ -22,6 +22,29 @@ const objectTypes = [
   'embed',
 ] as const;
 
+// Define a list of allowed keys
+const allowedKeys = [
+  'id',
+  'type',
+  'position',
+  'width',
+  'height',
+  'fill',
+  'circle',
+  'embedUrl',
+  'fontSize',
+  'imageData',
+  'italic',
+  'lineWidth',
+  'locked',
+  'originalUrl',
+  'points',
+  'rotation',
+  'spoiler',
+  'text',
+  'weight',
+] as const;
+
 const corsOptions = {
   origin: '*',
   allowMethods: ['GET', 'POST', 'OPTIONS'],
@@ -87,8 +110,23 @@ const validators = {
   },
 };
 
+// Function to delete invalid keys
+function sanitizeObject(obj: any): any {
+  const sanitized: any = {};
+  for (const key of allowedKeys) {
+    if (obj[key] !== undefined) {
+      sanitized[key] = obj[key];
+    }
+  }
+  return sanitized;
+}
+
 // Object validation
-function validateObject(obj: any): { isValid: boolean; error?: string } {
+function validateObject(obj: any): {
+  isValid: boolean;
+  error?: string;
+  sanitizedObject?: any;
+} {
   if (!obj.id) {
     return { isValid: false, error: 'invalid id' };
   }
@@ -135,7 +173,8 @@ function validateObject(obj: any): { isValid: boolean; error?: string } {
     return { isValid: false, error: 'invalid weight' };
   }
 
-  return { isValid: true };
+  // If validation succeeds, return sanitizedObject
+  return { isValid: true, sanitizedObject: sanitizeObject(obj) };
 }
 
 app.get('/', (c) => {
@@ -169,18 +208,20 @@ app.post('/', async (c) => {
     return c.json({ error: 'request body must not be empty' }, 400);
   }
 
+  const sanitizedBodies = [];
   for (const body of bodies) {
     const validation = validateObject(body);
     if (!validation.isValid) {
       return c.json({ error: validation.error }, 400);
     }
+    sanitizedBodies.push(validation.sanitizedObject);
   }
 
   const id = uuidv7();
   const db = drizzle(c.env.DB);
   await db.insert(items).values({
     id,
-    content: bodies,
+    content: sanitizedBodies, // Store sanitized data
     createdAt: new Date().toISOString(),
   });
 
