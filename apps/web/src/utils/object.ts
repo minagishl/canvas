@@ -161,3 +161,53 @@ export function downObject(
     )
   );
 }
+
+export function leftObject(
+  objects: CanvasObject[],
+  selectedObjectId: string | null,
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+): void {
+  if (!selectedObjectId) return;
+
+  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+  if (!selectedObject) return;
+
+  setObjects((prevObjects) =>
+    prevObjects.map((obj) =>
+      obj.id === selectedObjectId
+        ? {
+            ...obj,
+            position: {
+              ...obj.position,
+              x: obj.position.x - 10,
+            },
+          }
+        : obj
+    )
+  );
+}
+
+export function rightObject(
+  objects: CanvasObject[],
+  selectedObjectId: string | null,
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+): void {
+  if (!selectedObjectId) return;
+
+  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+  if (!selectedObject) return;
+
+  setObjects((prevObjects) =>
+    prevObjects.map((obj) =>
+      obj.id === selectedObjectId
+        ? {
+            ...obj,
+            position: {
+              ...obj.position,
+              x: obj.position.x + 10,
+            },
+          }
+        : obj
+    )
+  );
+}
