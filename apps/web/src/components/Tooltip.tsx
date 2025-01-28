@@ -216,6 +216,7 @@ export function Tooltip({
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
   const isTextObject = selectedObject?.type === 'text';
   const isImageObject = selectedObject?.type === 'image';
+  const isOriginalUrl = selectedObject?.originalUrl;
   const isEmbedObject = selectedObject?.type === 'embed';
 
   return (
@@ -332,7 +333,7 @@ export function Tooltip({
           </select>
         </>
       )}
-      {isImageObject && (
+      {isImageObject && !isOriginalUrl && (
         <>
           <div className="group relative">
             <button
