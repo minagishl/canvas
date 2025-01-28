@@ -91,3 +91,28 @@ export function Modal({
     </>
   );
 }
+
+export function MobileModal(): React.ReactElement {
+  return (
+    <>
+      <div className="fixed left-0 top-0 z-50 flex size-full bg-black opacity-50" />
+      <div className="fixed left-1/2 top-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 transform">
+        <div className="mx-10 h-fit w-fit rounded-lg bg-white p-4 text-center text-sm sm:flex sm:flex-col">
+          <span>On a smartphone, you can only view shared data.</span>
+          <span>To create new content, please access from a computer.</span>
+          {import.meta.env.VITE_EXAMPLE_CANVAS_URL && (
+            <>
+              <br />
+              <a
+                className="text-blue-600 underline"
+                href={import.meta.env.VITE_EXAMPLE_CANVAS_URL}
+              >
+                Open example data
+              </a>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}

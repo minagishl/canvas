@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
 import { CanvasDataSchema } from '../schema';
 import { parseAsync } from 'valibot';
+import { isMobile } from 'react-device-detect';
 
 // Utility functions
 import { showTemporaryAlert } from '../utils/alert';
@@ -47,7 +48,7 @@ import { ImageObject } from './objects/Image';
 // Components
 import { Tooltip } from './Tooltip';
 import { Alert } from './Alert';
-import { Modal } from './Modal';
+import { Modal, MobileModal } from './Modal';
 import { Loading } from './Loading';
 
 // Hooks
@@ -95,6 +96,7 @@ export const Canvas = () => {
   const [remoteObjects, setRemoteObjects] = useState<CanvasObject[] | null>(
     null
   );
+  const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
 
   // Confirm reload / tab deletion.
   useEffect(() => {
@@ -982,6 +984,9 @@ export const Canvas = () => {
               console.error('Invalid canvas data:', error);
               showTemporaryAlert('Invalid canvas data format', setAlert);
             }
+
+            // Close the mobile modal if the canvas data is loaded
+            setShowMobileModal(false);
           }
         })
         .catch((error) => {
@@ -989,6 +994,8 @@ export const Canvas = () => {
         });
       // Delete the id parameter from the URL without reloading the page
       handleDeleteParms(params);
+    } else if (isMobile && !id && objects.length === 0) {
+      setShowMobileModal(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1125,6 +1132,7 @@ export const Canvas = () => {
         })}
 
       {isModalOpen && <Modal close={() => setIsModalOpen(false)} />}
+      {showMobileModal && <MobileModal />}
     </div>
   );
 };
