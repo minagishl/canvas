@@ -88,12 +88,18 @@ export const Canvas = () => {
     x: number;
     y: number;
   } | null>(null);
+  const [remoteObjects, setRemoteObjects] = useState<CanvasObject[] | null>(
+    null
+  );
 
   // Confirm reload / tab deletion.
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // If there are no objects, no need to confirm
       if (objects.length === 0) return;
-      e.preventDefault();
+
+      if (JSON.stringify(remoteObjects) !== JSON.stringify(objects))
+        e.preventDefault();
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -101,7 +107,7 @@ export const Canvas = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [objects]);
+  }, [objects, remoteObjects]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -947,6 +953,7 @@ export const Canvas = () => {
               const result = await parseAsync(CanvasDataSchema, data);
               setObjects(objects.concat(result.content as CanvasObject[]));
               showTemporaryAlert('Canvas data loaded', setAlert);
+              setRemoteObjects(result.content as CanvasObject[]);
             } catch (error) {
               console.error('Invalid canvas data:', error);
               showTemporaryAlert('Invalid canvas data format', setAlert);
