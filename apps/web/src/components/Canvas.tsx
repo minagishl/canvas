@@ -946,6 +946,7 @@ export const Canvas = () => {
             try {
               const result = await parseAsync(CanvasDataSchema, data);
               setObjects(objects.concat(result.content as CanvasObject[]));
+              showTemporaryAlert('Canvas data loaded', setAlert);
             } catch (error) {
               console.error('Invalid canvas data:', error);
               showTemporaryAlert('Invalid canvas data format', setAlert);
