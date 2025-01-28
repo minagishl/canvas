@@ -2,6 +2,7 @@ import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { ViteMinifyPlugin } from 'vite-plugin-minify';
 import { visualizer } from 'rollup-plugin-visualizer';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -16,6 +17,7 @@ export default defineConfig(({ mode }) => ({
       useShortDoctype: true,
       removeEmptyAttributes: false,
     }),
+    tailwindcss(),
   ],
   build: {
     minify: 'terser',
