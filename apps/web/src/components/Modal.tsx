@@ -68,10 +68,10 @@ export function Modal({
   return (
     <>
       <div
-        className="fixed left-0 top-0 z-50 size-full bg-black opacity-50"
+        className="fixed top-0 left-0 z-50 size-full bg-black opacity-50"
         onClick={close}
       />
-      <div className="fixed left-1/2 top-1/2 z-50 flex -translate-x-1/2 -translate-y-1/2 transform gap-2 rounded-xl bg-white p-2">
+      <div className="fixed top-1/2 left-1/2 z-50 flex -translate-x-1/2 -translate-y-1/2 transform gap-2 rounded-xl bg-white p-2">
         {items.map((item, index) => (
           <div key={index} className="group relative">
             <button
@@ -81,7 +81,7 @@ export function Modal({
               {item.icon}
             </button>
             {item.text && (
-              <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
+              <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
                 <Popover text={item.text} upper={false} />
               </div>
             )}
@@ -95,22 +95,27 @@ export function Modal({
 export function MobileModal(): React.ReactElement {
   return (
     <>
-      <div className="fixed left-0 top-0 z-50 flex size-full bg-black opacity-50" />
-      <div className="fixed left-1/2 top-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 transform">
-        <div className="mx-10 h-fit w-fit rounded-lg bg-white p-4 text-center text-sm sm:flex sm:flex-col">
-          <span>On a smartphone, you can only view shared data.</span>
-          <span>To create new content, please access from a computer.</span>
-          {import.meta.env.VITE_EXAMPLE_CANVAS_URL && (
-            <>
-              <br />
-              <a
-                className="text-blue-600 underline"
-                href={import.meta.env.VITE_EXAMPLE_CANVAS_URL}
-              >
-                Open example data
-              </a>
-            </>
-          )}
+      <div className="fixed top-0 left-0 z-50 flex size-full bg-black opacity-50" />
+      <div className="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 transform px-10">
+        <div className="mx-auto max-w-md rounded-lg bg-white p-4">
+          <div className="text-center text-sm">
+            <span className="sm:block">
+              On a smartphone, you can only view shared data.
+            </span>
+            <span className="sm:block">
+              To create new content, please access from a computer.
+            </span>
+            {import.meta.env.VITE_EXAMPLE_CANVAS_URL && (
+              <div className="mt-2">
+                <a
+                  className="text-blue-600 underline"
+                  href={import.meta.env.VITE_EXAMPLE_CANVAS_URL}
+                >
+                  Open example data
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
