@@ -244,7 +244,7 @@ export const Canvas = () => {
           const objectId = clickedHTMLObject
             .closest('[data-object-id]')
             ?.getAttribute('data-object-id');
-          if (objectId) {
+          if (objectId && !isMobile) {
             e.preventDefault(); // Prevent text selection
             e.stopPropagation(); // Prevent event propagation to canvas
             setSelectedObjectId(objectId);
@@ -693,7 +693,7 @@ export const Canvas = () => {
       if (selectedTool === 'select') {
         const clickedObject = findClickedObject(point, objects);
 
-        if (clickedObject) {
+        if (clickedObject && !isMobile) {
           setSelectedObjectId(clickedObject.id);
           setIsDragging(true);
           setStartPoint(point);
@@ -1045,7 +1045,7 @@ export const Canvas = () => {
         onTouchEnd={handleTouchEnd}
       />
 
-      {selectedObjectId && (
+      {selectedObjectId && !isMobile && (
         <Tooltip
           position={tooltipPosition}
           isDragging={isDragging}
