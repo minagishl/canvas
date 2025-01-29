@@ -8,6 +8,7 @@ import {
   ZoomIn,
   ZoomOut,
   MoreHorizontal,
+  BugPlay,
 } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { ToolType } from '../types/canvas';
@@ -24,6 +25,15 @@ const button = tv({
   variants: {
     isSelected: {
       true: 'bg-indigo-100 text-indigo-600',
+    },
+  },
+});
+
+const container = tv({
+  base: 'fixed top-4 left-1/2 z-40 flex max-w-96 -translate-x-1/2 items-center gap-2 rounded-xl bg-white p-2 shadow-lg select-none',
+  variants: {
+    isDevMode: {
+      true: 'max-w-none',
     },
   },
 });
@@ -154,10 +164,12 @@ export function Toolbar(): React.ReactElement {
     }
   };
 
+  const isDevMode = import.meta.env.MODE === 'development';
+
   return (
     <>
       <Loading hidden={!isLoading} />
-      <div className="fixed left-1/2 top-4 z-40 flex max-w-96 -translate-x-1/2 select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg">
+      <div className={container({ isDevMode })}>
         {tools
           .filter((Tool) => !isMobile || Tool.name === 'select')
           .map((Tool) => (
@@ -178,7 +190,7 @@ export function Toolbar(): React.ReactElement {
               <MoreHorizontal className="h-5 w-5" />
             </button>
             <div className="absolute left-1/2 hidden h-8 w-16 -translate-x-1/2 group-hover:block" />
-            <div className="absolute left-1/2 top-full hidden -translate-x-1/2 pt-3 group-hover:block">
+            <div className="absolute top-full left-1/2 hidden -translate-x-1/2 pt-3 group-hover:block">
               <Menu handleShareCanvas={handleShareCanvas} />
             </div>
           </div>
@@ -194,7 +206,7 @@ export function Toolbar(): React.ReactElement {
           >
             <ZoomOut className="h-5 w-5" />
           </button>
-          <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
+          <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
             <Popover text="Zoom out" upper={false} />
           </div>
         </div>
@@ -206,10 +218,23 @@ export function Toolbar(): React.ReactElement {
           >
             <ZoomIn className="h-5 w-5" />
           </button>
-          <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover:block">
+          <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
             <Popover text="Zoom in" upper={false} />
           </div>
         </div>
+        {isDevMode && (
+          <div className="group relative">
+            <button
+              className="rounded-md p-2 text-green-500 transition-colors hover:bg-gray-100"
+              disabled={true}
+            >
+              <BugPlay className="h-5 w-5" />
+            </button>
+            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
+              <Popover text="Currently in development mode" upper={false} />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
