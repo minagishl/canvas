@@ -8,7 +8,7 @@ function App(): React.ReactElement {
   return (
     <AlertProvider>
       <CanvasProvider>
-        <div className="relative h-screen w-screen select-none overflow-hidden bg-gray-50">
+        <div className="relative h-screen w-screen overflow-hidden bg-gray-50 select-none">
           <Canvas />
           <Toolbar />
         </div>

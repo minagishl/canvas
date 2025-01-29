@@ -89,14 +89,14 @@ export const EmbedObject = React.memo(
           <>
             <div className="pointer-events-none absolute -inset-2.5 border-2 border-indigo-600" />
             <div
-              className="absolute -left-3 -top-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
+              className="absolute -top-3 -left-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
               onMouseDown={(e) => {
                 e.stopPropagation();
                 handleMouseDown(e, 'top-left');
               }}
             />
             <div
-              className="absolute -right-3 -top-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
+              className="absolute -top-3 -right-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
               onMouseDown={(e) => {
                 e.stopPropagation();
                 handleMouseDown(e, 'top-right');
@@ -110,7 +110,7 @@ export const EmbedObject = React.memo(
               }}
             />
             <div
-              className="absolute -bottom-3 -right-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
+              className="absolute -right-3 -bottom-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
               onMouseDown={(e) => {
                 e.stopPropagation();
                 handleMouseDown(e, 'bottom-right');

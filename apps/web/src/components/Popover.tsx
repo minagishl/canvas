@@ -22,7 +22,7 @@ export function Popover({
 }): React.ReactElement {
   return (
     <div className={popover({ upper })}>
-      <div className="flex w-fit flex-col items-center justify-center whitespace-nowrap p-2 px-4 font-sans">
+      <div className="flex w-fit flex-col items-center justify-center p-2 px-4 font-sans whitespace-nowrap">
         <div className="flex h-5 items-center justify-center text-center">
           {command && (
             <div className="flex flex-row items-center justify-center">

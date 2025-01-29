@@ -52,7 +52,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   };
 
   return (
-    <div className="animate-fade animate-duration-300 animate-once absolute left-1/2 top-2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-md bg-white p-2 shadow-md">
+    <div className="animate-fade animate-duration-300 animate-once absolute top-2 left-1/2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-md bg-white p-2 shadow-md">
       <button
         className={button({ isSelected: selectedTool === 'pen' })}
         onClick={() => {
@@ -81,7 +81,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
             >
               <Film className="h-5 w-5" />
             </button>
-            <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
               <Popover text="Add random GIF" upper={false} />
             </div>
           </div>
@@ -94,7 +94,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         >
           <ImageDown className="h-5 w-5" />
         </button>
-        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+        <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
           <Popover text="Export as image" upper={false} command="E" />
         </div>
       </div>
@@ -103,7 +103,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
           <button className={button()} onClick={handleShareCanvas}>
             <Share className="h-5 w-5" />
           </button>
-          <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+          <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
             <Popover text="Share canvas" upper={false} command="S" />
           </div>
         </div>
@@ -112,7 +112,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         <button className={button()} onClick={handleClearCanvas}>
           <Trash2 className="h-5 w-5" />
         </button>
-        <div className="absolute left-1/2 top-full mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+        <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
           <Popover text="Delete all objects" upper={false} />
         </div>
       </div>
