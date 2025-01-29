@@ -184,6 +184,8 @@ export function Tooltip({
   };
 
   const handleRotate = () => {
+    const object = objects.find((obj) => obj.id === selectedObjectId);
+    if (object?.locked === true) return;
     rotateObject(
       selectedObjectId,
       objects,
@@ -221,7 +223,7 @@ export function Tooltip({
 
   return (
     <div
-      className="absolute z-10 flex select-none items-center gap-2 rounded-xl bg-white p-2 shadow-lg"
+      className="absolute z-10 flex items-center gap-2 rounded-xl bg-white p-2 shadow-lg select-none"
       id="tooltip"
       style={{
         top: position.y,
