@@ -162,7 +162,7 @@ export const Canvas = () => {
         const point = getCanvasPoint(e, canvasRef, offset, scale);
         setImagePosition(point);
         fetchRandomGif(
-          imagePosition,
+          point,
           setAlert,
           addObject,
           setImagePosition,
@@ -294,7 +294,6 @@ export const Canvas = () => {
       scale,
       selectedObjectId,
       selectedTool,
-      imagePosition,
       setAlert,
       addObject,
       setSelectedTool,
@@ -1020,7 +1019,7 @@ export const Canvas = () => {
     >
       <canvas
         ref={canvasRef}
-        className={`fixed inset-0 left-0 top-0 ${
+        className={`fixed inset-0 top-0 left-0 ${
           selectedTool === 'select'
             ? isPanning
               ? 'cursor-grabbing'
