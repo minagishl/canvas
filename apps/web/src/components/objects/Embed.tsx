@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { CanvasObject } from '../../types/canvas';
+import { isMobile } from 'react-device-detect';
 
 interface EmbedObjectProps {
   selectedObjectId: string | null;
@@ -60,13 +61,15 @@ export const EmbedObject = React.memo(
           height: obj.height * scale,
           willChange: 'transform',
           cursor: 'default',
-          pointerEvents: isSelected
-            ? isDragging
-              ? 'none'
-              : isResizing
+          pointerEvents: isMobile
+            ? 'none'
+            : isSelected
+              ? isDragging
                 ? 'none'
-                : 'auto'
-            : 'auto',
+                : isResizing
+                  ? 'none'
+                  : 'auto'
+              : 'auto',
         }}
         onMouseDown={handleMouseDown}
       >
@@ -75,13 +78,15 @@ export const EmbedObject = React.memo(
           title="embed"
           className="h-full w-full"
           style={{
-            pointerEvents: isSelected
-              ? isDragging
-                ? 'none'
-                : isResizing
+            pointerEvents: isMobile
+              ? 'none'
+              : isSelected
+                ? isDragging
                   ? 'none'
-                  : 'auto'
-              : 'none',
+                  : isResizing
+                    ? 'none'
+                    : 'auto'
+                : 'none',
           }}
         />
 

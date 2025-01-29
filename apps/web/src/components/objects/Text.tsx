@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { CanvasObject } from '../../types/canvas';
 import { tv } from 'tailwind-variants';
+import { isMobile } from 'react-device-detect';
 
 interface TextObjectProps {
   selectedTool: string;
@@ -109,7 +110,13 @@ export const TextObject = React.memo(
           paddingLeft: `${6 * scale}px`,
           color: obj.fill,
           willChange: 'transform',
-          pointerEvents: isDragging ? 'none' : isResizing ? 'none' : 'auto',
+          pointerEvents: isMobile
+            ? 'none'
+            : isDragging
+              ? 'none'
+              : isResizing
+                ? 'none'
+                : 'auto',
           cursor: selectedTool === 'select' ? 'move' : 'default',
           fontWeight: obj.weight,
           lineHeight: getLineHeight(scale),

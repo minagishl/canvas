@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { CanvasObject } from '../../types/canvas';
+import { isMobile } from 'react-device-detect';
 
 interface ImageObjectProps {
   selectedObjectId: string | null;
@@ -78,7 +79,13 @@ export const ImageObject = React.memo(
           height: obj.height * scale,
           willChange: 'transform',
           cursor: 'default',
-          pointerEvents: isDragging ? 'none' : isResizing ? 'none' : 'auto',
+          pointerEvents: isMobile
+            ? 'none'
+            : isDragging
+              ? 'none'
+              : isResizing
+                ? 'none'
+                : 'auto',
         }}
         onMouseDown={handleMouseDown}
       >
