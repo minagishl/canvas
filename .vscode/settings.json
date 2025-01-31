@@ -2,5 +2,8 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.validate.enable": true,
   "typescript.format.enable": true,
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "search.exclude": {
+    "**/apps/api/.wrangler": true
+  }
 }
