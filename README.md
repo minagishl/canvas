@@ -63,19 +63,19 @@ apps/
 
 - `yarn install`: Install all dependencies.
 
-### Web Application (`web`)
-
-- `yarn dev`: Start the development server.
-- `yarn lint`: Lints the code.
-- `yarn format`: Formats the code.
-- `yarn build`: Builds the application for production.
-
-### API (`api`)
+### API
 
 - `yarn dev`: Start the development server.
 - `yarn deploy`: Deploy to Cloudflare Workers
 - `yarn migration:local`: Run local database migrations
 - `yarn migration:remote`: Run remote database migrations
+
+### Web Application
+
+- `yarn dev`: Start the development server.
+- `yarn lint`: Lints the code.
+- `yarn format`: Formats the code.
+- `yarn build`: Builds the application for production.
 
 ## License
 
