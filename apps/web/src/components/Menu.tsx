@@ -93,7 +93,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         <MoveUpRight className="h-5 w-5" />
       </button>
       {import.meta.env.VITE_API_URL &&
-        import.meta.env.VITE_GIF_ENABLED === 'true' && (
+        import.meta.env.VITE_ENABLED_GIF === 'true' && (
           <div className="group/menu relative">
             <button
               className={button({ isSelected: selectedTool === 'gif' })}
@@ -130,17 +130,19 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
           </div>
         </div>
       )}
-      <div className="group/menu relative">
-        <button
-          className={button({ isSelected: selectedTool === 'presentation' })}
-          onClick={handleStartPresentation}
-        >
-          <Presentation className="h-5 w-5" />
-        </button>
-        <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-          <Popover text="Start presentation" upper={false} />
+      {import.meta.env.VITE_ENABLED_PRESENTATION && (
+        <div className="group/menu relative">
+          <button
+            className={button({ isSelected: selectedTool === 'presentation' })}
+            onClick={handleStartPresentation}
+          >
+            <Presentation className="h-5 w-5" />
+          </button>
+          <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+            <Popover text="Start presentation" upper={false} />
+          </div>
         </div>
-      </div>
+      )}
       <div className="group/menu relative">
         <button className={button()} onClick={handleClearCanvas}>
           <Trash2 className="h-5 w-5" />

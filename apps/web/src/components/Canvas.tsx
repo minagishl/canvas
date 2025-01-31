@@ -424,7 +424,7 @@ export const Canvas = () => {
             resizeHandle: resizing,
             isShiftPressed: e.shiftKey,
             snapToGridEnabled:
-              import.meta.env.VITE_RESIZE_SNAP_ENABLED === 'true' &&
+              import.meta.env.VITE_ENABLED_RESIZES_NAP === 'true' &&
               snapToGridEnabled,
           });
 
