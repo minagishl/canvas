@@ -125,9 +125,11 @@ export function MobileModal(): React.ReactElement {
 export function ModalInput({
   placeholder,
   close = () => {},
+  onChange,
 }: {
   placeholder?: string;
   close?: () => void;
+  onChange?: (text: string) => void;
 }): React.ReactElement {
   return (
     <>
@@ -141,6 +143,7 @@ export function ModalInput({
             <input
               className="h-9 w-full rounded-md border-2 border-gray-100 px-2 focus:border-indigo-400 focus:outline-none"
               placeholder={placeholder ?? 'Enter the text'}
+              onChange={(e) => onChange?.(e.target.value)}
             />
             <button className="ml-2 cursor-pointer rounded-md bg-indigo-100 p-2 text-indigo-600 hover:bg-indigo-200">
               <ArrowRight className="h-5 w-5" />
