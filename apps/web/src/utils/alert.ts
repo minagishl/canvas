@@ -8,3 +8,9 @@ export const showTemporaryAlert = (
     setAlert('');
   }, duration);
 };
+
+export const hiddenAlert = (
+  setAlert: React.Dispatch<React.SetStateAction<string>>
+): void => {
+  setAlert('');
+};

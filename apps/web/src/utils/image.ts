@@ -1,5 +1,5 @@
 import { Point, CanvasObject } from '../types/canvas';
-import { showTemporaryAlert } from './alert';
+import { showTemporaryAlert, hiddenAlert } from './alert';
 import { type ToolType } from '../types/canvas';
 import { handleAddObject } from './history';
 import { type HistoryState } from '../types/history';
@@ -45,9 +45,11 @@ export const fetchRandomGif = async (
 
     setImagePosition(null);
     setSelectedTool('select');
+    hiddenAlert(setAlert);
     showTemporaryAlert('GIF added successfully', setAlert);
   } catch (error) {
     console.error('Error fetching GIF:', error);
+    hiddenAlert(setAlert);
     showTemporaryAlert(
       error instanceof Error ? error.message : 'Failed to fetch GIF',
       setAlert
