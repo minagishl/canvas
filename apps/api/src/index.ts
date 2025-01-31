@@ -186,8 +186,9 @@ interface TenorResponse {
 }
 
 app.get('/gif', async (c) => {
+  const keyword = Math.random() > 0.5 ? 'cat' : 'dog';
   const response = await fetch(
-    `https://tenor.googleapis.com/v2/search?q=cat&key=${c.env.TENOR_API_KEY}&limit=1&random=true`
+    `https://tenor.googleapis.com/v2/search?q=${keyword}&key=${c.env.TENOR_API_KEY}&limit=1&random=true`
   );
   const data = (await response.json()) as TenorResponse;
   if (!data) {
