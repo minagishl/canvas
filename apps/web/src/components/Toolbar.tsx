@@ -231,8 +231,6 @@ export function Toolbar(): React.ReactElement {
     if (history.length > 0) {
       const latestAction = history[history.length - 1];
 
-      console.log(latestAction);
-
       // If the action is to add an object
       if (latestAction.type === 'create') {
         const objectType =
