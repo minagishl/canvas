@@ -273,16 +273,16 @@ export function Tooltip({
               </div>
             </>
           )}
-          <div className="group relative">
-            <button className={button()} onClick={handleMoveDown}>
-              <Layers2 className="h-5 w-5 rotate-180" />
-            </button>
-            <div className={popup({ isTextObject })}>
-              <Popover text="Move object down" upper={isTextObject} />
-            </div>
-          </div>
         </>
       )}
+      <div className="group relative">
+        <button className={button()} onClick={handleMoveDown}>
+          <Layers2 className="h-5 w-5 rotate-180" />
+        </button>
+        <div className={popup({ isTextObject })}>
+          <Popover text="Move object down" upper={isTextObject} />
+        </div>
+      </div>
       {isTextObject && (
         <>
           <div className="group relative">
