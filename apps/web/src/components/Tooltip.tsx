@@ -26,6 +26,7 @@ import {
 import { fontSize } from '../types/canvas';
 import { textEdit, textToggleItalic } from '../utils/text';
 import { imageToggleCircle, imageToggleSpoiler } from '../utils/image';
+import { COLORS } from '../utils/constants';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -47,8 +48,6 @@ interface TooltipProps {
   setIsEditingId: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const colors = ['#4f46e5', '#dc2626', '#16a34a', '#f59e0b', '#06b6d4'];
-
 export function Tooltip({
   position,
   isDragging,
@@ -68,7 +67,7 @@ export function Tooltip({
       if (!selectedObject) return prevObjects;
 
       const availableColors =
-        selectedObject.type === 'text' ? [...colors, '#fafafa'] : colors;
+        selectedObject.type === 'text' ? [...COLORS, '#fafafa'] : COLORS;
 
       const currentColorIndex = availableColors.indexOf(selectedObject.fill);
       const nextColorIndex = (currentColorIndex + 1) % availableColors.length;
@@ -243,7 +242,7 @@ export function Tooltip({
               className="h-5 w-5"
               fill={
                 objects.find((obj) => obj.id === selectedObjectId)?.fill ||
-                colors[0]
+                COLORS[0]
               }
               stroke="none"
             />
