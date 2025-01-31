@@ -189,7 +189,7 @@ export function Toolbar(): React.ReactElement {
             <button key="more" className={button()}>
               <MoreHorizontal className="h-5 w-5" />
             </button>
-            <div className="absolute left-1/2 hidden h-8 w-16 -translate-x-1/2 group-hover:block" />
+            <div className="absolute left-1/2 hidden h-8 w-24 -translate-x-1/2 group-hover:block" />
             <div className="absolute top-full left-1/2 hidden -translate-x-1/2 pt-3 group-hover:block">
               <Menu handleShareCanvas={handleShareCanvas} />
             </div>
