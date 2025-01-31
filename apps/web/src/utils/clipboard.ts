@@ -3,6 +3,7 @@ import { convertYouTubeUrlToEmbed } from './embed';
 import { copyObject } from './object';
 import { getCanvasPoint } from './canvas';
 import { handleFileChange } from './image';
+import { HistoryState } from '../types/history';
 
 export const handlePaste = async (
   width: number,
@@ -14,7 +15,10 @@ export const handlePaste = async (
   setSelectedObjectId: (value: React.SetStateAction<string | null>) => void,
   objects: CanvasObject[],
   copyObjectId: string | null,
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
+  setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
+  setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
+  currentHistoryIndex: number
 ) => {
   try {
     // Retrieve items from the clipboard
@@ -43,10 +47,13 @@ export const handlePaste = async (
           file: new File([blob], 'image', { type: blob.type }),
           imagePosition: position,
           setImageCache: () => {},
-          addObject,
           setImagePosition: () => {},
           setSelectedTool: () => {},
           setAlert: () => {},
+          setObjects,
+          setHistory,
+          setCurrentHistoryIndex,
+          currentHistoryIndex,
         });
       }
     }

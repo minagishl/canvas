@@ -928,7 +928,10 @@ export const Canvas = () => {
           setSelectedObjectId,
           objects,
           copyObjectId,
-          setObjects
+          setObjects,
+          setHistory,
+          setCurrentHistoryIndex,
+          currentHistoryIndex
         );
       }
       // Lock object with Cmd/Ctrl + Shift + L
@@ -1017,6 +1020,9 @@ export const Canvas = () => {
     setIsModalOpen,
     isModalOpen,
     handleUndo,
+    setHistory,
+    setCurrentHistoryIndex,
+    currentHistoryIndex,
   ]);
 
   useEffect(() => {
