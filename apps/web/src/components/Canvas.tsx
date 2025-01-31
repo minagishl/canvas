@@ -101,6 +101,32 @@ export const Canvas = () => {
   );
   const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
 
+  useEffect(() => {
+    // Event listener for the container element
+    const container = document.querySelector(
+      '.relative.h-screen.w-screen'
+    ) as HTMLElement;
+    const preventZoom = (e: WheelEvent) => {
+      // Cancel only if the ctrl key (cmd key on Mac) is pressed
+      if (e.ctrlKey || e.metaKey) {
+        // Prevent zoom if not on the canvas element
+        if (!(e.target instanceof HTMLCanvasElement)) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    if (container) {
+      container.addEventListener('wheel', preventZoom, { passive: false });
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('wheel', preventZoom);
+      }
+    };
+  }, []);
+
   const handleUndo = useCallback(() => {
     if (currentHistoryIndex >= 0) {
       const targetIndex = currentHistoryIndex - 1;
