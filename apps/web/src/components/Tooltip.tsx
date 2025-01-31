@@ -38,6 +38,10 @@ const popup = tv({
   },
 });
 
+const button = tv({
+  base: 'rounded-md p-2 transition-colors hover:bg-gray-100 cursor-pointer',
+});
+
 const fontSizeArray: fontSize[] = [
   12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128,
 ];
@@ -234,10 +238,7 @@ export function Tooltip({
     >
       {!isImageObject && !isEmbedObject && (
         <>
-          <button
-            className="rounded-md p-2 transition-colors hover:bg-gray-100"
-            onClick={handleColorChange}
-          >
+          <button className={button()} onClick={handleColorChange}>
             <Circle
               className="h-5 w-5"
               fill={
@@ -252,7 +253,9 @@ export function Tooltip({
             <>
               <div className="group relative">
                 <button
-                  className="flex size-9 items-center justify-center rounded-md p-2 transition-colors hover:bg-gray-100"
+                  className={button({
+                    className: 'flex size-9 items-center justify-center',
+                  })}
                   onClick={handleLineWidthChange}
                 >
                   <div
@@ -271,10 +274,7 @@ export function Tooltip({
             </>
           )}
           <div className="group relative">
-            <button
-              className="rounded-md p-2 transition-colors hover:bg-gray-100"
-              onClick={handleMoveDown}
-            >
+            <button className={button()} onClick={handleMoveDown}>
               <Layers2 className="h-5 w-5 rotate-180" />
             </button>
             <div className={popup({ isTextObject })}>
@@ -286,10 +286,7 @@ export function Tooltip({
       {isTextObject && (
         <>
           <div className="group relative">
-            <button
-              className="rounded-md p-2 transition-colors hover:bg-gray-100"
-              onClick={handleWeightChange}
-            >
+            <button className={button()} onClick={handleWeightChange}>
               <Bold className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
@@ -301,10 +298,7 @@ export function Tooltip({
             </div>
           </div>
           <div className="group relative">
-            <button
-              className="rounded-md p-2 transition-colors hover:bg-gray-100"
-              onClick={handleItalicChange}
-            >
+            <button className={button()} onClick={handleItalicChange}>
               <Italic className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
@@ -315,10 +309,7 @@ export function Tooltip({
               />
             </div>
           </div>
-          <button
-            className="rounded-md p-2 transition-colors hover:bg-gray-100"
-            onClick={handleTextEdit}
-          >
+          <button className={button()} onClick={handleTextEdit}>
             <TextCursorInput className="h-5 w-5" />
           </button>
           <select
@@ -337,10 +328,7 @@ export function Tooltip({
       {isImageObject && !isOriginalUrl && (
         <>
           <div className="group relative">
-            <button
-              className="rounded-md p-2 transition-colors hover:bg-gray-100"
-              onClick={handleToggleCircle}
-            >
+            <button className={button()} onClick={handleToggleCircle}>
               {selectedObject?.circle ? (
                 <CircleOff className="h-5 w-5 scale-x-[-1]" />
               ) : (
@@ -352,10 +340,7 @@ export function Tooltip({
             </div>
           </div>
           <div className="group relative">
-            <button
-              className="rounded-md p-2 transition-colors hover:bg-gray-100"
-              onClick={handleToggleSpoiler}
-            >
+            <button className={button()} onClick={handleToggleSpoiler}>
               {selectedObject?.spoiler ? (
                 <EyeOff className="h-5 w-5 scale-x-[-1]" />
               ) : (
@@ -369,10 +354,7 @@ export function Tooltip({
         </>
       )}
       <div className="group relative">
-        <button
-          className="rounded-md p-2 transition-colors hover:bg-gray-100"
-          onClick={handleRotate}
-        >
+        <button className={button()} onClick={handleRotate}>
           <RefreshCw className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>
@@ -381,10 +363,7 @@ export function Tooltip({
       </div>
       <div className="mx-2 h-6 w-px bg-gray-200" />
       <div className="group relative">
-        <button
-          className="rounded-md p-2 transition-colors hover:bg-gray-100"
-          onClick={handleChangeLocked}
-        >
+        <button className={button()} onClick={handleChangeLocked}>
           {selectedObject?.locked ? (
             <LockKeyhole className="h-5 w-5" />
           ) : (
@@ -396,10 +375,7 @@ export function Tooltip({
         </div>
       </div>
       <div className="group relative">
-        <button
-          className="rounded-md p-2 transition-colors hover:bg-gray-100"
-          onClick={handleDuplicateObject}
-        >
+        <button className={button()} onClick={handleDuplicateObject}>
           <Copy className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>
@@ -407,10 +383,7 @@ export function Tooltip({
         </div>
       </div>
       <div className="group relative">
-        <button
-          className="rounded-md p-2 transition-colors hover:bg-gray-100"
-          onClick={handleDeleteObject}
-        >
+        <button className={button()} onClick={handleDeleteObject}>
           <Trash2 className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>

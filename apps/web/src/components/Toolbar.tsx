@@ -201,7 +201,7 @@ export function Toolbar(): React.ReactElement {
         <div className="group relative">
           <button
             onClick={handleZoomOut}
-            className="rounded-md p-2 transition-colors hover:bg-gray-100"
+            className={button()}
             disabled={isZooming || scale <= 0.7}
           >
             <ZoomOut className="h-5 w-5" />
@@ -213,7 +213,7 @@ export function Toolbar(): React.ReactElement {
         <div className="group relative">
           <button
             onClick={handleZoomIn}
-            className="rounded-md p-2 transition-colors hover:bg-gray-100"
+            className={button()}
             disabled={isZooming || scale >= 2}
           >
             <ZoomIn className="h-5 w-5" />
