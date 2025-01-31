@@ -97,7 +97,7 @@ export function MobileModal(): React.ReactElement {
     <>
       <div className="fixed top-0 left-0 z-50 flex size-full bg-black opacity-50" />
       <div className="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 transform px-10">
-        <div className="mx-auto max-w-md rounded-lg bg-white p-4">
+        <div className="mx-auto max-w-96 rounded-lg bg-white p-4">
           <div className="text-center text-sm">
             <span className="sm:block">
               On a smartphone, you can only view shared data.
