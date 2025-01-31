@@ -69,6 +69,55 @@ export function Toolbar(): React.ReactElement {
   const [isZooming, setIsZooming] = React.useState(false);
   const animationRef = useRef<number | null>(null);
 
+  // Joke
+  const [, setKeyUp] = React.useState<string[]>([]);
+  const [rotation, setRotation] = React.useState(false);
+
+  const konamiCommand = React.useMemo(
+    () => [
+      'ArrowUp',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowLeft',
+      'ArrowRight',
+      'b',
+      'a',
+    ],
+    []
+  );
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      setKeyUp((prev) => {
+        const updated = [...prev, e.key];
+
+        // Limit the length of the command
+        if (updated.length > konamiCommand.length) {
+          updated.shift();
+        }
+
+        // Start rotation animation if the command matches
+        if (updated.join('') === konamiCommand.join('') && !rotation) {
+          setRotation(true);
+          // Stop the animation after one rotation
+          setTimeout(() => {
+            setRotation(false);
+          }, 1000);
+          return [];
+        }
+        return updated;
+      });
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [konamiCommand, rotation]);
+
   const handleToolSelect = (tool: ToolType) => {
     setSelectedTool(tool);
     if (window.gtag) {
@@ -254,12 +303,15 @@ export function Toolbar(): React.ReactElement {
         </div>
         {isDevMode && (
           <div className="group relative">
-            <button
-              className="rounded-md p-2 text-green-500 transition-colors hover:bg-gray-100"
-              disabled={true}
-            >
-              <BugPlay className="h-5 w-5" />
-            </button>
+            <div className="rounded-md p-2 text-green-500 transition-colors hover:bg-gray-100">
+              <BugPlay
+                className={`h-5 w-5 ${
+                  rotation
+                    ? 'animate-duration-300 animate-ease-out animate-[spin_0.4s_linear_1]'
+                    : ''
+                }`}
+              />
+            </div>
             <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
               <Popover text="Currently in development mode" upper={false} />
             </div>
