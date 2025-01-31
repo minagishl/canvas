@@ -9,6 +9,7 @@ import {
   ZoomOut,
   MoreHorizontal,
   BugPlay,
+  Presentation,
 } from 'lucide-react';
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { ToolType } from '../types/canvas';
@@ -33,6 +34,9 @@ const container = tv({
   base: 'fixed top-4 left-1/2 z-40 flex max-w-96 -translate-x-1/2 items-center gap-2 rounded-xl bg-white p-2 shadow-lg select-none',
   variants: {
     isDevMode: {
+      true: 'max-w-none',
+    },
+    isPresentation: {
       true: 'max-w-none',
     },
   },
@@ -165,18 +169,27 @@ export function Toolbar(): React.ReactElement {
   };
 
   const isDevMode = import.meta.env.MODE === 'development';
+  const isPresentation = selectedTool === 'presentation';
 
   return (
     <>
       <Loading hidden={!isLoading} />
       <div className={container({ isDevMode })}>
         {tools
-          .filter((Tool) => !isMobile || Tool.name === 'select')
+          .filter(
+            (Tool) =>
+              (!isMobile || Tool.name === 'select') &&
+              (!isPresentation || Tool.name === 'select')
+          )
           .map((Tool) => (
             <div key={Tool.name} className="group relative">
               <button
                 id={`toolbar-${Tool.name}`}
-                className={button({ isSelected: selectedTool === Tool.name })}
+                className={button({
+                  isSelected:
+                    selectedTool === Tool.name ||
+                    (isPresentation && Tool.name === 'select'),
+                })}
                 onClick={() => handleToolSelect(Tool.name)}
                 onKeyDown={handleOnKeyDown}
               >
@@ -184,7 +197,7 @@ export function Toolbar(): React.ReactElement {
               </button>
             </div>
           ))}
-        {!isMobile && (
+        {!isMobile && !isPresentation && (
           <div className="group relative">
             <button key="more" className={button()}>
               <MoreHorizontal className="h-5 w-5" />
@@ -195,6 +208,23 @@ export function Toolbar(): React.ReactElement {
             </div>
           </div>
         )}
+
+        {!isMobile && isPresentation && (
+          <div className="group/menu relative">
+            <button
+              className={button()}
+              onClick={() => {
+                handleToolSelect('select');
+              }}
+            >
+              <Presentation className="h-5 w-5" />
+            </button>
+            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+              <Popover text="Stop presentation" upper={false} />
+            </div>
+          </div>
+        )}
+
         <div className="relative flex h-6 w-4 items-center justify-center">
           <div className="h-6 w-px bg-gray-200" />
         </div>

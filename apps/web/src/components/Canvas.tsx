@@ -246,7 +246,10 @@ export const Canvas = () => {
         return;
       }
 
-      if (selectedTool === 'select' && selectedObjectId) {
+      if (
+        (selectedTool === 'select' || selectedTool === 'presentation') &&
+        selectedObjectId
+      ) {
         // Resize handle detection
         const selectedObject = objects.find(
           (obj) => obj.id === selectedObjectId
@@ -293,7 +296,7 @@ export const Canvas = () => {
         }
       }
 
-      if (selectedTool === 'select') {
+      if (selectedTool === 'select' || selectedTool === 'presentation') {
         setIsEditingId('');
         // Clicking on a text or image object
         const clickedHTMLObject = e.target as HTMLElement;
@@ -443,7 +446,7 @@ export const Canvas = () => {
         if (selectedObject?.locked) return;
 
         if (
-          selectedTool === 'select' &&
+          (selectedTool === 'select' || selectedTool === 'presentation') &&
           selectedObjectId &&
           startPoint &&
           e.buttons === 1
@@ -776,7 +779,7 @@ export const Canvas = () => {
       setLastTouchDistance(distance);
     } else if (e.touches.length === 1) {
       const point = getTouchPoint(touch, canvasRef, offset, scale);
-      if (selectedTool === 'select') {
+      if (selectedTool === 'select' || selectedTool === 'presentation') {
         const clickedObject = findClickedObject(point, objects);
 
         if (clickedObject && !isMobile) {
@@ -821,7 +824,10 @@ export const Canvas = () => {
     } else if (e.touches.length === 1) {
       const touch = e.touches[0];
       if (isDragging) {
-        if (selectedTool === 'select' && selectedObjectId && startPoint) {
+        const isSelect = selectedTool === 'select';
+        const isPresentation = selectedTool === 'presentation';
+
+        if ((isSelect || isPresentation) && selectedObjectId && startPoint) {
           const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
           const newX = currentPoint.x - dragOffset.x;
           const newY = currentPoint.y - dragOffset.y;
@@ -1140,7 +1146,7 @@ export const Canvas = () => {
       <canvas
         ref={canvasRef}
         className={`fixed inset-0 top-0 left-0 ${
-          selectedTool === 'select'
+          selectedTool === 'select' || selectedTool === 'presentation'
             ? isPanning
               ? 'cursor-grabbing'
               : 'cursor-default'

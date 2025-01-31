@@ -68,7 +68,8 @@ export type ToolType =
   | 'pen'
   | 'save'
   | 'arrow'
-  | 'gif';
+  | 'gif'
+  | 'presentation';
 
 export type ResizeHandle =
   | 'top-left'
