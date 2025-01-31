@@ -17,7 +17,6 @@ import {
   copyObject,
   deleteObject,
   lockObject,
-  restoreObject,
   upObject,
   downObject,
   leftObject,
@@ -35,10 +34,12 @@ import {
   getTouchDistance,
   getTouchCenter,
 } from '../utils/touch';
+import { handleAddObject } from '../utils/history';
 
 // Contexts
 import { useCanvasContext } from '../contexts/CanvasContext';
 import { useAlertContext } from '../contexts/AlertContext';
+import { useHistoryContext } from '../contexts/HistoryContext';
 
 // Objects
 import { EmbedObject } from './objects/Embed';
@@ -70,6 +71,8 @@ export const Canvas = () => {
     objects,
     addObject,
   } = useCanvasContext();
+  const { history, setHistory, currentHistoryIndex, setCurrentHistoryIndex } =
+    useHistoryContext();
   const { alert, setAlert } = useAlertContext();
   const [width, height] = useWindowSize();
   const [imagePosition, setImagePosition] = useState<Point | null>(null);
@@ -97,6 +100,31 @@ export const Canvas = () => {
     null
   );
   const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
+
+  const handleUndo = useCallback(() => {
+    if (currentHistoryIndex >= 0) {
+      const targetIndex = currentHistoryIndex - 1;
+
+      if (targetIndex >= 0) {
+        // If there is a history, return to the previous state
+        const previousState = history[targetIndex];
+        setObjects(previousState.objects);
+        setSelectedObjectId(previousState.selectedObjectId);
+      } else {
+        // If the index is less than 0, return to the initial state
+        setObjects([]);
+        setSelectedObjectId(null);
+      }
+
+      setCurrentHistoryIndex(targetIndex);
+    }
+  }, [
+    currentHistoryIndex,
+    history,
+    setCurrentHistoryIndex,
+    setObjects,
+    setSelectedObjectId,
+  ]);
 
   // Confirm reload / tab deletion.
   useEffect(() => {
@@ -164,9 +192,12 @@ export const Canvas = () => {
         fetchRandomGif(
           point,
           setAlert,
-          addObject,
           setImagePosition,
-          setSelectedTool
+          setSelectedTool,
+          setObjects,
+          setHistory,
+          setCurrentHistoryIndex,
+          currentHistoryIndex
         );
         return;
       }
@@ -295,8 +326,11 @@ export const Canvas = () => {
       selectedObjectId,
       selectedTool,
       setAlert,
-      addObject,
       setSelectedTool,
+      setObjects,
+      setHistory,
+      setCurrentHistoryIndex,
+      currentHistoryIndex,
       objects,
       setSelectedObjectId,
       isDragging,
@@ -516,11 +550,17 @@ export const Canvas = () => {
           points: [...currentLine, point],
         };
 
-        addObject(newArrow);
         setCurrentLine([]);
         setPreviewObject(null);
         setIsDragging(false);
         setSelectedTool('select');
+        handleAddObject(
+          newArrow,
+          setObjects,
+          setHistory,
+          setCurrentHistoryIndex,
+          currentHistoryIndex
+        );
       } else {
         setCurrentLine([point]);
       }
@@ -545,10 +585,16 @@ export const Canvas = () => {
         points: currentLine,
       };
 
-      addObject(newLine);
       setCurrentLine([]);
       setPreviewObject(null);
       setIsDragging(false);
+      handleAddObject(
+        newLine,
+        setObjects,
+        setHistory,
+        setCurrentHistoryIndex,
+        currentHistoryIndex
+      );
       return;
     }
 
@@ -603,11 +649,17 @@ export const Canvas = () => {
         e.shiftKey
       );
 
-      addObject(newObject);
       setSelectedTool('select');
       setIsDragging(false);
       setStartPoint(null);
       setPreviewObject(null);
+      handleAddObject(
+        newObject,
+        setObjects,
+        setHistory,
+        setCurrentHistoryIndex,
+        currentHistoryIndex
+      );
     }
   };
 
@@ -671,10 +723,13 @@ export const Canvas = () => {
       file,
       imagePosition,
       setImageCache,
-      addObject,
       setImagePosition,
       setSelectedTool,
       setAlert,
+      setObjects,
+      setHistory,
+      setCurrentHistoryIndex,
+      currentHistoryIndex,
     });
   };
 
@@ -817,7 +872,8 @@ export const Canvas = () => {
       }
 
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
-        restoreObject(objects, setObjects, setSelectedObjectId);
+        e.preventDefault();
+        handleUndo();
       }
 
       // Italicize text with Cmd/Ctrl + I
@@ -929,6 +985,7 @@ export const Canvas = () => {
     snapToGridEnabled,
     setIsModalOpen,
     isModalOpen,
+    handleUndo,
   ]);
 
   useEffect(() => {

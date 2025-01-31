@@ -1,13 +1,18 @@
 import { Point, CanvasObject } from '../types/canvas';
 import { showTemporaryAlert } from './alert';
 import { type ToolType } from '../types/canvas';
+import { handleAddObject } from './history';
+import { type HistoryState } from '../types/history';
 
 export const fetchRandomGif = async (
   imagePosition: Point | null,
   setAlert: React.Dispatch<React.SetStateAction<string>>,
-  addObject: (object: CanvasObject) => void,
   setImagePosition: (position: Point | null) => void,
-  setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>
+  setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>,
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
+  setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
+  setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
+  currentHistoryIndex: number
 ): Promise<void> => {
   try {
     const gifUrl = await randomGif(imagePosition, setAlert);
@@ -30,7 +35,14 @@ export const fetchRandomGif = async (
       originalUrl: gifUrl,
     };
 
-    addObject(gifObject);
+    handleAddObject(
+      gifObject,
+      setObjects,
+      setHistory,
+      setCurrentHistoryIndex,
+      currentHistoryIndex
+    );
+
     setImagePosition(null);
     setSelectedTool('select');
     showTemporaryAlert('GIF added successfully', setAlert);
@@ -124,20 +136,26 @@ interface HandleFileChangeProps {
   setImageCache: (
     value: React.SetStateAction<{ [key: string]: string }>
   ) => void;
-  addObject: (object: CanvasObject) => void;
   setImagePosition: (value: React.SetStateAction<Point | null>) => void;
   setSelectedTool: (value: React.SetStateAction<ToolType>) => void;
   setAlert: (value: React.SetStateAction<string>) => void;
+  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void;
+  setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>;
+  setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
+  currentHistoryIndex: number;
 }
 
 export const handleFileChange = async ({
   file,
   imagePosition,
   setImageCache,
-  addObject,
   setImagePosition,
   setSelectedTool,
   setAlert,
+  setObjects,
+  setHistory,
+  setCurrentHistoryIndex,
+  currentHistoryIndex,
 }: HandleFileChangeProps): Promise<void> => {
   if (!file || !imagePosition) return;
 
@@ -174,15 +192,21 @@ export const handleFileChange = async ({
     const id = Math.random().toString(36).slice(2, 11);
     setImageCache((prev) => ({ ...prev, [id]: imageData }));
 
-    addObject({
-      id,
-      type: 'image',
-      position: imagePosition,
-      width,
-      height,
-      fill: 'transparent',
-      imageData,
-    });
+    handleAddObject(
+      {
+        id,
+        type: 'image',
+        position: imagePosition,
+        width,
+        height,
+        fill: 'transparent',
+        imageData,
+      },
+      setObjects,
+      setHistory,
+      setCurrentHistoryIndex,
+      currentHistoryIndex
+    );
 
     setImagePosition(null);
     setSelectedTool('select');

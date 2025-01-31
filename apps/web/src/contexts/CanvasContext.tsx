@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CanvasObject, ToolType, Point } from '../types/canvas';
+import { useHistoryContext } from './HistoryContext';
 
 interface CanvasContextType {
   scale: number;
@@ -25,6 +26,19 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
   const [objects, setObjects] = useState<CanvasObject[]>([]);
   const [selectedTool, setSelectedTool] = useState<ToolType>('select');
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
+  const { history, setHistory, setCurrentHistoryIndex } = useHistoryContext();
+
+  useEffect(() => {
+    if (history.length === 0) {
+      const initialState = {
+        objects: [],
+        selectedObjectId: null,
+      };
+      setHistory([initialState]);
+      setCurrentHistoryIndex(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addObject = (object: CanvasObject) => {
     setObjects((prev) => [...prev, object]);
