@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "modal": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "isAvailable": {
+          "type": "boolean"
+        }
+      },
+      "required": ["title", "body", "isAvailable"]
+    }
+  },
+  "required": ["modal"]
+}
