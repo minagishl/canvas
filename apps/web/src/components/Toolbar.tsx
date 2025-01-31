@@ -325,7 +325,7 @@ export function Toolbar(): React.ReactElement {
           </div>
         </div>
         {isDevMode && (
-          <div className="group relative">
+          <div className="relative">
             <div className="rounded-md p-2 text-green-500 transition-colors hover:bg-gray-100">
               <BugPlay
                 className={`h-5 w-5 ${
@@ -334,9 +334,6 @@ export function Toolbar(): React.ReactElement {
                     : ''
                 }`}
               />
-            </div>
-            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
-              <Popover text="Currently in development mode" upper={false} />
             </div>
             <div className="absolute top-full left-1/2 mt-2 block -translate-x-1/2">
               {popoverText !== '' && (
