@@ -14,7 +14,7 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
-import { useCanvasContext } from '../contexts/CanvasContext';
+import { useCanvasContext } from '~/contexts/CanvasContext';
 import { Popover } from './Popover';
 import { tv } from 'tailwind-variants';
 import {
@@ -22,11 +22,11 @@ import {
   deleteObject,
   lockObject,
   rotateObject,
-} from '../utils/object';
-import { fontSize } from '../types/canvas';
-import { textEdit, textToggleItalic } from '../utils/text';
-import { imageToggleCircle, imageToggleSpoiler } from '../utils/image';
-import { COLORS } from '../utils/constants';
+} from '~/utils/object';
+import { fontSize } from '~/types/canvas';
+import { textEdit, textToggleItalic } from '~/utils/text';
+import { imageToggleCircle, imageToggleSpoiler } from '~/utils/image';
+import { COLORS } from '~/utils/constants';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',

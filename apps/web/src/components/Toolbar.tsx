@@ -11,14 +11,14 @@ import {
   BugPlay,
   Presentation,
 } from 'lucide-react';
-import { useCanvasContext } from '../contexts/CanvasContext';
-import { ToolType } from '../types/canvas';
+import { useCanvasContext } from '~/contexts/CanvasContext';
+import { ToolType } from '~/types/canvas';
 import { isMobile } from 'react-device-detect';
 import { Popover } from './Popover';
 import { Menu } from './Menu';
 import { Loading } from './Loading';
-import { shareCanvasAsURL } from '../utils/canvas';
-import { useAlertContext } from '../contexts/AlertContext';
+import { shareCanvasAsURL } from '~/utils/canvas';
+import { useAlertContext } from '~/contexts/AlertContext';
 import { tv } from 'tailwind-variants';
 
 const button = tv({

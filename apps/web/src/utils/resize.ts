@@ -1,4 +1,4 @@
-import { CanvasObject, Point, ResizeHandle } from '../types/canvas';
+import { CanvasObject, Point, ResizeHandle } from '~/types/canvas';
 import { snapToGrid, snapToGridSize } from './grid';
 import { MIN_OBJECT_SIZE } from './constants';
 

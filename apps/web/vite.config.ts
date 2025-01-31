@@ -3,11 +3,13 @@ import react from '@vitejs/plugin-react';
 import { ViteMinifyPlugin } from 'vite-plugin-minify';
 import { visualizer } from 'rollup-plugin-visualizer';
 import tailwindcss from '@tailwindcss/vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    tsconfigPaths(),
     htmlPlugin(loadEnv(mode, '.')),
     ViteMinifyPlugin({
       removeComments: true,

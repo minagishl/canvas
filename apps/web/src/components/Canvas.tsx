@@ -1,18 +1,18 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Point, CanvasObject, ResizeHandle, LinePoint } from '../types/canvas';
-import { CanvasDataSchema } from '../schema';
+import { Point, CanvasObject, ResizeHandle, LinePoint } from '~/types/canvas';
+import { CanvasDataSchema } from '~/schema';
 import { parseAsync } from 'valibot';
 import { isMobile } from 'react-device-detect';
 
 // Utility functions
-import { showTemporaryAlert } from '../utils/alert';
-import { findClickedObject } from '../utils/selection';
+import { showTemporaryAlert } from '~/utils/alert';
+import { findClickedObject } from '~/utils/selection';
 import {
   setupAndRenderCanvas,
   getCanvasPoint,
   exportCanvasAsImage,
   shareCanvasAsURL,
-} from '../utils/canvas';
+} from '~/utils/canvas';
 import {
   copyObject,
   deleteObject,
@@ -21,25 +21,21 @@ import {
   downObject,
   leftObject,
   rightObject,
-} from '../utils/object';
-import { createPreviewObject } from '../utils/preview';
-import { calculateTooltipPosition } from '../utils/tooltip';
-import { fetchRandomGif, handleFileChange } from '../utils/image';
-import { textToggleBold, textToggleItalic } from '../utils/text';
-import { snapToGrid } from '../utils/grid';
-import { handlePaste } from '../utils/clipboard';
-import { handleObjectResize } from '../utils/resize';
-import {
-  getTouchPoint,
-  getTouchDistance,
-  getTouchCenter,
-} from '../utils/touch';
-import { handleAddObject } from '../utils/history';
+} from '~/utils/object';
+import { createPreviewObject } from '~/utils/preview';
+import { calculateTooltipPosition } from '~/utils/tooltip';
+import { fetchRandomGif, handleFileChange } from '~/utils/image';
+import { textToggleBold, textToggleItalic } from '~/utils/text';
+import { snapToGrid } from '~/utils/grid';
+import { handlePaste } from '~/utils/clipboard';
+import { handleObjectResize } from '~/utils/resize';
+import { getTouchPoint, getTouchDistance, getTouchCenter } from '~/utils/touch';
+import { handleAddObject } from '~/utils/history';
 
 // Contexts
-import { useCanvasContext } from '../contexts/CanvasContext';
-import { useAlertContext } from '../contexts/AlertContext';
-import { useHistoryContext } from '../contexts/HistoryContext';
+import { useCanvasContext } from '~/contexts/CanvasContext';
+import { useAlertContext } from '~/contexts/AlertContext';
+import { useHistoryContext } from '~/contexts/HistoryContext';
 
 // Objects
 import { EmbedObject } from './objects/Embed';
@@ -53,7 +49,7 @@ import { Modal, MobileModal, TextModal } from './Modal';
 import { Loading } from './Loading';
 
 // Hooks
-import { useWindowSize } from '../hooks/window';
+import { useWindowSize } from '~/hooks/window';
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);

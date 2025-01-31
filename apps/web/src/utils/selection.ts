@@ -1,4 +1,4 @@
-import { CanvasObject, Point, LinePoint } from '../types/canvas';
+import { CanvasObject, Point, LinePoint } from '~/types/canvas';
 
 export const isPointNearLine = (
   point: Point,

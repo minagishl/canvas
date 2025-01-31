@@ -1,4 +1,4 @@
-import { CanvasObject } from '../types/canvas';
+import { CanvasObject } from '~/types/canvas';
 
 export const copyObject = (
   objects: CanvasObject[],

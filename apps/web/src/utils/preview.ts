@@ -1,4 +1,4 @@
-import { CanvasObject, Point, ToolType } from '../types/canvas';
+import { CanvasObject, Point, ToolType } from '~/types/canvas';
 import { MIN_OBJECT_SIZE } from './constants';
 
 export const createPreviewObject = (

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { type HistoryState } from '../types/history';
+import { type HistoryState } from '~/types/history';
 
 interface HistoryContextType {
   history: HistoryState[];

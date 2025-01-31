@@ -1,9 +1,9 @@
-import { Point, CanvasObject } from '../types/canvas';
+import { Point, CanvasObject } from '~/types/canvas';
 import { convertYouTubeUrlToEmbed } from './embed';
 import { copyObject } from './object';
 import { getCanvasPoint } from './canvas';
 import { handleFileChange } from './image';
-import { HistoryState } from '../types/history';
+import { HistoryState } from '~/types/history';
 
 export const handlePaste = async (
   width: number,

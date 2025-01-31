@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Point } from '../types/canvas';
+import { type Point } from '~/types/canvas';
 
 export const getTouchPoint = (
   touch: React.Touch,

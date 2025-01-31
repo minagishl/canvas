@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CanvasObject, ToolType, Point } from '../types/canvas';
+import { CanvasObject, ToolType, Point } from '~/types/canvas';
 import { useHistoryContext } from './HistoryContext';
 
 interface CanvasContextType {

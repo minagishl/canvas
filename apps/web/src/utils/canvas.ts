@@ -1,4 +1,4 @@
-import { CanvasObject, Point } from '../types/canvas';
+import { CanvasObject, Point } from '~/types/canvas';
 import { toPng } from 'html-to-image';
 import { showTemporaryAlert } from './alert';
 import { GRID_SIZE } from './constants';

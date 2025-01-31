@@ -1,4 +1,4 @@
-import { CanvasObject, fontWeight } from '../types/canvas';
+import { CanvasObject, fontWeight } from '~/types/canvas';
 
 export const textEdit = (
   selectedObjectId: string | null,

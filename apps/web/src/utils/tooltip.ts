@@ -1,4 +1,4 @@
-import { type Point, type CanvasObject } from '../types/canvas';
+import { type Point, type CanvasObject } from '~/types/canvas';
 
 interface CalculateTooltipPositionProps {
   selectedObject: CanvasObject;

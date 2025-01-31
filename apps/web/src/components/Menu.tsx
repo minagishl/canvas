@@ -7,12 +7,12 @@ import {
   Film,
   Presentation,
 } from 'lucide-react';
-import { useCanvasContext } from '../contexts/CanvasContext';
+import { useCanvasContext } from '~/contexts/CanvasContext';
 import { Popover } from './Popover';
-import { useAlertContext } from '../contexts/AlertContext';
-import { exportCanvasAsImage } from '../utils/canvas';
+import { useAlertContext } from '~/contexts/AlertContext';
+import { exportCanvasAsImage } from '~/utils/canvas';
 import { tv } from 'tailwind-variants';
-import { type ToolType } from '../types/canvas';
+import { type ToolType } from '~/types/canvas';
 
 const button = tv({
   base: 'cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',

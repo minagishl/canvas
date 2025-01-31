@@ -1,6 +1,6 @@
-import { CanvasObject } from '../types/canvas';
-import { HistoryAction } from '../types/history';
-import { HistoryState } from '../types/history';
+import { CanvasObject } from '~/types/canvas';
+import { HistoryAction } from '~/types/history';
+import { HistoryState } from '~/types/history';
 
 export const addToHistory = (
   action: HistoryAction,

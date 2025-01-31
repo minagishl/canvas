@@ -1,4 +1,4 @@
-import { Point } from '../types/canvas';
+import { Point } from '~/types/canvas';
 import { GRID_SIZE } from './constants';
 
 export const snapToGrid = (point: Point): Point => {

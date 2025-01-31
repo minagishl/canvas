@@ -1,8 +1,8 @@
-import { Point, CanvasObject } from '../types/canvas';
+import { Point, CanvasObject } from '~/types/canvas';
 import { showTemporaryAlert, hiddenAlert } from './alert';
-import { type ToolType } from '../types/canvas';
+import { type ToolType } from '~/types/canvas';
 import { handleAddObject } from './history';
-import { type HistoryState } from '../types/history';
+import { type HistoryState } from '~/types/history';
 
 export const fetchRandomGif = async (
   imagePosition: Point | null,
