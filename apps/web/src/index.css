@@ -4,3 +4,14 @@
 * {
   overscroll-behavior: none;
 }
+
+/* Hide scrollbar */
+#root {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.content::-webkit-scrollbar {
+  display: none;
+}
