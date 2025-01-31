@@ -64,7 +64,14 @@ export const handlePaste = async (
       // Processing of existing text and YouTube URLs
       handleTextPaste(text, position, addObject, setSelectedObjectId);
     } else if (copyObjectId) {
-      copyObject(objects, copyObjectId, setObjects, setSelectedObjectId);
+      copyObject(
+        objects,
+        copyObjectId,
+        setSelectedObjectId,
+        setHistory,
+        setCurrentHistoryIndex,
+        currentHistoryIndex
+      );
     }
   } catch (error) {
     console.error('Error pasting:', error);

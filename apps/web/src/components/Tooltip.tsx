@@ -202,7 +202,14 @@ export function Tooltip({
   };
 
   const handleDuplicateObject = () => {
-    copyObject(objects, selectedObjectId, setObjects, setSelectedObjectId);
+    copyObject(
+      objects,
+      selectedObjectId,
+      setSelectedObjectId,
+      setHistory,
+      setCurrentHistoryIndex,
+      currentHistoryIndex
+    );
   };
 
   const handleDeleteObject = () => {

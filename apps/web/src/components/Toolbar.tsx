@@ -250,6 +250,14 @@ export function Toolbar(): React.ReactElement {
           setPopoverText('');
         }, 2000);
       }
+
+      // if the action is to copy an object
+      if (latestAction.type === 'copy') {
+        setPopoverText('The object has been copied.');
+        setTimeout(() => {
+          setPopoverText('');
+        }, 2000);
+      }
     }
   }, [history, isDevMode]);
 

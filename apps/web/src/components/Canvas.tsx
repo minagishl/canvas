@@ -966,7 +966,14 @@ export const Canvas = () => {
       // Duplicate object with Cmd/Ctrl + D
       if (e.key === 'd' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        copyObject(objects, selectedObjectId, setObjects, setSelectedObjectId);
+        copyObject(
+          objects,
+          selectedObjectId,
+          setSelectedObjectId,
+          setHistory,
+          setCurrentHistoryIndex,
+          currentHistoryIndex
+        );
       }
 
       // Grid snap toggle with Cmd/Ctrl + G
