@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Github, BookMarked, X, BookOpen } from 'lucide-react';
+import { Github, BookMarked, X, BookOpen, ArrowRight } from 'lucide-react';
 import { Popover } from './Popover';
 
 const navigateToUrl = (url: string) => {
@@ -115,6 +115,36 @@ export function MobileModal(): React.ReactElement {
                 </a>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function ModalInput({
+  placeholder,
+  close = () => {},
+}: {
+  placeholder?: string;
+  close?: () => void;
+}): React.ReactElement {
+  return (
+    <>
+      <div
+        className="fixed top-0 left-0 z-50 flex size-full bg-black opacity-50"
+        onClick={close}
+      />
+      <div className="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 transform px-10">
+        <div className="mx-auto max-w-96 rounded-lg bg-white p-2">
+          <div className="flex flex-row rounded-md text-center text-sm">
+            <input
+              className="h-9 w-full rounded-md border-2 border-gray-100 px-2 focus:border-indigo-400 focus:outline-none"
+              placeholder={placeholder ?? 'Enter the text'}
+            />
+            <button className="ml-2 cursor-pointer rounded-md bg-indigo-100 p-2 text-indigo-600 hover:bg-indigo-200">
+              <ArrowRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </div>
