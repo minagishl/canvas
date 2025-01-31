@@ -307,7 +307,7 @@ export function Toolbar(): React.ReactElement {
               <BugPlay
                 className={`h-5 w-5 ${
                   rotation
-                    ? 'animate-duration-400 animate-ease-out animate-[spin_0.4s_linear_1]'
+                    ? 'animate-once animate-duration-700 animate-ease-out animate-spin'
                     : ''
                 }`}
               />
