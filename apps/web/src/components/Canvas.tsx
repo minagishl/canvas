@@ -403,6 +403,7 @@ export const Canvas = () => {
           height: 0,
           fill: '#4f46e5',
           points: [...currentLine, point],
+          lineWidth: 6,
         });
         return;
       }
@@ -582,6 +583,7 @@ export const Canvas = () => {
           height: maxY - minY,
           fill: '#4f46e5',
           points: [...currentLine, point],
+          lineWidth: 6,
         };
 
         setCurrentLine([]);
@@ -617,6 +619,7 @@ export const Canvas = () => {
         height: maxY - minY,
         fill: '#4f46e5',
         points: currentLine,
+        lineWidth: 6,
       };
 
       setCurrentLine([]);
