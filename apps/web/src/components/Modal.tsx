@@ -154,3 +154,25 @@ export function ModalInput({
     </>
   );
 }
+
+export function TextModal({
+  title,
+  body,
+}: {
+  title: string;
+  body: string;
+}): React.ReactElement {
+  return (
+    <>
+      <div className="fixed top-0 left-0 z-50 flex size-full bg-black opacity-50" />
+      <div className="fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 transform px-10">
+        <div className="mx-auto max-w-96 rounded-lg bg-white p-4">
+          <div className="flex flex-col text-center text-sm">
+            {title && <span className="text-base">{title}</span>}
+            <span className="[&:not(:first-child)]:mt-2">{body}</span>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

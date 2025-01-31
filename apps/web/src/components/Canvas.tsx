@@ -49,7 +49,7 @@ import { ImageObject } from './objects/Image';
 // Components
 import { Tooltip } from './Tooltip';
 import { Alert } from './Alert';
-import { Modal, MobileModal } from './Modal';
+import { Modal, MobileModal, TextModal } from './Modal';
 import { Loading } from './Loading';
 
 // Hooks
@@ -100,6 +100,11 @@ export const Canvas = () => {
     null
   );
   const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
+  const [showTextModal, setShowTextModal] = useState<boolean>(false);
+  const [textModalContent, setTextModalContent] = useState<{
+    title: string;
+    body: string;
+  } | null>(null);
 
   useEffect(() => {
     // Event listener for the container element
@@ -1095,6 +1100,32 @@ export const Canvas = () => {
     }
   };
 
+  useEffect(() => {
+    const apiUrl = import.meta.env.VITE_STATUS_API_URL;
+    if (apiUrl) {
+      fetch(apiUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          const isAvailable = data.modal.isAvailable;
+          if (isAvailable === false) {
+            const content = {
+              title: data.modal.title,
+              body: data.modal.body,
+            };
+
+            // Set the content of the text modal
+            setTextModalContent(content);
+
+            // Show the text modal
+            setShowTextModal(true);
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching status data:', error);
+        });
+    }
+  }, []);
+
   return (
     <div
       className="relative h-screen w-screen overflow-hidden"
@@ -1215,6 +1246,12 @@ export const Canvas = () => {
 
       {isModalOpen && <Modal close={() => setIsModalOpen(false)} />}
       {showMobileModal && <MobileModal />}
+      {showTextModal && textModalContent && (
+        <TextModal
+          title={textModalContent.title}
+          body={textModalContent.body}
+        />
+      )}
     </div>
   );
 };
