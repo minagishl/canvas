@@ -739,16 +739,181 @@ export const Canvas = () => {
     [scale, offset, setScale, setOffset]
   );
 
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      setTouchStartTime(Date.now());
+
+      if (e.touches.length === 2) {
+        // Start pinch gesture
+        const distance = getTouchDistance(e.touches);
+        setLastTouchDistance(distance);
+      } else if (e.touches.length === 1) {
+        const point = getTouchPoint(touch, canvasRef, offset, scale);
+        if (selectedTool === 'select' || selectedTool === 'presentation') {
+          const clickedObject = findClickedObject(point, objects);
+
+          if (clickedObject && !isMobile) {
+            setSelectedObjectId(clickedObject.id);
+            setIsDragging(true);
+            setStartPoint(point);
+            setDragOffset({
+              x: point.x - clickedObject.position.x,
+              y: point.y - clickedObject.position.y,
+            });
+          } else {
+            setSelectedObjectId(null);
+            setIsPanning(true);
+            setPanStart({ x: touch.clientX, y: touch.clientY });
+          }
+        } else {
+          setStartPoint(point);
+          setIsDragging(true);
+        }
+      }
+    },
+    [objects, offset, scale, selectedTool, setSelectedObjectId]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2) {
+        // Pinch zoom processing
+        const distance = getTouchDistance(e.touches);
+        const delta = (distance - lastTouchDistance) * 0.01;
+        const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
+
+        const center = getTouchCenter(e.touches);
+        const worldX = (center.x - offset.x) / scale;
+        const worldY = (center.y - offset.y) / scale;
+
+        const newOffsetX = center.x - worldX * newScale;
+        const newOffsetY = center.y - worldY * newScale;
+
+        setScale(newScale);
+        setOffset({ x: newOffsetX, y: newOffsetY });
+        setLastTouchDistance(distance);
+      } else if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        if (isDragging) {
+          const isSelect = selectedTool === 'select';
+          const isPresentation = selectedTool === 'presentation';
+
+          if ((isSelect || isPresentation) && selectedObjectId && startPoint) {
+            const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
+            const newX = currentPoint.x - dragOffset.x;
+            const newY = currentPoint.y - dragOffset.y;
+
+            const updatedObjects = objects.map((obj) =>
+              obj.id === selectedObjectId
+                ? { ...obj, position: { x: newX, y: newY } }
+                : obj
+            );
+            setObjects(updatedObjects);
+          } else if (startPoint) {
+            const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
+            const preview = createPreviewObject(
+              selectedTool,
+              startPoint,
+              currentPoint,
+              false
+            );
+            setPreviewObject(preview);
+          }
+        } else if (isPanning) {
+          if (panStart) {
+            const deltaX = touch.clientX - panStart.x;
+            const deltaY = touch.clientY - panStart.y;
+            setOffset({
+              x: offset.x + deltaX,
+              y: offset.y + deltaY,
+            });
+          }
+          setPanStart({ x: touch.clientX, y: touch.clientY });
+        }
+      }
+    },
+    [
+      dragOffset.x,
+      dragOffset.y,
+      isDragging,
+      isPanning,
+      lastTouchDistance,
+      objects,
+      offset,
+      panStart,
+      scale,
+      selectedObjectId,
+      selectedTool,
+      setObjects,
+      setOffset,
+      setScale,
+      startPoint,
+    ]
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      const touchDuration = Date.now() - touchStartTime;
+
+      if (isDragging) {
+        setIsDragging(false);
+        setStartPoint(null);
+        setDragOffset({ x: 0, y: 0 });
+      }
+
+      if (isPanning) {
+        setIsPanning(false);
+        setPanStart(null);
+      }
+
+      if (touchDuration < 200 && !isDragging && selectedTool === 'image') {
+        const touch = e.changedTouches[0];
+        const point = getTouchPoint(touch, canvasRef, offset, scale);
+        setImagePosition(point);
+        fileInputRef.current?.click();
+      }
+
+      setLastTouchDistance(0);
+    },
+    [isDragging, isPanning, offset, scale, selectedTool, touchStartTime]
+  );
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     canvas.addEventListener('wheel', handleWheel, { passive: false });
 
+    const touchStartHandler = (e: TouchEvent) => {
+      e.preventDefault();
+      handleTouchStart(e as unknown as React.TouchEvent<Element>);
+    };
+
+    const touchMoveHandler = (e: TouchEvent) => {
+      e.preventDefault();
+      handleTouchMove(e as unknown as React.TouchEvent<Element>);
+    };
+
+    const touchEndHandler = (e: TouchEvent) => {
+      e.preventDefault();
+      handleTouchEnd(e as unknown as React.TouchEvent<Element>);
+    };
+
+    canvas.addEventListener('touchstart', touchStartHandler, {
+      passive: false,
+    });
+    canvas.addEventListener('touchmove', touchMoveHandler, { passive: false });
+    canvas.addEventListener('touchend', touchEndHandler, { passive: false });
+
     return () => {
       canvas.removeEventListener('wheel', handleWheel);
+
+      canvas.removeEventListener('touchstart', touchStartHandler);
+      canvas.removeEventListener('touchmove', touchMoveHandler);
+      canvas.removeEventListener('touchend', touchEndHandler);
     };
-  }, [handleWheel]);
+  }, [handleTouchEnd, handleTouchMove, handleTouchStart, handleWheel]);
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -764,126 +929,6 @@ export const Canvas = () => {
       setCurrentHistoryIndex,
       currentHistoryIndex,
     });
-  };
-
-  // Add touch event handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    setTouchStartTime(Date.now());
-
-    if (e.touches.length === 2) {
-      // Start pinch gesture
-      const distance = getTouchDistance(e.touches);
-      setLastTouchDistance(distance);
-    } else if (e.touches.length === 1) {
-      const point = getTouchPoint(touch, canvasRef, offset, scale);
-      if (selectedTool === 'select' || selectedTool === 'presentation') {
-        const clickedObject = findClickedObject(point, objects);
-
-        if (clickedObject && !isMobile) {
-          setSelectedObjectId(clickedObject.id);
-          setIsDragging(true);
-          setStartPoint(point);
-          setDragOffset({
-            x: point.x - clickedObject.position.x,
-            y: point.y - clickedObject.position.y,
-          });
-        } else {
-          setSelectedObjectId(null);
-          setIsPanning(true);
-          setPanStart({ x: touch.clientX, y: touch.clientY });
-        }
-      } else {
-        setStartPoint(point);
-        setIsDragging(true);
-      }
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    e.preventDefault();
-
-    if (e.touches.length === 2) {
-      // Pinch zoom processing
-      const distance = getTouchDistance(e.touches);
-      const delta = (distance - lastTouchDistance) * 0.01;
-      const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
-
-      const center = getTouchCenter(e.touches);
-      const worldX = (center.x - offset.x) / scale;
-      const worldY = (center.y - offset.y) / scale;
-
-      const newOffsetX = center.x - worldX * newScale;
-      const newOffsetY = center.y - worldY * newScale;
-
-      setScale(newScale);
-      setOffset({ x: newOffsetX, y: newOffsetY });
-      setLastTouchDistance(distance);
-    } else if (e.touches.length === 1) {
-      const touch = e.touches[0];
-      if (isDragging) {
-        const isSelect = selectedTool === 'select';
-        const isPresentation = selectedTool === 'presentation';
-
-        if ((isSelect || isPresentation) && selectedObjectId && startPoint) {
-          const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
-          const newX = currentPoint.x - dragOffset.x;
-          const newY = currentPoint.y - dragOffset.y;
-
-          const updatedObjects = objects.map((obj) =>
-            obj.id === selectedObjectId
-              ? { ...obj, position: { x: newX, y: newY } }
-              : obj
-          );
-          setObjects(updatedObjects);
-        } else if (startPoint) {
-          const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
-          const preview = createPreviewObject(
-            selectedTool,
-            startPoint,
-            currentPoint,
-            false
-          );
-          setPreviewObject(preview);
-        }
-      } else if (isPanning) {
-        if (panStart) {
-          const deltaX = touch.clientX - panStart.x;
-          const deltaY = touch.clientY - panStart.y;
-          setOffset({
-            x: offset.x + deltaX,
-            y: offset.y + deltaY,
-          });
-        }
-        setPanStart({ x: touch.clientX, y: touch.clientY });
-      }
-    }
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    e.preventDefault();
-    const touchDuration = Date.now() - touchStartTime;
-
-    if (isDragging) {
-      setIsDragging(false);
-      setStartPoint(null);
-      setDragOffset({ x: 0, y: 0 });
-    }
-
-    if (isPanning) {
-      setIsPanning(false);
-      setPanStart(null);
-    }
-
-    if (touchDuration < 200 && !isDragging && selectedTool === 'image') {
-      const touch = e.changedTouches[0];
-      const point = getTouchPoint(touch, canvasRef, offset, scale);
-      setImagePosition(point);
-      fileInputRef.current?.click();
-    }
-
-    setLastTouchDistance(0);
   };
 
   // Delete an object with the Delete key
@@ -1187,9 +1232,6 @@ export const Canvas = () => {
           setIsPanning(false);
           setPanStart(null);
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       />
 
       {selectedObjectId && !isMobile && (
