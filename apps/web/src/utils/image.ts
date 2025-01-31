@@ -25,6 +25,13 @@ export const fetchRandomGif = async (
 
     if (!imagePosition) return;
 
+    // Check if the URL is from Tenor
+    const originalUrl = new URL(gifUrl);
+    if (originalUrl.origin !== 'https://media.tenor.com') {
+      showTemporaryAlert('Invalid GIF URL', setAlert);
+      throw new Error('Invalid GIF URL');
+    }
+
     const gifObject: CanvasObject = {
       id: Math.random().toString(36).slice(2, 11),
       type: 'image',
