@@ -1,4 +1,5 @@
 import { CanvasObject } from '~/types/canvas';
+import { HistoryState } from '~/types/history';
 
 export const copyObject = (
   objects: CanvasObject[],
@@ -31,13 +32,39 @@ export const copyObject = (
 export const deleteObject = (
   selectedObjectId: string | null,
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
-  setSelectedObjectId: React.Dispatch<React.SetStateAction<string | null>>
+  setSelectedObjectId: React.Dispatch<React.SetStateAction<string | null>>,
+  setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
+  setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
+  currentHistoryIndex: number
 ): void => {
   if (!selectedObjectId) return;
 
-  setObjects((prevObjects) =>
-    prevObjects.filter((obj) => obj.id !== selectedObjectId)
-  );
+  setObjects((prevObjects) => {
+    const newObjects = prevObjects.filter((obj) => obj.id !== selectedObjectId);
+
+    // Add to history if history management is enabled
+    if (
+      setHistory &&
+      setCurrentHistoryIndex &&
+      currentHistoryIndex !== undefined
+    ) {
+      setHistory((prev) => {
+        const newHistory = prev.slice(0, currentHistoryIndex + 1);
+        return [
+          ...newHistory,
+          {
+            type: 'delete',
+            objects: newObjects,
+            selectedObjectId: null,
+          },
+        ];
+      });
+      setCurrentHistoryIndex(currentHistoryIndex + 1);
+    }
+
+    return newObjects;
+  });
+
   setSelectedObjectId(null);
 };
 

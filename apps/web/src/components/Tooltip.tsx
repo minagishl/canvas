@@ -27,6 +27,7 @@ import { fontSize } from '~/types/canvas';
 import { textEdit, textToggleItalic } from '~/utils/text';
 import { imageToggleCircle, imageToggleSpoiler } from '~/utils/image';
 import { COLORS } from '~/utils/constants';
+import { useHistoryContext } from '~/contexts/HistoryContext';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -59,6 +60,8 @@ export function Tooltip({
 }: TooltipProps): React.ReactElement | null {
   const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
     useCanvasContext();
+  const { setHistory, setCurrentHistoryIndex, currentHistoryIndex } =
+    useHistoryContext();
   const [isRotating, setIsRotating] = React.useState(false);
 
   const handleColorChange = () => {
@@ -203,7 +206,14 @@ export function Tooltip({
   };
 
   const handleDeleteObject = () => {
-    deleteObject(selectedObjectId, setObjects, setSelectedObjectId);
+    deleteObject(
+      selectedObjectId,
+      setObjects,
+      setSelectedObjectId,
+      setHistory,
+      setCurrentHistoryIndex,
+      currentHistoryIndex
+    );
   };
 
   const handleToggleCircle = () => {

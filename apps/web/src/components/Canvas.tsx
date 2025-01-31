@@ -901,7 +901,14 @@ export const Canvas = () => {
       }
 
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        deleteObject(selectedObjectId, setObjects, setSelectedObjectId);
+        deleteObject(
+          selectedObjectId,
+          setObjects,
+          setSelectedObjectId,
+          setHistory,
+          setCurrentHistoryIndex,
+          currentHistoryIndex
+        );
       }
 
       if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {

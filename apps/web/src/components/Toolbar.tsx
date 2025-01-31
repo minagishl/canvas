@@ -242,6 +242,14 @@ export function Toolbar(): React.ReactElement {
           setPopoverText('');
         }, 2000);
       }
+
+      // if the action is to delete an object
+      if (latestAction.type === 'delete') {
+        setPopoverText('The object has been deleted.');
+        setTimeout(() => {
+          setPopoverText('');
+        }, 2000);
+      }
     }
   }, [history, isDevMode]);
 
