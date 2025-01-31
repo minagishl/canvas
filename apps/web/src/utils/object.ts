@@ -54,21 +54,6 @@ export const lockObject = (
   );
 };
 
-export const restoreObject = (
-  objects: CanvasObject[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
-  setSelectedObjectId: React.Dispatch<React.SetStateAction<string | null>>
-): void => {
-  const latestObject = objects[objects.length - 1];
-  if (!latestObject) return;
-
-  setObjects((prevObjects) =>
-    prevObjects.filter((obj) => obj.id !== latestObject.id)
-  );
-
-  setSelectedObjectId(null);
-};
-
 export const rotateObject = (
   selectedObjectId: string | null,
   objects: CanvasObject[],
