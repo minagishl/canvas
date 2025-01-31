@@ -902,6 +902,7 @@ export const Canvas = () => {
 
       if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteObject(
+          objects,
           selectedObjectId,
           setObjects,
           setSelectedObjectId,
@@ -969,6 +970,7 @@ export const Canvas = () => {
         copyObject(
           objects,
           selectedObjectId,
+          setObjects,
           setSelectedObjectId,
           setHistory,
           setCurrentHistoryIndex,

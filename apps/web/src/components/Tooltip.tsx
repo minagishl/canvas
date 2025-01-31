@@ -205,6 +205,7 @@ export function Tooltip({
     copyObject(
       objects,
       selectedObjectId,
+      setObjects,
       setSelectedObjectId,
       setHistory,
       setCurrentHistoryIndex,
@@ -214,6 +215,7 @@ export function Tooltip({
 
   const handleDeleteObject = () => {
     deleteObject(
+      objects,
       selectedObjectId,
       setObjects,
       setSelectedObjectId,

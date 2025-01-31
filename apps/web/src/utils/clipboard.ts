@@ -67,6 +67,7 @@ export const handlePaste = async (
       copyObject(
         objects,
         copyObjectId,
+        setObjects,
         setSelectedObjectId,
         setHistory,
         setCurrentHistoryIndex,
