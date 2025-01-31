@@ -892,6 +892,11 @@ export const Canvas = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditingId !== '') return;
 
+      if (e.key === 'Escape' && selectedTool !== 'select') {
+        setSelectedTool('select');
+        return;
+      }
+
       if ((e.key === '=' || e.key === '-') && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
       }
@@ -1029,6 +1034,7 @@ export const Canvas = () => {
     setHistory,
     setCurrentHistoryIndex,
     currentHistoryIndex,
+    selectedTool,
   ]);
 
   useEffect(() => {
