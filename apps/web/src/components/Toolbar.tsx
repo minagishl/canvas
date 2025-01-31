@@ -73,6 +73,7 @@ export function Toolbar(): React.ReactElement {
 
   // Debug
   const [popoverText, setPopoverText] = React.useState('');
+  const popoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Joke
   const [, setKeyUp] = React.useState<string[]>([]);
@@ -225,6 +226,20 @@ export function Toolbar(): React.ReactElement {
   const isDevMode = import.meta.env.MODE === 'development';
   const isPresentation = selectedTool === 'presentation';
 
+  const showPopoverMessage = useCallback((message: string) => {
+    // Clear the existing timer
+    if (popoverTimerRef.current) {
+      clearTimeout(popoverTimerRef.current);
+    }
+
+    setPopoverText(message);
+
+    // Set a new timer
+    popoverTimerRef.current = setTimeout(() => {
+      setPopoverText('');
+    }, 2000);
+  }, []);
+
   useEffect(() => {
     if (!isDevMode) return;
 
@@ -235,29 +250,27 @@ export function Toolbar(): React.ReactElement {
       if (latestAction.type === 'create') {
         const objectType =
           latestAction.objects[latestAction.objects.length - 1].type;
-        setPopoverText(`The object "${objectType}" has been created.`);
-        setTimeout(() => {
-          setPopoverText('');
-        }, 2000);
+        showPopoverMessage(`The object "${objectType}" has been created.`);
       }
 
       // if the action is to delete an object
       if (latestAction.type === 'delete') {
-        setPopoverText('The object has been deleted.');
-        setTimeout(() => {
-          setPopoverText('');
-        }, 2000);
+        showPopoverMessage('The object has been deleted.');
       }
 
       // if the action is to copy an object
       if (latestAction.type === 'copy') {
-        setPopoverText('The object has been copied.');
-        setTimeout(() => {
-          setPopoverText('');
-        }, 2000);
+        showPopoverMessage('The object has been copied.');
       }
     }
-  }, [history, isDevMode]);
+
+    // Clean up
+    return () => {
+      if (popoverTimerRef.current) {
+        clearTimeout(popoverTimerRef.current);
+      }
+    };
+  }, [history, isDevMode, showPopoverMessage]);
 
   return (
     <>
