@@ -339,8 +339,8 @@ export function Toolbar(): React.ReactElement {
               <Popover text="Currently in development mode" upper={false} />
             </div>
             <div className="absolute top-full left-1/2 mt-2 block -translate-x-1/2">
-              {popoverText === '' && (
-                <Popover text="test" upper={false} triangle={true} />
+              {popoverText !== '' && (
+                <Popover text={popoverText} upper={false} triangle={true} />
               )}
             </div>
           </div>
