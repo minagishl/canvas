@@ -1,9 +1,8 @@
 import { CanvasObject } from '~/types/canvas';
-import { HistoryAction } from '~/types/history';
 import { HistoryState } from '~/types/history';
 
 export const addToHistory = (
-  action: HistoryAction,
+  action: HistoryState,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
   currentHistoryIndex: number
@@ -13,6 +12,7 @@ export const addToHistory = (
     return [
       ...newHistory,
       {
+        type: action.type,
         objects: action.objects,
         selectedObjectId: action.selectedObjectId,
       },
@@ -51,7 +51,11 @@ export const handleAddObject = async (
         const newHistory = prev.slice(0, currentHistoryIndex + 1);
         return [
           ...newHistory,
-          { objects: newObjects, selectedObjectId: newObject.id },
+          {
+            type: 'create',
+            objects: newObjects,
+            selectedObjectId: newObject.id,
+          },
         ];
       });
       setCurrentHistoryIndex((prev) => prev + 1);

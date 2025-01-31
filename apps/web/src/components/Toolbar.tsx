@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 import {
   MousePointer2,
   Square,
@@ -20,6 +20,7 @@ import { Loading } from './Loading';
 import { shareCanvasAsURL } from '~/utils/canvas';
 import { useAlertContext } from '~/contexts/AlertContext';
 import { tv } from 'tailwind-variants';
+import { useHistoryContext } from '~/contexts/HistoryContext';
 
 const button = tv({
   base: 'cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
@@ -64,10 +65,14 @@ export function Toolbar(): React.ReactElement {
     setSelectedTool,
     setSelectedObjectId,
   } = useCanvasContext();
+  const { history } = useHistoryContext();
   const { setAlert } = useAlertContext();
   const [isLoading, setIsLoading] = React.useState(false);
   const [isZooming, setIsZooming] = React.useState(false);
   const animationRef = useRef<number | null>(null);
+
+  // Debug
+  const [popoverText, setPopoverText] = React.useState('');
 
   // Joke
   const [, setKeyUp] = React.useState<string[]>([]);
@@ -217,6 +222,24 @@ export function Toolbar(): React.ReactElement {
     }
   };
 
+  useEffect(() => {
+    if (history.length > 0) {
+      const latestAction = history[history.length - 1];
+
+      console.log(latestAction);
+
+      // If the action is to add an object
+      if (latestAction.type === 'create') {
+        const objectType =
+          latestAction.objects[latestAction.objects.length - 1].type;
+        setPopoverText(`The object "${objectType}" has been created.`);
+        setTimeout(() => {
+          setPopoverText('');
+        }, 2000);
+      }
+    }
+  }, [history]);
+
   const isDevMode = import.meta.env.MODE === 'development';
   const isPresentation = selectedTool === 'presentation';
 
@@ -314,6 +337,11 @@ export function Toolbar(): React.ReactElement {
             </div>
             <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
               <Popover text="Currently in development mode" upper={false} />
+            </div>
+            <div className="absolute top-full left-1/2 mt-2 block -translate-x-1/2">
+              {popoverText === '' && (
+                <Popover text="test" upper={false} triangle={true} />
+              )}
             </div>
           </div>
         )}

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CanvasObject, ToolType, Point } from '~/types/canvas';
 import { useHistoryContext } from './HistoryContext';
+import { HistoryState } from '~/types/history';
 
 interface CanvasContextType {
   scale: number;
@@ -31,9 +32,10 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (history.length === 0) {
       const initialState = {
+        type: 'init',
         objects: [],
         selectedObjectId: null,
-      };
+      } as HistoryState;
       setHistory([initialState]);
       setCurrentHistoryIndex(0);
     }
