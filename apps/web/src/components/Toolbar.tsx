@@ -222,7 +222,12 @@ export function Toolbar(): React.ReactElement {
     }
   };
 
+  const isDevMode = import.meta.env.MODE === 'development';
+  const isPresentation = selectedTool === 'presentation';
+
   useEffect(() => {
+    if (!isDevMode) return;
+
     if (history.length > 0) {
       const latestAction = history[history.length - 1];
 
@@ -238,10 +243,7 @@ export function Toolbar(): React.ReactElement {
         }, 2000);
       }
     }
-  }, [history]);
-
-  const isDevMode = import.meta.env.MODE === 'development';
-  const isPresentation = selectedTool === 'presentation';
+  }, [history, isDevMode]);
 
   return (
     <>
