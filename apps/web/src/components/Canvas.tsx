@@ -1388,7 +1388,7 @@ export const Canvas = () => {
         />
       )}
 
-      {!isFileDragging && <Drag />}
+      {isFileDragging && <Drag />}
     </div>
   );
 };
