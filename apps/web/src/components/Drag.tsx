@@ -6,7 +6,7 @@ export function Drag() {
       <div className="flex flex-col items-center justify-center rounded-l p-4">
         <Inbox className="size-10 animate-bounce text-white" />
         <p className="mt-4 text-white">Drop the file here</p>
-        <p className="text-white">Supported files: PNG, JPEG, GIF, WebP</p>
+        <p className="text-white">Supported files: PNG, JPEG, GIF, WebP, SVG</p>
       </div>
     </div>
   );
