@@ -47,6 +47,7 @@ import { Tooltip } from './Tooltip';
 import { Alert } from './Alert';
 import { Modal, MobileModal, TextModal } from './Modal';
 import { Loading } from './Loading';
+import { Drag } from './Drag';
 
 // Hooks
 import { useWindowSize } from '~/hooks/window';
@@ -101,6 +102,7 @@ export const Canvas = () => {
     title: string;
     body: string;
   } | null>(null);
+  const [isFileDragging, setIsFileDragging] = useState(false);
 
   useEffect(() => {
     // Event listener for the container element
@@ -1204,15 +1206,29 @@ export const Canvas = () => {
     }
   }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsFileDragging(true);
+    },
+    [setIsFileDragging]
+  );
+
+  const handleDragLeave = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsFileDragging(false);
+    },
+    [setIsFileDragging]
+  );
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
+      setIsFileDragging(false);
 
       // Convert the mouse position to canvas coordinates
       const point = getCanvasPoint(e, canvasRef, offset, scale);
@@ -1233,11 +1249,9 @@ export const Canvas = () => {
       });
     },
     [
-      canvasRef,
+      setIsFileDragging,
       offset,
       scale,
-      setImageCache,
-      setImagePosition,
       setSelectedTool,
       setAlert,
       setObjects,
@@ -1252,6 +1266,7 @@ export const Canvas = () => {
       className="relative h-screen w-screen overflow-hidden"
       onContextMenu={(e) => e.preventDefault()}
       onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       <canvas
@@ -1372,6 +1387,8 @@ export const Canvas = () => {
           body={textModalContent.body}
         />
       )}
+
+      {!isFileDragging && <Drag />}
     </div>
   );
 };
