@@ -1204,10 +1204,55 @@ export const Canvas = () => {
     }
   }, []);
 
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Convert the mouse position to canvas coordinates
+      const point = getCanvasPoint(e, canvasRef, offset, scale);
+      setImagePosition(point);
+
+      const file = e.dataTransfer.files[0];
+      handleFileChange({
+        file,
+        imagePosition: point,
+        setImageCache,
+        setImagePosition,
+        setSelectedTool,
+        setAlert,
+        setObjects,
+        setHistory,
+        setCurrentHistoryIndex,
+        currentHistoryIndex,
+      });
+    },
+    [
+      canvasRef,
+      offset,
+      scale,
+      setImageCache,
+      setImagePosition,
+      setSelectedTool,
+      setAlert,
+      setObjects,
+      setHistory,
+      setCurrentHistoryIndex,
+      currentHistoryIndex,
+    ]
+  );
+
   return (
     <div
       className="relative h-screen w-screen overflow-hidden"
       onContextMenu={(e) => e.preventDefault()}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
     >
       <canvas
         ref={canvasRef}
