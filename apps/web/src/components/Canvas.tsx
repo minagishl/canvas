@@ -1264,6 +1264,7 @@ export const Canvas = () => {
   return (
     <div
       className="relative h-screen w-screen overflow-hidden"
+      role="main"
       onContextMenu={(e) => e.preventDefault()}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
