@@ -1,6 +1,6 @@
 # Canvas
 
-> **Note**: Please read the guide and terms located in the [/docs](./docs/) folder before using this application.
+> **Note**: Please read the guide and terms located in the [docs](./docs/) folder before using this application.
 
 This repository utilizes TypeScript and Vite for secure and fast web applications with monorepo structure using Yarn Workspaces.
 
