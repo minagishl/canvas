@@ -4,10 +4,15 @@ import { ViteMinifyPlugin } from 'vite-plugin-minify';
 import { visualizer } from 'rollup-plugin-visualizer';
 import tailwindcss from '@tailwindcss/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import removeAttr from 'react-remove-attr';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
+    removeAttr({
+      extensions: ['jsx', 'tsx'],
+      attributes: ['data-testid'],
+    }),
     react(),
     tsconfigPaths(),
     htmlPlugin(loadEnv(mode, '.')),
