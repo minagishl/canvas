@@ -46,7 +46,7 @@ const allowedKeys = [
 ] as const;
 
 const corsOptions = {
-  origin: '*',
+  origin: 'https://canvas.minagishl.com',
   allowMethods: ['GET', 'POST', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
