@@ -1,0 +1,57 @@
+name: Build
+
+on:
+  push:
+    branches: ['main', 'develop']
+    paths:
+      - 'apps/web/**'
+      - '.github/workflows/build.yml'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.x'
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build Web App
+        run: yarn workspace web build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: apps/web/dist
+          retention-days: 7
+
+      - name: Comment on commit with artifact download link
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // Retrieve information from GitHub Actions environment variables
+            const commitSha = process.env.GITHUB_SHA;
+            const repo = process.env.GITHUB_REPOSITORY;
+            const runId = process.env.GITHUB_RUN_ID;
+            const serverUrl = process.env.GITHUB_SERVER_URL;
+
+            // The artifact can be downloaded from the workflow run's details page
+            const artifactUrl = `${serverUrl}/${repo}/actions/runs/${runId}#artifacts`;
+            const commentBody = `Build succeeded! The build artifact for commit \`${commitSha}\` can be downloaded from [here](${artifactUrl}).`;
+
+            // Post a comment on the commit
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: commitSha,
+              body: commentBody,
+            });
