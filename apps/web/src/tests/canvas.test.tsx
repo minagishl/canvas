@@ -30,4 +30,13 @@ describe('Canvas', () => {
       },
     });
   });
+
+  it('Menu display test on more button hover', async () => {
+    render(<App />);
+
+    const moreButton = screen.getByTestId('more');
+
+    fireEvent.mouseEnter(moreButton);
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+  });
 });

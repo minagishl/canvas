@@ -299,7 +299,7 @@ export function Toolbar(): React.ReactElement {
             </div>
           ))}
         {!isMobile && !isPresentation && (
-          <div className="group relative">
+          <div className="group relative" data-testid="more">
             <button key="more" className={button()}>
               <MoreHorizontal className="h-5 w-5" />
             </button>
