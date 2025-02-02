@@ -22,6 +22,11 @@
 For plain text, it will be added as a text object, but when you copy and paste an object, a copy of the object will be created.
 Also, when you paste a YouTube video URL, the video will be embedded.
 
+### Sample Video
+
+For a visual demonstration, check out this sample video:  
+[How to Use the Features](https://www.youtube.com/watch?v=UW_GOOb7Zjk)
+
 ## Remove Shared URL
 
 If you want to remove a URL you've shared, please submit it through [this form](https://forms.gle/coanQsMM6aeuUVX78).
