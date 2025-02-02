@@ -133,7 +133,7 @@ function validateObject(obj: any): {
   error?: string;
   sanitizedObject?: any;
 } {
-  if (validators.checkObjectId(obj.id)) {
+  if (!validators.checkObjectId(obj.id)) {
     return { isValid: false, error: 'invalid id' };
   }
 
