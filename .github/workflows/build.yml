@@ -51,9 +51,9 @@ jobs:
             const artifactUrl = `${serverUrl}/${repo}/actions/runs/${runId}#artifacts`;
 
             // Create a Markdown-formatted comment body using a standard string with newline characters
-            const commentBody = "**Build succeeded!**\n\n" +
-                                "- **Commit:** `" + shortCommitSha + "`\n" +
-                                "- **Artifact Download:** [Download here](" + artifactUrl + ")\n\n" +
+            const commentBody = "## Build succeeded!\n\n" +
+                                "- **Commit**: `" + shortCommitSha + "`\n" +
+                                "- **Artifact Download**: [Download here](" + artifactUrl + ")\n\n" +
                                 "_This build was triggered by a commit on branch **main** or **develop**._";
 
             // Post a comment on the commit
