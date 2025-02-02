@@ -27,6 +27,11 @@ Also, when you paste a YouTube video URL, the video will be embedded.
 For a visual demonstration, check out this sample video:  
 [How to Use the Features](https://www.youtube.com/watch?v=UW_GOOb7Zjk)
 
+## Status Page
+
+For real-time system status updates, visit our status page:  
+[canvas.instatus.com](https://canvas.instatus.com)
+
 ## Remove Shared URL
 
 If you want to remove a URL you've shared, please submit it through [this form](https://forms.gle/coanQsMM6aeuUVX78).
