@@ -50,15 +50,11 @@ jobs:
             // The artifact can be downloaded from the workflow run's details page
             const artifactUrl = `${serverUrl}/${repo}/actions/runs/${runId}#artifacts`;
 
-            // Create a Markdown-formatted comment body
-            const commentBody = `
-**Build succeeded!**
-
-- **Commit:** \`${shortCommitSha}\`
-- **Artifact Download:** [Download here](${artifactUrl})
-
-_This build was triggered by a commit on branch **main** or **develop**._
-            `;
+            // Create a Markdown-formatted comment body using a standard string with newline characters
+            const commentBody = "**Build succeeded!**\n\n" +
+                                "- **Commit:** `" + shortCommitSha + "`\n" +
+                                "- **Artifact Download:** [Download here](" + artifactUrl + ")\n\n" +
+                                "_This build was triggered by a commit on branch **main** or **develop**._";
 
             // Post a comment on the commit
             await github.rest.repos.createCommitComment({
