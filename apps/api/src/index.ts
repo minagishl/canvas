@@ -66,6 +66,10 @@ const validators = {
     );
   },
 
+  checkObjectId(id: string): boolean {
+    return /^[0-9a-zA-Z]{9}$/i.test(id);
+  },
+
   checkPosition(position: any): boolean {
     return (
       position &&
@@ -129,7 +133,7 @@ function validateObject(obj: any): {
   error?: string;
   sanitizedObject?: any;
 } {
-  if (!obj.id) {
+  if (validators.checkObjectId(obj.id)) {
     return { isValid: false, error: 'invalid id' };
   }
 
