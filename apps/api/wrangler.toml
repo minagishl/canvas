@@ -2,6 +2,7 @@ name = "canvas"
 main = "src/index.ts"
 compatibility_date = "2025-01-05"
 compatibility_flags = ["nodejs_compat"]
+keep_vars = true
 
 [ observability.logs ]
 enabled = true
@@ -11,3 +12,6 @@ binding = "DB"
 database_name = "canvas"
 database_id = "e3119c7d-bcc9-4169-9074-264b5921ff39"
 migrations_dir = "drizzle"
+
+[ env.production ]
+vars = { ALLOWED_ORIGINS = "https://canvas.minagishl.com" }
