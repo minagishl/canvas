@@ -40,13 +40,25 @@ jobs:
           script: |
             // Retrieve information from GitHub Actions environment variables
             const commitSha = process.env.GITHUB_SHA;
+
+            // Shorten the commit ID to the first 7 characters
+            const shortCommitSha = commitSha.slice(0, 7);
             const repo = process.env.GITHUB_REPOSITORY;
             const runId = process.env.GITHUB_RUN_ID;
             const serverUrl = process.env.GITHUB_SERVER_URL;
 
             // The artifact can be downloaded from the workflow run's details page
             const artifactUrl = `${serverUrl}/${repo}/actions/runs/${runId}#artifacts`;
-            const commentBody = `Build succeeded! The build artifact for commit \`${commitSha}\` can be downloaded from [here](${artifactUrl}).`;
+
+            // Create a Markdown-formatted comment body
+            const commentBody = `
+**Build succeeded!**
+
+- **Commit:** \`${shortCommitSha}\`
+- **Artifact Download:** [Download here](${artifactUrl})
+
+_This build was triggered by a commit on branch **main** or **develop**._
+            `;
 
             // Post a comment on the commit
             await github.rest.repos.createCommitComment({
