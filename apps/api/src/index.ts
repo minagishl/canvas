@@ -8,6 +8,7 @@ import { v7 as uuidv7 } from 'uuid';
 type Bindings = {
   DB: D1Database;
   TENOR_API_KEY: string;
+  ALLOWED_ORIGINS: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -45,16 +46,17 @@ const allowedKeys = [
   'weight',
 ] as const;
 
-const corsOptions = {
-  origin: 'https://canvas.minagishl.com',
-  allowMethods: ['GET', 'POST', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
-  maxAge: 600,
-  credentials: true,
-};
-
-app.use('/*', cors(corsOptions));
+app.use(
+  '/*',
+  cors({
+    origin: (_, c) => (c.env.ALLOWED_ORIGINS ?? '*').split(','),
+    allowMethods: ['GET', 'POST', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+    maxAge: 600,
+    credentials: true,
+  })
+);
 
 // Validation functions
 const validators = {
