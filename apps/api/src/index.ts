@@ -4,24 +4,41 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { items } from './db/schema';
 import { v7 as uuidv7 } from 'uuid';
+import OpenAI from 'openai';
+import { zodResponseFormat } from 'openai/helpers/zod';
+import { z } from 'zod';
 
 type Bindings = {
   DB: D1Database;
   TENOR_API_KEY: string;
   ALLOWED_ORIGINS: string;
+  OPENAI_API_KEY: string;
+  OPENAI_MODEL?: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-const objectTypes = [
-  'rectangle',
-  'circle',
-  'text',
-  'image',
-  'line',
-  'arrow',
-  'embed',
-] as const;
+const ObjectTypes = {
+  rectangle: 'rectangle',
+  circle: 'circle',
+  text: 'text',
+  image: 'image',
+  line: 'line',
+  arrow: 'arrow',
+  embed: 'embed',
+} as const;
+
+const fontWeight = {
+  100: 100,
+  200: 200,
+  300: 300,
+  400: 400,
+  500: 500,
+  600: 600,
+  700: 700,
+  800: 800,
+  900: 900,
+} as const;
 
 // Define a list of allowed keys
 const allowedKeys = [
@@ -84,7 +101,7 @@ const validators = {
 
   checkWeight(weight: any): boolean {
     if (weight === undefined) return true;
-    return [100, 200, 300, 400, 500, 600, 700, 800, 900].includes(weight);
+    return Object.keys(weight).includes(weight.toString());
   },
 
   checkTypeFields(obj: any, type: string, field: string): boolean {
@@ -137,7 +154,7 @@ function validateObject(obj: any): {
     return { isValid: false, error: 'invalid id' };
   }
 
-  if (!objectTypes.includes(obj.type)) {
+  if (!Object.values(ObjectTypes).includes(obj.type)) {
     return { isValid: false, error: 'invalid type' };
   }
 
@@ -257,6 +274,104 @@ app.get('/:id', async (c) => {
   }
 
   return c.json(result);
+});
+
+const schema = z.object({
+  canvas: z
+    .array(
+      z.object({
+        id: z.string().describe('9-character unique ID (alphanumeric)'),
+        type: z.nativeEnum(ObjectTypes).describe('Object type'),
+        position: z
+          .object({
+            x: z.number().describe('X coordinate'),
+            y: z.number().describe('Y coordinate'),
+          })
+          .describe('Object position'),
+        width: z.number().describe('Object width'),
+        height: z.number().describe('Object height'),
+        fill: z.string().describe('Fill color'),
+        circle: z.boolean().optional().describe('True if circular'),
+        fontSize: z
+          .number()
+          .refine((n) =>
+            [12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128].includes(n)
+          )
+          .optional()
+          .describe('Font size'),
+        italic: z.boolean().optional().describe('True if italic'),
+        lineWidth: z.number().optional().describe('Line width'),
+        points: z
+          .array(
+            z
+              .object({
+                x: z.number().describe('Point X coordinate'),
+                y: z.number().describe('Point Y coordinate'),
+              })
+              .describe('Points for lines and arrows')
+          )
+          .optional(),
+        rotation: z.number().optional().describe('Rotation angle (in degrees)'),
+        spoiler: z
+          .boolean()
+          .optional()
+          .describe('True if content is a spoiler'),
+        text: z.string().optional().describe('Text content'),
+        weight: z
+          .number()
+          .refine((n) => Object.keys(fontWeight).includes(n.toString()))
+          .optional()
+          .describe('Font weight (100-900)'),
+      })
+    )
+    .describe('Canvas objects'),
+});
+
+app.post('/generate', async (c) => {
+  const client = new OpenAI({ apiKey: c.env.OPENAI_API_KEY });
+
+  if (!c.env.OPENAI_API_KEY) {
+    return c.json({ error: 'OPENAI_API_KEY is not set' }, 500);
+  }
+
+  const { prompt } = await c.req.json();
+
+  if (!prompt) {
+    return c.json({ error: 'prompt is required' }, 400);
+  }
+
+  try {
+    // Instruct the JSON schema with a system message (without any extra text, always return valid JSON)
+    const systemPrompt = `You are an excellent assistant to generate canvas objects.
+Based on the user's instructions, create a canvas object that strictly follows the JSON schema below.`;
+
+    const messages = [
+      { role: 'system' as const, content: systemPrompt },
+      { role: 'user' as const, content: prompt },
+    ];
+
+    const completion = await client.beta.chat.completions.parse({
+      model: c.env.OPENAI_MODEL ?? 'gpt-4o-mini-2024-07-18',
+      messages,
+      temperature: 0.7,
+      response_format: zodResponseFormat(schema, 'canvas'),
+    });
+
+    const response = completion.choices[0].message.parsed;
+    if (!response) {
+      return c.json({ error: 'Invalid OpenAI API response.' }, 500);
+    }
+
+    try {
+      return c.json(response.canvas);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      return c.json({ error: 'Failed to parse JSON output.' }, 500);
+    }
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: 'Failed to generate content.' }, 500);
+  }
 });
 
 export default app;

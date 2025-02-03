@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '~/types/canvas';
-import { CanvasDataSchema } from '~/schema';
+import { CanvasDataSchema, CanvasAIDaraSchema } from '~/schema';
 import { parseAsync } from 'valibot';
 import { isMobile } from 'react-device-detect';
 
@@ -36,6 +36,7 @@ import { handleAddObject } from '~/utils/history';
 import { useCanvasContext } from '~/contexts/CanvasContext';
 import { useAlertContext } from '~/contexts/AlertContext';
 import { useHistoryContext } from '~/contexts/HistoryContext';
+import { useAIContext } from '~/contexts/AIContext';
 
 // Objects
 import { EmbedObject } from './objects/Embed';
@@ -45,7 +46,7 @@ import { ImageObject } from './objects/Image';
 // Components
 import { Tooltip } from './Tooltip';
 import { Alert } from './Alert';
-import { Modal, MobileModal, TextModal } from './Modal';
+import { Modal, MobileModal, TextModal, ModalInput } from './Modal';
 import { Loading } from './Loading';
 import { Drag } from './Drag';
 
@@ -103,6 +104,8 @@ export const Canvas = () => {
     body: string;
   } | null>(null);
   const [isFileDragging, setIsFileDragging] = useState(false);
+  const [aiInputText, setAIInputText] = useState('');
+  const { showAIInput, setShowAIInput } = useAIContext();
 
   useEffect(() => {
     // Event listener for the container element
@@ -1261,6 +1264,42 @@ export const Canvas = () => {
     ]
   );
 
+  const handleAIGenerate = async () => {
+    try {
+      setIsLoading(true);
+      const apiUrl = new URL(import.meta.env.VITE_API_URL);
+      const response = await fetch(`${apiUrl.href}generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: aiInputText }),
+      });
+
+      const data = await response.json();
+      if (data) {
+        const result = await parseAsync(CanvasAIDaraSchema, data);
+        // Add each generated object
+        result.forEach((object) => {
+          handleAddObject(
+            object,
+            setObjects,
+            setHistory,
+            setCurrentHistoryIndex,
+            currentHistoryIndex
+          );
+        });
+        showTemporaryAlert('AI generated content added', setAlert);
+      }
+    } catch (error) {
+      console.error('Error generating content:', error);
+      showTemporaryAlert('Error generating content', setAlert);
+    } finally {
+      setIsLoading(false);
+      setShowAIInput(false);
+    }
+  };
+
   return (
     <div
       className="relative h-screen w-screen overflow-hidden"
@@ -1382,10 +1421,20 @@ export const Canvas = () => {
 
       {isModalOpen && <Modal close={() => setIsModalOpen(false)} />}
       {showMobileModal && <MobileModal />}
+
       {showTextModal && textModalContent && (
         <TextModal
           title={textModalContent.title}
           body={textModalContent.body}
+        />
+      )}
+
+      {showAIInput && (
+        <ModalInput
+          placeholder="Describe what you want to create..."
+          close={() => setShowAIInput(false)}
+          onChange={(text) => setAIInputText(text)}
+          send={handleAIGenerate}
         />
       )}
 

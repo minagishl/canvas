@@ -43,7 +43,7 @@ export type CanvasObject = {
   position: Point;
   width: number;
   height: number;
-  fill: string;
+  fill?: string;
   circle?: boolean;
   embedUrl?: string;
   fontSize?: fontSize;

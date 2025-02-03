@@ -22,6 +22,7 @@ import { shareCanvasAsURL } from '~/utils/canvas';
 import { useAlertContext } from '~/contexts/AlertContext';
 import { tv } from 'tailwind-variants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
+import { useAIContext } from '~/contexts/AIContext';
 
 const button = tv({
   base: 'cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
@@ -83,6 +84,9 @@ export function Toolbar(): React.ReactElement {
   // Joke
   const [, setKeyUp] = React.useState<string[]>([]);
   const [rotation, setRotation] = React.useState(false);
+
+  // AI
+  const { showAIInput, setShowAIInput } = useAIContext();
 
   const konamiCommand = React.useMemo(
     () => [
@@ -277,6 +281,10 @@ export function Toolbar(): React.ReactElement {
     };
   }, [history, isDevMode, showPopoverMessage]);
 
+  const handleAIClick = () => {
+    setShowAIInput(!showAIInput);
+  };
+
   return (
     <>
       <Loading hidden={!isLoading} />
@@ -384,7 +392,7 @@ export function Toolbar(): React.ReactElement {
             className="group relative ml-2 w-fit rounded-xl bg-white p-2 shadow-lg"
             data-testid="more"
           >
-            <button key="more" className={button()}>
+            <button key="more" className={button()} onClick={handleAIClick}>
               <Sparkles className="h-5 w-5" />
             </button>
             <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">

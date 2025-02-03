@@ -126,10 +126,12 @@ export function ModalInput({
   placeholder,
   close = () => {},
   onChange,
+  send,
 }: {
   placeholder?: string;
   close?: () => void;
   onChange?: (text: string) => void;
+  send?: () => void;
 }): React.ReactElement {
   return (
     <>
@@ -145,7 +147,10 @@ export function ModalInput({
               placeholder={placeholder ?? 'Enter the text'}
               onChange={(e) => onChange?.(e.target.value)}
             />
-            <button className="ml-2 cursor-pointer rounded-md bg-indigo-100 p-2 text-indigo-600 hover:bg-indigo-200">
+            <button
+              className="ml-2 cursor-pointer rounded-md bg-indigo-100 p-2 text-indigo-600 hover:bg-indigo-200"
+              onClick={send}
+            >
               <ArrowRight className="h-5 w-5" />
             </button>
           </div>
