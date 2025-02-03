@@ -10,6 +10,7 @@ import {
   MoreHorizontal,
   BugPlay,
   Presentation,
+  Sparkles,
 } from 'lucide-react';
 import { useCanvasContext } from '~/contexts/CanvasContext';
 import { ToolType } from '~/types/canvas';
@@ -32,7 +33,11 @@ const button = tv({
 });
 
 const container = tv({
-  base: 'fixed top-4 left-1/2 z-40 flex max-w-96 -translate-x-1/2 items-center gap-2 rounded-xl bg-white p-2 shadow-lg select-none',
+  base: 'fixed flex flex-row top-4 left-1/2 z-40 -translate-x-1/2 select-none',
+});
+
+const containerInner = tv({
+  base: 'flex max-w-none items-center gap-2 rounded-xl p-2 bg-white shadow-lg',
   variants: {
     isDevMode: {
       true: 'max-w-none',
@@ -275,99 +280,115 @@ export function Toolbar(): React.ReactElement {
   return (
     <>
       <Loading hidden={!isLoading} />
-      <div className={container({ isDevMode })}>
-        {tools
-          .filter(
-            (Tool) =>
-              (!isMobile || Tool.name === 'select') &&
-              (!isPresentation || Tool.name === 'select')
-          )
-          .map((Tool) => (
-            <div key={Tool.name} className="group relative">
-              <button
-                id={`toolbar-${Tool.name}`}
-                className={button({
-                  isSelected:
-                    selectedTool === Tool.name ||
-                    (isPresentation && Tool.name === 'select'),
-                })}
-                onClick={() => handleToolSelect(Tool.name)}
-                onKeyDown={handleOnKeyDown}
-              >
-                <Tool.icon className="h-5 w-5" />
+      <div className={container()}>
+        <div className={containerInner({ isDevMode, isPresentation })}>
+          {tools
+            .filter(
+              (Tool) =>
+                (!isMobile || Tool.name === 'select') &&
+                (!isPresentation || Tool.name === 'select')
+            )
+            .map((Tool) => (
+              <div key={Tool.name} className="group relative">
+                <button
+                  id={`toolbar-${Tool.name}`}
+                  className={button({
+                    isSelected:
+                      selectedTool === Tool.name ||
+                      (isPresentation && Tool.name === 'select'),
+                  })}
+                  onClick={() => handleToolSelect(Tool.name)}
+                  onKeyDown={handleOnKeyDown}
+                >
+                  <Tool.icon className="h-5 w-5" />
+                </button>
+              </div>
+            ))}
+          {!isMobile && !isPresentation && (
+            <div className="group relative" data-testid="more">
+              <button key="more" className={button()}>
+                <MoreHorizontal className="h-5 w-5" />
               </button>
+              <div className="absolute left-1/2 hidden h-8 w-24 -translate-x-1/2 group-hover:block" />
+              <div className="absolute top-full left-1/2 hidden -translate-x-1/2 pt-3 group-hover:block">
+                <Menu handleShareCanvas={handleShareCanvas} />
+              </div>
             </div>
-          ))}
-        {!isMobile && !isPresentation && (
-          <div className="group relative" data-testid="more">
-            <button key="more" className={button()}>
-              <MoreHorizontal className="h-5 w-5" />
-            </button>
-            <div className="absolute left-1/2 hidden h-8 w-24 -translate-x-1/2 group-hover:block" />
-            <div className="absolute top-full left-1/2 hidden -translate-x-1/2 pt-3 group-hover:block">
-              <Menu handleShareCanvas={handleShareCanvas} />
-            </div>
-          </div>
-        )}
+          )}
 
-        {!isMobile && isPresentation && (
-          <div className="group/menu relative">
+          {!isMobile && isPresentation && (
+            <div className="group/menu relative">
+              <button
+                className={button()}
+                onClick={() => {
+                  handleToolSelect('select');
+                }}
+              >
+                <Presentation className="h-5 w-5" />
+              </button>
+              <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+                <Popover text="Stop presentation" upper={false} />
+              </div>
+            </div>
+          )}
+
+          <div className="relative flex h-6 w-4 items-center justify-center">
+            <div className="h-6 w-px bg-gray-200" />
+          </div>
+          <div className="group relative">
             <button
+              onClick={handleZoomOut}
               className={button()}
-              onClick={() => {
-                handleToolSelect('select');
-              }}
+              disabled={isZooming || scale <= 0.7}
             >
-              <Presentation className="h-5 w-5" />
+              <ZoomOut className="h-5 w-5" />
             </button>
-            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-              <Popover text="Stop presentation" upper={false} />
+            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
+              <Popover text="Zoom out" upper={false} />
             </div>
           </div>
-        )}
+          <div className="group relative">
+            <button
+              onClick={handleZoomIn}
+              className={button()}
+              disabled={isZooming || scale >= 2}
+            >
+              <ZoomIn className="h-5 w-5" />
+            </button>
+            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
+              <Popover text="Zoom in" upper={false} />
+            </div>
+          </div>
+          {isDevMode && (
+            <div className="relative">
+              <div className="rounded-md p-2 text-green-500 transition-colors hover:bg-gray-100">
+                <BugPlay
+                  className={`h-5 w-5 ${
+                    rotation
+                      ? 'animate-once animate-duration-700 animate-ease-out animate-spin'
+                      : ''
+                  }`}
+                />
+              </div>
+              <div className="absolute top-full left-1/2 mt-2 block -translate-x-1/2">
+                {popoverText !== '' && (
+                  <Popover text={popoverText} upper={false} triangle={true} />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
-        <div className="relative flex h-6 w-4 items-center justify-center">
-          <div className="h-6 w-px bg-gray-200" />
-        </div>
-        <div className="group relative">
-          <button
-            onClick={handleZoomOut}
-            className={button()}
-            disabled={isZooming || scale <= 0.7}
+        {import.meta.env.VITE_ENABLED_AI === 'true' && (
+          <div
+            className="group relative ml-2 w-fit rounded-xl bg-white p-2 shadow-lg"
+            data-testid="more"
           >
-            <ZoomOut className="h-5 w-5" />
-          </button>
-          <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
-            <Popover text="Zoom out" upper={false} />
-          </div>
-        </div>
-        <div className="group relative">
-          <button
-            onClick={handleZoomIn}
-            className={button()}
-            disabled={isZooming || scale >= 2}
-          >
-            <ZoomIn className="h-5 w-5" />
-          </button>
-          <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
-            <Popover text="Zoom in" upper={false} />
-          </div>
-        </div>
-        {isDevMode && (
-          <div className="relative">
-            <div className="rounded-md p-2 text-green-500 transition-colors hover:bg-gray-100">
-              <BugPlay
-                className={`h-5 w-5 ${
-                  rotation
-                    ? 'animate-once animate-duration-700 animate-ease-out animate-spin'
-                    : ''
-                }`}
-              />
-            </div>
-            <div className="absolute top-full left-1/2 mt-2 block -translate-x-1/2">
-              {popoverText !== '' && (
-                <Popover text={popoverText} upper={false} triangle={true} />
-              )}
+            <button key="more" className={button()}>
+              <Sparkles className="h-5 w-5" />
+            </button>
+            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
+              <Popover text="Ask the Canvas AI" upper={false} />
             </div>
           </div>
         )}

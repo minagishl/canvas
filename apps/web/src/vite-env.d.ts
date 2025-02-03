@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_ENABLED_GIF: string;
   readonly VITE_ENABLED_RESIZES_NAP: string;
   readonly VITE_ENABLED_PRESENTATION: string;
+  readonly VITE_ENABLED_AI: string;
 }
 
 interface ImportMeta {
