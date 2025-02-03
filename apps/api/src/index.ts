@@ -351,7 +351,7 @@ Based on the user's instructions, create a canvas object that strictly follows t
     ];
 
     const completion = await client.beta.chat.completions.parse({
-      model: c.env.OPENAI_MODEL ?? 'gpt-4o-mini-2024-07-18',
+      model: c.env.OPENAI_MODEL ?? 'gpt-4o-mini',
       messages,
       temperature: 0.7,
       response_format: zodResponseFormat(schema, 'canvas'),
