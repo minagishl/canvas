@@ -388,10 +388,7 @@ export function Toolbar(): React.ReactElement {
         </div>
 
         {import.meta.env.VITE_ENABLED_AI === 'true' && !isMobile && (
-          <div
-            className="group relative ml-2 w-fit rounded-xl bg-white p-2 shadow-lg"
-            data-testid="more"
-          >
+          <div className="group relative ml-2 w-fit rounded-xl bg-white p-2 shadow-lg">
             <button key="more" className={button()} onClick={handleAIClick}>
               <Sparkles className="h-5 w-5" />
             </button>
