@@ -76,7 +76,9 @@ export function Tooltip({
       const availableColors =
         selectedObject.type === 'text' ? [...COLORS, '#fafafa'] : COLORS;
 
-      const currentColorIndex = availableColors.indexOf(selectedObject.fill);
+      const currentColorIndex = availableColors.indexOf(
+        selectedObject.fill || COLORS[0]
+      );
       const nextColorIndex = (currentColorIndex + 1) % availableColors.length;
 
       return prevObjects.map((obj) =>
