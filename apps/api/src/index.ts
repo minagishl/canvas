@@ -294,10 +294,9 @@ const schema = z.object({
           .refine((n) =>
             [12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128].includes(n)
           )
-          .optional()
-          .describe('Font size'),
+          .describe('Font size (If not required, specify 12)'),
         italic: z.boolean().optional().describe('True if italic'),
-        lineWidth: z.number().optional().describe('Line width'),
+        lineWidth: z.number().optional().describe('Line width (default 6)'),
         points: z
           .array(
             z
