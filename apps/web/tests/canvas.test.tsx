@@ -2,7 +2,6 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import '@testing-library/jest-dom';
 import App from '../src/App';
-import React from 'react';
 
 describe('Canvas', () => {
   it('handles drag and drop correctly', async () => {
