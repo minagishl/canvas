@@ -1,9 +1,12 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.validate.enable": true,
-  "typescript.format.enable": true,
   "css.lint.unknownAtRules": "ignore",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "prettier.enable": true,
   "search.exclude": {
     "**/apps/api/.wrangler": true
-  }
+  },
+  "typescript.format.enable": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.validate.enable": true
 }
