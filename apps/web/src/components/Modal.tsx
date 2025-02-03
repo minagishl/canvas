@@ -142,6 +142,19 @@ export function ModalInput({
   send?: () => void;
   isLoading?: boolean;
 }): React.ReactElement {
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        close();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
+
   return (
     <>
       <div
