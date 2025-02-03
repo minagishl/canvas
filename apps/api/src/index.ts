@@ -350,20 +350,20 @@ Based on the user's instructions, create a canvas object that strictly follows t
       { role: 'user' as const, content: prompt },
     ];
 
-    const completion = await client.beta.chat.completions.parse({
+    const completion = await client.chat.completions.create({
       model: c.env.OPENAI_MODEL ?? 'gpt-4o-mini',
       messages,
       temperature: 0.7,
       response_format: zodResponseFormat(schema, 'canvas'),
     });
 
-    const response = completion.choices[0].message.parsed;
+    const response = completion.choices[0].message.content;
     if (!response) {
       return c.json({ error: 'Invalid OpenAI API response.' }, 500);
     }
 
     try {
-      return c.json(response.canvas);
+      return c.json(JSON.parse(response).canvas);
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
       return c.json({ error: 'Failed to parse JSON output.' }, 500);
