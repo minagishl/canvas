@@ -988,7 +988,7 @@ export const Canvas = () => {
         textToggleBold(objects, selectedObjectId, setObjects);
       }
 
-      if (e.key === 'v' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'v' && (e.metaKey || e.ctrlKey) && !showAIInput) {
         handlePaste(
           width,
           height,
@@ -1103,6 +1103,7 @@ export const Canvas = () => {
     setCurrentHistoryIndex,
     currentHistoryIndex,
     selectedTool,
+    showAIInput,
   ]);
 
   useEffect(() => {
