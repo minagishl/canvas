@@ -387,7 +387,7 @@ export function Toolbar(): React.ReactElement {
           )}
         </div>
 
-        {import.meta.env.VITE_ENABLED_AI === 'true' && (
+        {import.meta.env.VITE_ENABLED_AI === 'true' && !isMobile && (
           <div
             className="group relative ml-2 w-fit rounded-xl bg-white p-2 shadow-lg"
             data-testid="more"
