@@ -3,6 +3,7 @@ import { toPng } from 'html-to-image';
 import { showTemporaryAlert } from './alert';
 import { GRID_SIZE } from './constants';
 import { handleCopy } from './clipboard';
+import { COLORS } from './constants';
 
 export const setupAndRenderCanvas = (
   canvas: HTMLCanvasElement,
@@ -80,8 +81,8 @@ export const drawObject = (
     -(object.position.y + object.height / 2)
   );
 
-  ctx.fillStyle = object.fill;
-  ctx.strokeStyle = object.fill;
+  ctx.fillStyle = object.fill ?? COLORS[0];
+  ctx.strokeStyle = object.fill ?? COLORS[0];
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
