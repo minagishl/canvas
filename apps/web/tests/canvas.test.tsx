@@ -30,7 +30,9 @@ describe('Canvas', () => {
       },
     });
   });
+});
 
+describe('Toolbar', () => {
   it('Menu display test on more button hover', async () => {
     render(<App />);
 
