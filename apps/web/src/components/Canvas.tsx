@@ -104,6 +104,9 @@ export const Canvas = () => {
     body: string;
   } | null>(null);
   const [isFileDragging, setIsFileDragging] = useState(false);
+
+  // AI
+  const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [aiInputText, setAIInputText] = useState('');
   const { showAIInput, setShowAIInput } = useAIContext();
 
@@ -1266,7 +1269,7 @@ export const Canvas = () => {
 
   const handleAIGenerate = async () => {
     try {
-      setIsLoading(true);
+      setIsAIGenerating(true);
       const apiUrl = new URL(import.meta.env.VITE_API_URL);
       const response = await fetch(`${apiUrl.href}generate`, {
         method: 'POST',
@@ -1295,7 +1298,7 @@ export const Canvas = () => {
       console.error('Error generating content:', error);
       showTemporaryAlert('Error generating content', setAlert);
     } finally {
-      setIsLoading(false);
+      setIsAIGenerating(false);
       setShowAIInput(false);
     }
   };
@@ -1435,6 +1438,7 @@ export const Canvas = () => {
           close={() => setShowAIInput(false)}
           onChange={(text) => setAIInputText(text)}
           send={handleAIGenerate}
+          isLoading={isAIGenerating}
         />
       )}
 

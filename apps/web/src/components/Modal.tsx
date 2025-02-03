@@ -1,5 +1,12 @@
 import { useEffect } from 'react';
-import { Github, BookMarked, X, BookOpen, ArrowRight } from 'lucide-react';
+import {
+  Github,
+  BookMarked,
+  X,
+  BookOpen,
+  ArrowRight,
+  Loader2,
+} from 'lucide-react';
 import { Popover } from './Popover';
 
 const navigateToUrl = (url: string) => {
@@ -127,11 +134,13 @@ export function ModalInput({
   close = () => {},
   onChange,
   send,
+  isLoading,
 }: {
   placeholder?: string;
   close?: () => void;
   onChange?: (text: string) => void;
   send?: () => void;
+  isLoading?: boolean;
 }): React.ReactElement {
   return (
     <>
@@ -150,8 +159,13 @@ export function ModalInput({
             <button
               className="ml-2 cursor-pointer rounded-md bg-indigo-100 p-2 text-indigo-600 hover:bg-indigo-200"
               onClick={send}
+              disabled={isLoading}
             >
-              <ArrowRight className="h-5 w-5" />
+              {isLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <ArrowRight className="h-5 w-5" />
+              )}
             </button>
           </div>
         </div>
