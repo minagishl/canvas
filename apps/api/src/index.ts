@@ -22,10 +22,8 @@ const ObjectTypes = {
   rectangle: 'rectangle',
   circle: 'circle',
   text: 'text',
-  image: 'image',
   line: 'line',
   arrow: 'arrow',
-  embed: 'embed',
 } as const;
 
 const fontWeight = {
@@ -291,7 +289,6 @@ const schema = z.object({
         width: z.number().describe('Object width'),
         height: z.number().describe('Object height'),
         fill: z.string().describe('Fill color'),
-        circle: z.boolean().optional().describe('True if circular'),
         fontSize: z
           .number()
           .refine((n) =>
@@ -312,10 +309,6 @@ const schema = z.object({
           )
           .optional(),
         rotation: z.number().optional().describe('Rotation angle (in degrees)'),
-        spoiler: z
-          .boolean()
-          .optional()
-          .describe('True if content is a spoiler'),
         text: z.string().optional().describe('Text content'),
         weight: z
           .number()
