@@ -937,6 +937,7 @@ export const Canvas = () => {
       setCurrentHistoryIndex,
       currentHistoryIndex,
     });
+    fileInputRef.current!.value = '';
   };
 
   // Delete an object with the Delete key
