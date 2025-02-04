@@ -5,7 +5,7 @@ type AlertProps = {
 };
 
 const alert = tv({
-  base: 'absolute bottom-4 bg-white rounded-sm shadow-md flex items-center justify-center left-1/2 -translate-x-1/2 animate-fade animate-duration-300 z-10',
+  base: 'absolute bottom-4 bg-white rounded-sm shadow-base flex items-center justify-center left-1/2 -translate-x-1/2 animate-fade animate-duration-300 z-10',
   variants: {
     show: {
       true: 'flex',

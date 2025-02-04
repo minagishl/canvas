@@ -247,7 +247,7 @@ export function Tooltip({
 
   return (
     <div
-      className="absolute z-10 flex items-center gap-2 rounded-lg bg-white p-1.5 shadow-md select-none"
+      className="shadow-base absolute z-10 flex items-center gap-2 rounded-lg bg-white p-1.5 select-none"
       id="tooltip"
       style={{
         top: position.y,

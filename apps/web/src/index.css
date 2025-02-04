@@ -15,3 +15,7 @@
 .content::-webkit-scrollbar {
   display: none;
 }
+
+@theme {
+  --shadow-base: 0 4px 16px rgba(5, 0, 56, 0.07);
+}

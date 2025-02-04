@@ -38,7 +38,7 @@ const container = tv({
 });
 
 const containerInner = tv({
-  base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-md',
+  base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-base',
 });
 
 const tools: {
@@ -388,7 +388,7 @@ export function Toolbar(): React.ReactElement {
         {import.meta.env.VITE_ENABLED_AI === 'true' &&
           !isMobile &&
           !isPresentation && (
-            <div className="group relative ml-2 w-fit rounded-lg bg-white p-1.5 shadow-md">
+            <div className="group shadow-base relative ml-2 w-fit rounded-lg bg-white p-1.5">
               <button
                 key="more"
                 className={button({ isSelected: showAIInput })}
