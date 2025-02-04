@@ -1269,6 +1269,12 @@ export const Canvas = () => {
   );
 
   const handleAIGenerate = async () => {
+    if (aiInputText.trim() === '') {
+      showTemporaryAlert('Please enter a description', setAlert);
+      setShowAIInput(false);
+      return;
+    }
+
     try {
       setIsAIGenerating(true);
       const apiUrl = new URL(import.meta.env.VITE_API_URL);
