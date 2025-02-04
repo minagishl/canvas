@@ -38,7 +38,7 @@ const container = tv({
 });
 
 const containerInner = tv({
-  base: 'flex max-w-none items-center gap-2 rounded-lg p-2 bg-white shadow-lg',
+  base: 'flex max-w-none items-center gap-2 rounded-lg p-2 bg-white shadow-md',
   variants: {
     isDevMode: {
       true: 'max-w-none',
@@ -388,7 +388,7 @@ export function Toolbar(): React.ReactElement {
         </div>
 
         {import.meta.env.VITE_ENABLED_AI === 'true' && !isMobile && (
-          <div className="group relative ml-2 w-fit rounded-lg bg-white p-2 shadow-lg">
+          <div className="group relative ml-2 w-fit rounded-lg bg-white p-2 shadow-md">
             <button key="more" className={button()} onClick={handleAIClick}>
               <Sparkles />
             </button>
