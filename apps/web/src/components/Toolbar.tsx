@@ -10,7 +10,6 @@ import {
   MoreHorizontal,
   BugPlay,
   Presentation,
-  Sparkles,
 } from 'lucide-react';
 import { useCanvasContext } from '~/contexts/CanvasContext';
 import { ToolType } from '~/types/canvas';
@@ -23,6 +22,7 @@ import { useAlertContext } from '~/contexts/AlertContext';
 import { tv } from 'tailwind-variants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
 import { useAIContext } from '~/contexts/AIContext';
+import { Sparkles } from './Sparkles';
 
 const button = tv({
   base: 'cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
@@ -390,7 +390,7 @@ export function Toolbar(): React.ReactElement {
         {import.meta.env.VITE_ENABLED_AI === 'true' && !isMobile && (
           <div className="group relative ml-2 w-fit rounded-xl bg-white p-2 shadow-lg">
             <button key="more" className={button()} onClick={handleAIClick}>
-              <Sparkles className="h-5 w-5" />
+              <Sparkles />
             </button>
             <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
               <Popover text="Ask the Canvas AI" upper={false} />
