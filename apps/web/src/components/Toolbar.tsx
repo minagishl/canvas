@@ -396,7 +396,7 @@ export function Toolbar(): React.ReactElement {
             <button key="more" className={button()} onClick={handleAIClick}>
               <Sparkles />
             </button>
-            <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
+            <div className="absolute top-full left-1/2 hidden -translate-x-1/2 group-hover:block">
               <Popover text="Ask the Canvas AI" upper={false} />
             </div>
           </div>
