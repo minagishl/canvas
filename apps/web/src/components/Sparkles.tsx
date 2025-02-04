@@ -16,14 +16,14 @@ export function Sparkles() {
 
       {/* upper right */}
       <g className="animate-infinite animate-ease-linear animate-duration-[2000ms] group-hover:animate-pulse">
-        <path d="M20 3v4"></path>
-        <path d="M22 5h-4"></path>
+        <path d="M20 3v4" />
+        <path d="M22 5h-4" />
       </g>
 
       {/* lower left */}
       <g className="animate-infinite animate-ease-linear animate-duration-[1000ms] group-hover:animate-pulse">
-        <path d="M4 17v2"></path>
-        <path d="M5 18H3"></path>
+        <path d="M4 17v2" />
+        <path d="M5 18H3" />
       </g>
     </svg>
   );
