@@ -402,7 +402,7 @@ export function Toolbar(): React.ReactElement {
                 className={button({ isSelected: showAIInput })}
                 onClick={handleAIClick}
               >
-                <Sparkles />
+                <Sparkles isAnimating={showAIInput} />
               </button>
               <div className="absolute top-full left-1/2 hidden -translate-x-1/2 group-hover:block">
                 <Popover text="Ask the Canvas AI" upper={false} />
