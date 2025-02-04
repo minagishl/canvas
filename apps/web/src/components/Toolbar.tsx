@@ -25,7 +25,7 @@ import { useAIContext } from '~/contexts/AIContext';
 import { Sparkles } from './Sparkles';
 
 const button = tv({
-  base: 'cursor-pointer rounded-sm p-2 transition-colors hover:bg-gray-100',
+  base: 'cursor-pointer rounded-sm p-2.5 transition-colors hover:bg-gray-100',
   variants: {
     isSelected: {
       true: 'bg-indigo-100 text-indigo-600',
@@ -38,15 +38,7 @@ const container = tv({
 });
 
 const containerInner = tv({
-  base: 'flex max-w-none items-center gap-2 rounded-lg p-2 bg-white shadow-md',
-  variants: {
-    isDevMode: {
-      true: 'max-w-none',
-    },
-    isPresentation: {
-      true: 'max-w-none',
-    },
-  },
+  base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-md',
 });
 
 const tools: {
@@ -290,7 +282,7 @@ export function Toolbar(): React.ReactElement {
     <>
       <Loading hidden={!isLoading} />
       <div className={container()}>
-        <div className={containerInner({ isDevMode, isPresentation })}>
+        <div className={containerInner()}>
           {tools
             .filter(
               (Tool) =>
@@ -375,7 +367,7 @@ export function Toolbar(): React.ReactElement {
               className="relative"
               onDoubleClick={() => setHiddedDevIcon(true)}
             >
-              <div className="rounded-sm p-2 text-green-500 transition-colors hover:bg-gray-100">
+              <div className="rounded-sm p-2.5 text-green-500 transition-colors hover:bg-gray-100">
                 <BugPlay
                   className={`h-5 w-5 ${
                     rotation
@@ -396,7 +388,7 @@ export function Toolbar(): React.ReactElement {
         {import.meta.env.VITE_ENABLED_AI === 'true' &&
           !isMobile &&
           !isPresentation && (
-            <div className="group relative ml-2 w-fit rounded-lg bg-white p-2 shadow-md">
+            <div className="group relative ml-2 w-fit rounded-lg bg-white p-1.5 shadow-md">
               <button
                 key="more"
                 className={button({ isSelected: showAIInput })}

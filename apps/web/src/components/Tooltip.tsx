@@ -40,7 +40,7 @@ const popup = tv({
 });
 
 const button = tv({
-  base: 'rounded-sm p-2 transition-colors hover:bg-gray-100 cursor-pointer',
+  base: 'rounded-sm p-2.5 transition-colors hover:bg-gray-100 cursor-pointer',
 });
 
 const fontSizeArray: fontSize[] = [
@@ -247,7 +247,7 @@ export function Tooltip({
 
   return (
     <div
-      className="absolute z-10 flex items-center gap-2 rounded-lg bg-white p-2 shadow-md select-none"
+      className="absolute z-10 flex items-center gap-2 rounded-lg bg-white p-1.5 shadow-md select-none"
       id="tooltip"
       style={{
         top: position.y,
