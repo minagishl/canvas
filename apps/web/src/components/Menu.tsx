@@ -132,7 +132,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
           </div>
         </div>
       )}
-      {import.meta.env.VITE_ENABLED_PRESENTATION && (
+      {import.meta.env.VITE_ENABLED_PRESENTATION === 'true' && (
         <div className="group/menu relative">
           <button
             className={button({ isSelected: selectedTool === 'presentation' })}
