@@ -83,7 +83,6 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         onClick={() => {
           handleToolSelect('pen');
         }}
-        title="Pen"
       >
         <Pencil className="h-5 w-5" />
       </button>
