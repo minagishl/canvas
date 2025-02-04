@@ -80,6 +80,7 @@ export function Toolbar(): React.ReactElement {
   // Debug
   const [popoverText, setPopoverText] = React.useState('');
   const popoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [hiddedDevIcon, setHiddedDevIcon] = React.useState(false);
 
   // Joke
   const [, setKeyUp] = React.useState<string[]>([]);
@@ -250,7 +251,7 @@ export function Toolbar(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!isDevMode) return;
+    if (!isDevMode || hiddedDevIcon) return;
 
     if (history.length > 0) {
       const latestAction = history[history.length - 1];
@@ -279,7 +280,7 @@ export function Toolbar(): React.ReactElement {
         clearTimeout(popoverTimerRef.current);
       }
     };
-  }, [history, isDevMode, showPopoverMessage]);
+  }, [hiddedDevIcon, history, isDevMode, showPopoverMessage]);
 
   const handleAIClick = () => {
     setShowAIInput(!showAIInput);
@@ -367,8 +368,11 @@ export function Toolbar(): React.ReactElement {
               <Popover text="Zoom in" upper={false} />
             </div>
           </div>
-          {isDevMode && (
-            <div className="relative">
+          {isDevMode && !hiddedDevIcon && (
+            <div
+              className="relative"
+              onDoubleClick={() => setHiddedDevIcon(true)}
+            >
               <div className="rounded-sm p-2 text-green-500 transition-colors hover:bg-gray-100">
                 <BugPlay
                   className={`h-5 w-5 ${
