@@ -303,8 +303,10 @@ export function Toolbar(): React.ReactElement {
                   id={`toolbar-${Tool.name}`}
                   className={button({
                     isSelected:
-                      selectedTool === Tool.name ||
-                      (isPresentation && Tool.name === 'select'),
+                      (!showAIInput && selectedTool === Tool.name) ||
+                      (isPresentation &&
+                        !showAIInput &&
+                        Tool.name === 'select'),
                   })}
                   onClick={() => handleToolSelect(Tool.name)}
                   onKeyDown={handleOnKeyDown}
@@ -391,16 +393,22 @@ export function Toolbar(): React.ReactElement {
           )}
         </div>
 
-        {import.meta.env.VITE_ENABLED_AI === 'true' && !isMobile && (
-          <div className="group relative ml-2 w-fit rounded-lg bg-white p-2 shadow-md">
-            <button key="more" className={button()} onClick={handleAIClick}>
-              <Sparkles />
-            </button>
-            <div className="absolute top-full left-1/2 hidden -translate-x-1/2 group-hover:block">
-              <Popover text="Ask the Canvas AI" upper={false} />
+        {import.meta.env.VITE_ENABLED_AI === 'true' &&
+          !isMobile &&
+          !isPresentation && (
+            <div className="group relative ml-2 w-fit rounded-lg bg-white p-2 shadow-md">
+              <button
+                key="more"
+                className={button({ isSelected: showAIInput })}
+                onClick={handleAIClick}
+              >
+                <Sparkles />
+              </button>
+              <div className="absolute top-full left-1/2 hidden -translate-x-1/2 group-hover:block">
+                <Popover text="Ask the Canvas AI" upper={false} />
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </>
   );
