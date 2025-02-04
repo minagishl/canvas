@@ -40,7 +40,7 @@ const popup = tv({
 });
 
 const button = tv({
-  base: 'rounded-md p-2 transition-colors hover:bg-gray-100 cursor-pointer',
+  base: 'rounded-sm p-2 transition-colors hover:bg-gray-100 cursor-pointer',
 });
 
 const fontSizeArray: fontSize[] = [
@@ -247,7 +247,7 @@ export function Tooltip({
 
   return (
     <div
-      className="absolute z-10 flex items-center gap-2 rounded-xl bg-white p-2 shadow-lg select-none"
+      className="absolute z-10 flex items-center gap-2 rounded-lg bg-white p-2 shadow-lg select-none"
       id="tooltip"
       style={{
         top: position.y,
@@ -334,7 +334,7 @@ export function Tooltip({
             <TextCursorInput className="h-5 w-5" />
           </button>
           <select
-            className="h-9 appearance-none rounded-md p-2 text-center leading-tight transition-colors hover:bg-gray-100"
+            className="h-9 appearance-none rounded-sm p-2 text-center leading-tight transition-colors hover:bg-gray-100"
             value={selectedObject?.fontSize || 24}
             onChange={handleChangeFontSize}
           >

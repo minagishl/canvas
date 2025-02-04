@@ -25,7 +25,7 @@ import { useAIContext } from '~/contexts/AIContext';
 import { Sparkles } from './Sparkles';
 
 const button = tv({
-  base: 'cursor-pointer rounded-md p-2 transition-colors hover:bg-gray-100',
+  base: 'cursor-pointer rounded-sm p-2 transition-colors hover:bg-gray-100',
   variants: {
     isSelected: {
       true: 'bg-indigo-100 text-indigo-600',
@@ -38,7 +38,7 @@ const container = tv({
 });
 
 const containerInner = tv({
-  base: 'flex max-w-none items-center gap-2 rounded-xl p-2 bg-white shadow-lg',
+  base: 'flex max-w-none items-center gap-2 rounded-lg p-2 bg-white shadow-lg',
   variants: {
     isDevMode: {
       true: 'max-w-none',
@@ -369,7 +369,7 @@ export function Toolbar(): React.ReactElement {
           </div>
           {isDevMode && (
             <div className="relative">
-              <div className="rounded-md p-2 text-green-500 transition-colors hover:bg-gray-100">
+              <div className="rounded-sm p-2 text-green-500 transition-colors hover:bg-gray-100">
                 <BugPlay
                   className={`h-5 w-5 ${
                     rotation
@@ -388,7 +388,7 @@ export function Toolbar(): React.ReactElement {
         </div>
 
         {import.meta.env.VITE_ENABLED_AI === 'true' && !isMobile && (
-          <div className="group relative ml-2 w-fit rounded-xl bg-white p-2 shadow-lg">
+          <div className="group relative ml-2 w-fit rounded-lg bg-white p-2 shadow-lg">
             <button key="more" className={button()} onClick={handleAIClick}>
               <Sparkles />
             </button>

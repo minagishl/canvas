@@ -119,7 +119,7 @@ export const ImageObject = React.memo(
                   style={{ zIndex: 1 }}
                 />
                 <button
-                  className="relative flex w-fit cursor-pointer flex-col items-center justify-center rounded-md bg-white p-2 px-4 font-sans whitespace-nowrap"
+                  className="relative flex w-fit cursor-pointer flex-col items-center justify-center rounded-sm bg-white p-2 px-4 font-sans whitespace-nowrap"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsSpoiler(false);
