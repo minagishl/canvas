@@ -75,7 +75,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
 
   return (
     <div
-      className="animate-fade animate-duration-300 animate-once absolute top-2 left-1/2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-sm bg-white p-2 shadow-md"
+      className="animate-fade animate-duration-300 animate-once absolute top-2 left-1/2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-lg bg-white p-2 shadow-md"
       role="menu"
     >
       <button
