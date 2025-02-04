@@ -1044,6 +1044,9 @@ export const Canvas = () => {
 
       if (e.key === '/' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
+
+        if (showAIInput) return;
+
         setIsModalOpen(!isModalOpen);
         setSelectedTool('select');
       }
