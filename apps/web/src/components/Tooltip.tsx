@@ -259,7 +259,11 @@ export function Tooltip({
     >
       {!isImageObject && !isEmbedObject && (
         <>
-          <button className={button()} onClick={handleColorChange}>
+          <button
+            className={button()}
+            onClick={handleColorChange}
+            aria-label="Color"
+          >
             <Circle
               className="h-5 w-5"
               fill={
@@ -278,6 +282,7 @@ export function Tooltip({
                     className: 'flex size-9 items-center justify-center',
                   })}
                   onClick={handleLineWidthChange}
+                  aria-label="Line width"
                 >
                   <div
                     className="flex w-5 items-center justify-center"
@@ -297,7 +302,7 @@ export function Tooltip({
         </>
       )}
       <div className="group relative">
-        <button className={button()} onClick={handleMoveDown}>
+        <button className={button()} onClick={handleMoveDown} aria-label="Move">
           <Layers2 className="h-5 w-5 rotate-180" />
         </button>
         <div className={popup({ isTextObject })}>
@@ -307,7 +312,11 @@ export function Tooltip({
       {isTextObject && (
         <>
           <div className="group relative">
-            <button className={button()} onClick={handleWeightChange}>
+            <button
+              className={button()}
+              onClick={handleWeightChange}
+              aria-label="Weight"
+            >
               <Bold className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
@@ -319,7 +328,11 @@ export function Tooltip({
             </div>
           </div>
           <div className="group relative">
-            <button className={button()} onClick={handleItalicChange}>
+            <button
+              className={button()}
+              onClick={handleItalicChange}
+              aria-label="Italic"
+            >
               <Italic className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
@@ -330,7 +343,11 @@ export function Tooltip({
               />
             </div>
           </div>
-          <button className={button()} onClick={handleTextEdit}>
+          <button
+            className={button()}
+            onClick={handleTextEdit}
+            aria-label="Edit"
+          >
             <TextCursorInput className="h-5 w-5" />
           </button>
           <select
@@ -349,7 +366,11 @@ export function Tooltip({
       {isImageObject && !isOriginalUrl && (
         <>
           <div className="group relative">
-            <button className={button()} onClick={handleToggleCircle}>
+            <button
+              className={button()}
+              onClick={handleToggleCircle}
+              aria-label="Circle"
+            >
               {selectedObject?.circle ? (
                 <CircleOff className="h-5 w-5 scale-x-[-1]" />
               ) : (
@@ -361,7 +382,11 @@ export function Tooltip({
             </div>
           </div>
           <div className="group relative">
-            <button className={button()} onClick={handleToggleSpoiler}>
+            <button
+              className={button()}
+              onClick={handleToggleSpoiler}
+              aria-label="Spoiler"
+            >
               {selectedObject?.spoiler ? (
                 <EyeOff className="h-5 w-5 scale-x-[-1]" />
               ) : (
@@ -375,7 +400,7 @@ export function Tooltip({
         </>
       )}
       <div className="group relative">
-        <button className={button()} onClick={handleRotate}>
+        <button className={button()} onClick={handleRotate} aria-label="Rotate">
           <RefreshCw className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>
@@ -384,7 +409,11 @@ export function Tooltip({
       </div>
       <div className="mx-2 h-6 w-px bg-gray-200" />
       <div className="group relative">
-        <button className={button()} onClick={handleChangeLocked}>
+        <button
+          className={button()}
+          onClick={handleChangeLocked}
+          aria-label="Lock"
+        >
           {selectedObject?.locked ? (
             <LockKeyhole className="h-5 w-5" />
           ) : (
@@ -396,7 +425,11 @@ export function Tooltip({
         </div>
       </div>
       <div className="group relative">
-        <button className={button()} onClick={handleDuplicateObject}>
+        <button
+          className={button()}
+          onClick={handleDuplicateObject}
+          aria-label="Duplicate"
+        >
           <Copy className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>
@@ -404,7 +437,11 @@ export function Tooltip({
         </div>
       </div>
       <div className="group relative">
-        <button className={button()} onClick={handleDeleteObject}>
+        <button
+          className={button()}
+          onClick={handleDeleteObject}
+          aria-label="Delete"
+        >
           <Trash2 className="h-5 w-5" />
         </button>
         <div className={popup({ isTextObject })}>

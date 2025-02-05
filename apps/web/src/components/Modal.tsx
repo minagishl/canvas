@@ -81,6 +81,7 @@ export function Modal({
             <button
               className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
               onClick={item.close ? close : item.onClick}
+              aria-label="Menu"
             >
               {item.icon}
             </button>
@@ -99,6 +100,7 @@ export function Modal({
               <button
                 key="more"
                 className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
+                aria-label="More"
               >
                 <MoreHorizontal className="h-5 w-5" />
               </button>
@@ -115,6 +117,9 @@ export function Modal({
                         onClick={() => {
                           navigateToUrl(import.meta.env.VITE_MENU_TWITTER);
                         }}
+                        aria-label={
+                          import.meta.env.VITE_MENU_TWITTER_TEXT ?? 'Twitter'
+                        }
                       >
                         <Twitter className="h-5 w-5" />
                       </button>
@@ -136,6 +141,9 @@ export function Modal({
                         onClick={() => {
                           navigateToUrl(import.meta.env.VITE_MENU_WEBSITE);
                         }}
+                        aria-label={
+                          import.meta.env.VITE_MENU_WEBSITE_TEXT ?? 'Website'
+                        }
                       >
                         <Earth className="h-5 w-5" />
                       </button>
@@ -158,6 +166,7 @@ export function Modal({
           <button
             className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
             onClick={close}
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
@@ -245,6 +254,7 @@ export function ModalInput({
               className="ml-2 cursor-pointer rounded-sm bg-indigo-100 p-2.5 text-indigo-600 hover:bg-indigo-200"
               onClick={send}
               disabled={isLoading}
+              aria-label="Send"
             >
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

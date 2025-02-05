@@ -302,6 +302,7 @@ export function Toolbar(): React.ReactElement {
                   })}
                   onClick={() => handleToolSelect(Tool.name)}
                   onKeyDown={handleOnKeyDown}
+                  aria-label={Tool.name}
                 >
                   <Tool.icon className="h-5 w-5" />
                 </button>
@@ -309,7 +310,7 @@ export function Toolbar(): React.ReactElement {
             ))}
           {!isMobile && !isPresentation && (
             <div className="group relative" data-testid="more">
-              <button key="more" className={button()}>
+              <button key="more" className={button()} aria-label="More">
                 <MoreHorizontal className="h-5 w-5" />
               </button>
               <div className="absolute left-1/2 hidden h-8 w-24 -translate-x-1/2 group-hover:block" />
@@ -326,6 +327,7 @@ export function Toolbar(): React.ReactElement {
                 onClick={() => {
                   handleToolSelect('select');
                 }}
+                aria-label="Stop presentation"
               >
                 <Presentation className="h-5 w-5" />
               </button>
@@ -343,6 +345,7 @@ export function Toolbar(): React.ReactElement {
               onClick={handleZoomOut}
               className={button()}
               disabled={isZooming || scale <= 0.7}
+              aria-label="Zoom out"
             >
               <ZoomOut className="h-5 w-5" />
             </button>
@@ -355,6 +358,7 @@ export function Toolbar(): React.ReactElement {
               onClick={handleZoomIn}
               className={button()}
               disabled={isZooming || scale >= 2}
+              aria-label="Zoom in"
             >
               <ZoomIn className="h-5 w-5" />
             </button>
@@ -393,6 +397,7 @@ export function Toolbar(): React.ReactElement {
                 key="more"
                 className={button({ isSelected: showAIInput })}
                 onClick={handleAIClick}
+                aria-label="AI"
               >
                 <Sparkles isAnimating={showAIInput} />
               </button>

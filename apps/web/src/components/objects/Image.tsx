@@ -125,6 +125,7 @@ export const ImageObject = React.memo(
                     setIsSpoiler(false);
                   }}
                   style={{ zIndex: 2 }}
+                  aria-label="Show image"
                 >
                   <div className="flex h-5 items-center justify-center text-center">
                     Show image

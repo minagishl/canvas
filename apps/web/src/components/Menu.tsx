@@ -83,6 +83,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         onClick={() => {
           handleToolSelect('pen');
         }}
+        aria-label="Pen"
       >
         <Pencil className="h-5 w-5" />
       </button>
@@ -91,6 +92,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         onClick={() => {
           handleToolSelect('arrow');
         }}
+        aria-label="Arrow"
       >
         <MoveUpRight className="h-5 w-5" />
       </button>
@@ -102,6 +104,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
               onClick={() => {
                 handleToolSelect('gif');
               }}
+              aria-label="GIF"
             >
               <Film className="h-5 w-5" />
             </button>
@@ -115,6 +118,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         <button
           className={button({ isSelected: selectedTool === 'save' })}
           onClick={handleSaveImage}
+          aria-label="Export as image"
         >
           <ImageDown className="h-5 w-5" />
         </button>
@@ -124,7 +128,11 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
       </div>
       {import.meta.env.VITE_API_URL && (
         <div className="group/menu relative">
-          <button className={button()} onClick={handleShareCanvas}>
+          <button
+            className={button()}
+            onClick={handleShareCanvas}
+            aria-label="Share canvas"
+          >
             <Share className="h-5 w-5" />
           </button>
           <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
@@ -137,6 +145,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
           <button
             className={button({ isSelected: selectedTool === 'presentation' })}
             onClick={handleStartPresentation}
+            aria-label="Start presentation"
           >
             <Presentation className="h-5 w-5" />
           </button>
@@ -146,7 +155,11 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         </div>
       )}
       <div className="group/menu relative">
-        <button className={button()} onClick={handleClearCanvas}>
+        <button
+          className={button()}
+          onClick={handleClearCanvas}
+          aria-label="Clear canvas"
+        >
           <Trash2 className="h-5 w-5" />
         </button>
         <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
