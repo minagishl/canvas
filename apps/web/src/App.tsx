@@ -12,11 +12,6 @@ const schema = {
   description: 'A free canvas tool available online for building ideas.',
   applicationCategory: 'DesignApplication',
   operatingSystem: 'All',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-  },
 };
 
 // Contexts
