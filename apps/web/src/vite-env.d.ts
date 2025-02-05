@@ -10,6 +10,12 @@ interface ImportMetaEnv {
   readonly VITE_ENABLED_RESIZES_NAP: string;
   readonly VITE_ENABLED_PRESENTATION: string;
   readonly VITE_ENABLED_AI: string;
+
+  // Menu items
+  readonly VITE_MENU_TWITTER: string;
+  readonly VITE_MENU_TWITTER_TEXT: string;
+  readonly VITE_MENU_WEBSITE: string;
+  readonly VITE_MENU_WEBSITE_TEXT: string;
 }
 
 interface ImportMeta {
