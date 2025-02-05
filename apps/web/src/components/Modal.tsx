@@ -6,6 +6,9 @@ import {
   BookOpen,
   ArrowRight,
   Loader2,
+  MoreHorizontal,
+  Twitter,
+  Earth,
 } from 'lucide-react';
 import { Popover } from './Popover';
 
@@ -46,12 +49,6 @@ const defaultItems: Items[] = [
       navigateToUrl(
         'https://github.com/minagishl/canvas/blob/main/docs/TERMS_AND_PRIVACY.md'
       ),
-  },
-  {
-    icon: <X className="h-5 w-5" />,
-    text: 'Close',
-    onClick: () => {},
-    close: true,
   },
 ];
 
@@ -94,6 +91,81 @@ export function Modal({
             )}
           </div>
         ))}
+
+        {items === defaultItems &&
+          (import.meta.env.VITE_MENU_TWITTER ||
+            import.meta.env.VITE_MENU_WEBSITE) && (
+            <div className="group relative" data-testid="more">
+              <button
+                key="more"
+                className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
+              >
+                <MoreHorizontal className="h-5 w-5" />
+              </button>
+              <div className="absolute left-1/2 hidden h-8 w-24 -translate-x-1/2 group-hover:block" />
+              <div className="absolute top-full left-1/2 hidden -translate-x-1/2 pt-3 group-hover:block">
+                <div
+                  className="animate-fade animate-duration-300 animate-once shadow-base absolute top-2 left-1/2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-lg bg-white p-1.5"
+                  role="menu"
+                >
+                  {import.meta.env.VITE_MENU_TWITTER && (
+                    <div className="group/menu relative">
+                      <button
+                        className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
+                        onClick={() => {
+                          navigateToUrl(import.meta.env.VITE_MENU_TWITTER);
+                        }}
+                      >
+                        <Twitter className="h-5 w-5" />
+                      </button>
+                      <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+                        <Popover
+                          text={
+                            import.meta.env.VITE_MENU_TWITTER_TEXT ?? 'Twitter'
+                          }
+                          upper={false}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {import.meta.env.VITE_MENU_WEBSITE && (
+                    <div className="group/menu relative">
+                      <button
+                        className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
+                        onClick={() => {
+                          navigateToUrl(import.meta.env.VITE_MENU_WEBSITE);
+                        }}
+                      >
+                        <Earth className="h-5 w-5" />
+                      </button>
+                      <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
+                        <Popover
+                          text={
+                            import.meta.env.VITE_MENU_WEBSITE_TEXT ?? 'Website'
+                          }
+                          upper={false}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+        <div className="group relative">
+          <button
+            className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
+            onClick={close}
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
+            <Popover text="Close" upper={false} />
+          </div>
+        </div>
       </div>
     </>
   );
