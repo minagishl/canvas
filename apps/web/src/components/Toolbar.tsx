@@ -302,7 +302,9 @@ export function Toolbar(): React.ReactElement {
                   })}
                   onClick={() => handleToolSelect(Tool.name)}
                   onKeyDown={handleOnKeyDown}
-                  aria-label={Tool.name}
+                  aria-label={
+                    Tool.name.charAt(0).toUpperCase() + Tool.name.slice(1)
+                  }
                 >
                   <Tool.icon className="h-5 w-5" />
                 </button>
