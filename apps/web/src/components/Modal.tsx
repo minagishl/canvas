@@ -8,6 +8,7 @@ import {
   Loader2,
   MoreHorizontal,
   Twitter,
+  Earth,
 } from 'lucide-react';
 import { Popover } from './Popover';
 
@@ -136,7 +137,7 @@ export function Modal({
                           navigateToUrl(import.meta.env.VITE_MENU_WEBSITE);
                         }}
                       >
-                        <BookOpen className="h-5 w-5" />
+                        <Earth className="h-5 w-5" />
                       </button>
                       <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
                         <Popover
