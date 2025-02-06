@@ -84,9 +84,6 @@ export const Canvas = () => {
   const [panStart, setPanStart] = useState<Point | null>(null);
   const [resizing, setResizing] = useState<ResizeHandle>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
-  const [initialPositions, setInitialPositions] = useState<{
-    [id: string]: Point;
-  }>({});
   const [imageCache, setImageCache] = useState<{ [key: string]: string }>({});
   const [currentLine, setCurrentLine] = useState<LinePoint[]>([]);
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
@@ -108,6 +105,14 @@ export const Canvas = () => {
   } | null>(null);
   const [isFileDragging, setIsFileDragging] = useState(false);
   const [isMoving, setIsMoving] = useState<boolean>(false);
+
+  // Object Position
+  const [initialPositions, setInitialPositions] = useState<{
+    [id: string]: Point;
+  }>({});
+  const [initialLinePoints, setInitialLinePoints] = useState<{
+    [id: string]: LinePoint[];
+  }>({});
 
   // AI
   const [isAIGenerating, setIsAIGenerating] = useState(false);
@@ -353,11 +358,22 @@ export const Canvas = () => {
                 : [...prev, clickedCanvasObject.id]
               : [clickedCanvasObject.id];
             const newInitialPositions: { [id: string]: Point } = {};
+            const newInitialLinePoints: { [id: string]: LinePoint[] } = {};
             newSelected.forEach((id) => {
               const obj = objects.find((o) => o.id === id);
-              if (obj) newInitialPositions[id] = { ...obj.position };
+              if (obj) {
+                newInitialPositions[id] = { ...obj.position };
+                if (
+                  (obj.type === 'line' || obj.type === 'arrow') &&
+                  obj.points
+                ) {
+                  // Record a copy of each point
+                  newInitialLinePoints[id] = obj.points.map((p) => ({ ...p }));
+                }
+              }
             });
             setInitialPositions(newInitialPositions);
+            setInitialLinePoints(newInitialLinePoints);
             return newSelected;
           });
           setIsDragging(true);
@@ -470,7 +486,8 @@ export const Canvas = () => {
         const updatedObjects = objects.map((obj) => {
           if (selectedObjectIds.includes(obj.id) && initialPositions[obj.id]) {
             if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
-              const newPoints = obj.points.map((p) => ({
+              const initPoints = initialLinePoints[obj.id] || obj.points;
+              const newPoints = initPoints.map((p) => ({
                 x: p.x + deltaX,
                 y: p.y + deltaY,
               }));
