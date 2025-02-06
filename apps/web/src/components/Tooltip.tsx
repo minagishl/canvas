@@ -51,9 +51,9 @@ export function Tooltip({
     useHistoryContext();
   const [isRotating, setIsRotating] = React.useState(false);
 
-  const handleColorChange = () => {
-    if (selectedObjectIds.length !== 1) return;
+  if (selectedObjectIds.length !== 1) return null;
 
+  const handleColorChange = () => {
     setObjects((prevObjects) => {
       const selectedObject = prevObjects.find(
         (obj) => obj.id === selectedObjectIds[0]
@@ -78,13 +78,10 @@ export function Tooltip({
   };
 
   const handleItalicChange = () => {
-    if (selectedObjectIds.length !== 1) return;
     textToggleItalic(objects, selectedObjectIds[0], setObjects);
   };
 
   const handleWeightChange = () => {
-    if (selectedObjectIds.length === 0) return;
-
     setObjects((prevObjects) => {
       const selectedObject = prevObjects.find((obj) =>
         selectedObjectIds.includes(obj.id)
@@ -108,21 +105,16 @@ export function Tooltip({
               | 900);
 
       return prevObjects.map((obj) =>
-        selectedObjectIds.includes(obj.id)
-          ? { ...obj, weight: nextWeight }
-          : obj
+        obj.id === selectedObjectIds[0] ? { ...obj, weight: nextWeight } : obj
       );
     });
   };
 
   const handleTextEdit = () => {
-    if (selectedObjectIds.length !== 1) return;
     textEdit(selectedObjectIds[0], objects, setIsEditingId);
   };
 
   const handleMoveDown = () => {
-    if (selectedObjectIds.length !== 1) return;
-
     const selectedObject = objects.find(
       (obj) => obj.id === selectedObjectIds[0]
     );
@@ -142,8 +134,6 @@ export function Tooltip({
   };
 
   const handleChangeFontSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!selectedObjectIds.length) return;
-
     const selectedObject = objects.find(
       (obj) => obj.id === selectedObjectIds[0]
     );
@@ -159,13 +149,10 @@ export function Tooltip({
   };
 
   const handleChangeLocked = () => {
-    if (!selectedObjectIds.length) return;
     lockObject(selectedObjectIds[0], setObjects);
   };
 
   const handleLineWidthChange = () => {
-    if (selectedObjectIds.length !== 1) return;
-
     setObjects((prevObjects) => {
       const selectedObject = prevObjects.find(
         (obj) => obj.id === selectedObjectIds[0]
@@ -188,8 +175,6 @@ export function Tooltip({
   };
 
   const handleRotate = () => {
-    if (selectedObjectIds.length !== 1) return;
-
     const object = objects.find((obj) => obj.id === selectedObjectIds[0]);
     if (object?.locked === true) return;
     rotateObject(
@@ -226,22 +211,16 @@ export function Tooltip({
   };
 
   const handleToggleCircle = () => {
-    if (selectedObjectIds.length !== 1) return;
-
     imageToggleCircle(objects, selectedObjectIds[0], setObjects);
   };
 
   const handleToggleSpoiler = () => {
-    if (selectedObjectIds.length !== 1) return;
-
     imageToggleSpoiler(objects, selectedObjectIds[0], setObjects);
   };
 
   if (!position) return null;
 
-  const selectedObject = objects.find((obj) =>
-    selectedObjectIds.includes(obj.id)
-  );
+  const selectedObject = objects.find((obj) => obj.id === selectedObjectIds[0]);
   const isTextObject = selectedObject?.type === 'text';
   const isImageObject = selectedObject?.type === 'image';
   const isOriginalUrl = selectedObject?.originalUrl;
