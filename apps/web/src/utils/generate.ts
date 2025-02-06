@@ -21,6 +21,12 @@ export const aIGenerate = async (
     return;
   }
 
+  if (aiInputText.length > 128) {
+    showTemporaryAlert('Description is too long', setAlert);
+    setShowAIInput(false);
+    return;
+  }
+
   try {
     setIsAIGenerating(true);
     const apiUrl = new URL(import.meta.env.VITE_API_URL);

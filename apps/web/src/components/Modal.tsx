@@ -215,12 +215,14 @@ export function ModalInput({
   onChange,
   send,
   isLoading,
+  isOver,
 }: {
   placeholder?: string;
   close?: () => void;
   onChange?: (text: string) => void;
   send?: () => void;
   isLoading?: boolean;
+  isOver?: boolean;
 }): React.ReactElement {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -250,9 +252,9 @@ export function ModalInput({
               onChange={(e) => onChange?.(e.target.value)}
             />
             <button
-              className="ml-2 cursor-pointer rounded-sm bg-indigo-100 p-2.5 text-indigo-600 hover:bg-indigo-200"
+              className="ml-2 cursor-pointer rounded-sm bg-indigo-100 p-2.5 text-indigo-600 hover:bg-indigo-200 disabled:cursor-not-allowed disabled:opacity-50"
               onClick={send}
-              disabled={isLoading}
+              disabled={isLoading || isOver}
               aria-label="Send"
             >
               {isLoading ? (

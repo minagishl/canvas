@@ -110,6 +110,7 @@ export const Canvas = () => {
   // AI
   const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [aiInputText, setAIInputText] = useState('');
+  const [aiInputIsOver, setAIInputIsOver] = useState(false);
   const { showAIInput, setShowAIInput } = useAIContext();
 
   // Moving
@@ -1301,6 +1302,17 @@ export const Canvas = () => {
     );
   };
 
+  const handleModalInputChange = (text: string) => {
+    // Limit the number of characters to 128
+    if (text.length > 128) {
+      setAIInputIsOver(true);
+      return;
+    }
+
+    setAIInputText(text);
+    setAIInputIsOver(false);
+  };
+
   return (
     <div
       className="relative h-screen w-screen overflow-hidden"
@@ -1438,9 +1450,10 @@ export const Canvas = () => {
         <ModalInput
           placeholder="Describe what you want to create..."
           close={() => setShowAIInput(false)}
-          onChange={(text) => setAIInputText(text)}
+          onChange={handleModalInputChange}
           send={handleAIGenerate}
           isLoading={isAIGenerating}
+          isOver={aiInputIsOver}
         />
       )}
 
