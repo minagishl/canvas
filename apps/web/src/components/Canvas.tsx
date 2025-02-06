@@ -220,25 +220,24 @@ export const Canvas = () => {
     height,
   ]);
 
-  useEffect(() => {
-    if (selectedObjectIds.length > 0) {
+  const initDragPositions = useCallback(
+    (selectedIds: string[]) => {
       const newInitialPositions: { [id: string]: Point } = {};
       const newInitialLinePoints: { [id: string]: LinePoint[] } = {};
-      selectedObjectIds.forEach((id) => {
+      selectedIds.forEach((id) => {
         const obj = objects.find((o) => o.id === id);
         if (obj) {
           newInitialPositions[id] = { ...obj.position };
           if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
-            // Record a copy of each point
             newInitialLinePoints[id] = obj.points.map((p) => ({ ...p }));
           }
         }
       });
       setInitialPositions(newInitialPositions);
       setInitialLinePoints(newInitialLinePoints);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedObjectIds]);
+    },
+    [objects, setInitialPositions, setInitialLinePoints]
+  );
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent, resizeHandle?: ResizeHandle) => {
@@ -351,14 +350,13 @@ export const Canvas = () => {
           if (objectId && !isMobile) {
             e.preventDefault(); // Prevent text selection
             e.stopPropagation(); // Prevent event propagation to canvas
-            setSelectedObjectIds((prev) => {
-              const newSelected = e.shiftKey
-                ? prev.includes(objectId)
-                  ? prev
-                  : [...prev, objectId]
-                : [objectId];
-              return newSelected;
-            });
+            const newSelectedIds = e.shiftKey
+              ? selectedObjectIds.includes(objectId)
+                ? selectedObjectIds
+                : [...selectedObjectIds, objectId]
+              : [objectId];
+            setSelectedObjectIds(newSelectedIds);
+            initDragPositions(newSelectedIds);
             setIsDragging(true);
             setStartPoint(point);
             return;
@@ -368,14 +366,13 @@ export const Canvas = () => {
         // If an object on the canvas is clicked
         const clickedCanvasObject = findClickedObject(point, objects);
         if (clickedCanvasObject) {
-          setSelectedObjectIds((prev) => {
-            const newSelected = e.shiftKey
-              ? prev.includes(clickedCanvasObject.id)
-                ? prev
-                : [...prev, clickedCanvasObject.id]
-              : [clickedCanvasObject.id];
-            return newSelected;
-          });
+          const newSelectedIds = e.shiftKey
+            ? selectedObjectIds.includes(clickedCanvasObject.id)
+              ? selectedObjectIds
+              : [...selectedObjectIds, clickedCanvasObject.id]
+            : [clickedCanvasObject.id];
+          setSelectedObjectIds(newSelectedIds);
+          initDragPositions(newSelectedIds);
           setIsDragging(true);
           setStartPoint(point);
           return;
@@ -400,14 +397,15 @@ export const Canvas = () => {
       scale,
       selectedObjectIds,
       selectedTool,
+      objects,
       setAlert,
       setSelectedTool,
       setObjects,
       setHistory,
       setCurrentHistoryIndex,
       currentHistoryIndex,
-      objects,
       setSelectedObjectIds,
+      initDragPositions,
       isDragging,
     ]
   );
