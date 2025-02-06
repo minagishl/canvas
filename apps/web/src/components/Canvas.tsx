@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '~/types/canvas';
-import { CanvasDataSchema, CanvasAIDaraSchema } from '~/schema';
+import { CanvasDataSchema } from '~/schema';
 import { parseAsync } from 'valibot';
 import { isMobile } from 'react-device-detect';
 
@@ -31,6 +31,7 @@ import { handlePaste } from '~/utils/clipboard';
 import { handleObjectResize } from '~/utils/resize';
 import { getTouchPoint, getTouchDistance, getTouchCenter } from '~/utils/touch';
 import { handleAddObject } from '~/utils/history';
+import { aIGenerate } from '~/utils/generate';
 
 // Contexts
 import { useCanvasContext } from '~/contexts/CanvasContext';
@@ -1273,45 +1274,16 @@ export const Canvas = () => {
   );
 
   const handleAIGenerate = async () => {
-    if (aiInputText.trim() === '') {
-      showTemporaryAlert('Please enter a description', setAlert);
-      setShowAIInput(false);
-      return;
-    }
-
-    try {
-      setIsAIGenerating(true);
-      const apiUrl = new URL(import.meta.env.VITE_API_URL);
-      const response = await fetch(`${apiUrl.href}generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt: aiInputText }),
-      });
-
-      const data = await response.json();
-      if (data) {
-        const result = await parseAsync(CanvasAIDaraSchema, data);
-        // Add each generated object
-        result.forEach((object) => {
-          handleAddObject(
-            object,
-            setObjects,
-            setHistory,
-            setCurrentHistoryIndex,
-            currentHistoryIndex
-          );
-        });
-        showTemporaryAlert('AI generated content added', setAlert);
-      }
-    } catch (error) {
-      console.error('Error generating content:', error);
-      showTemporaryAlert('Error generating content', setAlert);
-    } finally {
-      setIsAIGenerating(false);
-      setShowAIInput(false);
-    }
+    aIGenerate(
+      aiInputText,
+      setShowAIInput,
+      setAlert,
+      setIsAIGenerating,
+      setObjects,
+      setHistory,
+      setCurrentHistoryIndex,
+      currentHistoryIndex
+    );
   };
 
   return (
