@@ -332,6 +332,10 @@ app.post('/generate', async (c) => {
     return c.json({ error: 'prompt is required' }, 400);
   }
 
+  if (prompt.length > 128) {
+    return c.json({ error: 'prompt is too long' }, 400);
+  }
+
   try {
     // Instruct the JSON schema with a system message (without any extra text, always return valid JSON)
     const systemPrompt = `You are an excellent assistant to generate canvas objects.
