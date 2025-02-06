@@ -19,15 +19,10 @@ import { Menu } from './Menu';
 import { Loading } from './Loading';
 import { shareCanvasAsURL } from '~/utils/canvas';
 import { useAlertContext } from '~/contexts/AlertContext';
-import { tv } from 'tailwind-variants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
 import { useAIContext } from '~/contexts/AIContext';
 import { Sparkles } from './Sparkles';
-import { button, container } from '~/variants';
-
-const containerInner = tv({
-  base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-base',
-});
+import { button, container, frame } from '~/variants';
 
 const tools: {
   icon: typeof MousePointer2;
@@ -270,7 +265,7 @@ export function Toolbar(): React.ReactElement {
     <>
       <Loading hidden={!isLoading} />
       <div className={container({ top: true })}>
-        <div className={containerInner()}>
+        <div className={frame()}>
           {tools
             .filter(
               (Tool) =>
@@ -386,7 +381,7 @@ export function Toolbar(): React.ReactElement {
         {import.meta.env.VITE_ENABLED_AI === 'true' &&
           !isMobile &&
           !isPresentation && (
-            <div className="group shadow-base relative ml-2 w-fit rounded-lg bg-white p-1.5">
+            <div className={frame({ className: 'group relative ml-2' })}>
               <button
                 key="more"
                 className={button({ isSelected: showAIInput })}

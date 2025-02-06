@@ -78,3 +78,7 @@ export const text = tv({
     },
   },
 });
+
+export const frame = tv({
+  base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-base',
+});
