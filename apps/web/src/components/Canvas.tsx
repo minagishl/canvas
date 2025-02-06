@@ -324,9 +324,11 @@ export const Canvas = () => {
             e.preventDefault(); // Prevent text selection
             e.stopPropagation(); // Prevent event propagation to canvas
             setSelectedObjectIds((prev) => {
-              const newSelected = prev.includes(objectId)
-                ? prev
-                : [...prev, objectId];
+              const newSelected = e.shiftKey
+                ? prev.includes(objectId)
+                  ? prev
+                  : [...prev, objectId]
+                : [objectId];
               const newInitialPositions: { [id: string]: Point } = {};
               newSelected.forEach((id) => {
                 const obj = objects.find((o) => o.id === id);
@@ -340,13 +342,16 @@ export const Canvas = () => {
             return;
           }
         }
+
         // If an object on the canvas is clicked
         const clickedCanvasObject = findClickedObject(point, objects);
         if (clickedCanvasObject) {
           setSelectedObjectIds((prev) => {
-            const newSelected = prev.includes(clickedCanvasObject.id)
-              ? prev
-              : [...prev, clickedCanvasObject.id];
+            const newSelected = e.shiftKey
+              ? prev.includes(clickedCanvasObject.id)
+                ? prev
+                : [...prev, clickedCanvasObject.id]
+              : [clickedCanvasObject.id];
             const newInitialPositions: { [id: string]: Point } = {};
             newSelected.forEach((id) => {
               const obj = objects.find((o) => o.id === id);
