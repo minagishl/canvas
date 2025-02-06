@@ -46,3 +46,16 @@ export const popover = tv({
     },
   },
 });
+
+export const sparkles = tv({
+  base: 'animate-infinite animate-ease-linear group-hover:animate-pulse',
+  variants: {
+    position: {
+      upperRight: 'animate-duration-[2000ms]',
+      lowerLeft: 'animate-duration-[1000ms]',
+    },
+    isAnimating: {
+      true: 'animate-pulse',
+    },
+  },
+});
