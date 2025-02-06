@@ -150,6 +150,7 @@ export const Canvas = () => {
   }, []);
 
   const handleUndo = useCallback(() => {
+    setSelectedObjectIds([]);
     if (currentHistoryIndex >= 0) {
       const targetIndex = currentHistoryIndex - 1;
 
