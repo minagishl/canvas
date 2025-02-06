@@ -82,3 +82,7 @@ export const text = tv({
 export const frame = tv({
   base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-base',
 });
+
+export const menu = tv({
+  base: 'animate-fade animate-duration-300 animate-once shadow-base absolute top-2 left-1/2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-lg bg-white p-1.5',
+});

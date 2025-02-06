@@ -11,7 +11,7 @@ import {
   Earth,
 } from 'lucide-react';
 import { Popover } from './Popover';
-import { button, frame } from '~/variants';
+import { button, frame, menu } from '~/variants';
 
 const navigateToUrl = (url: string) => {
   window.location.href = url;
@@ -116,10 +116,7 @@ export function Modal({
               </button>
               <div className="absolute left-1/2 hidden h-8 w-24 -translate-x-1/2 group-hover:block" />
               <div className="absolute top-full left-1/2 hidden -translate-x-1/2 pt-3 group-hover:block">
-                <div
-                  className="animate-fade animate-duration-300 animate-once shadow-base absolute top-2 left-1/2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-lg bg-white p-1.5"
-                  role="menu"
-                >
+                <div className={menu()}>
                   {import.meta.env.VITE_MENU_TWITTER && (
                     <div className="group/menu relative">
                       <button

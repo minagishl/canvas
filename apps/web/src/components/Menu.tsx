@@ -12,7 +12,7 @@ import { Popover } from './Popover';
 import { useAlertContext } from '~/contexts/AlertContext';
 import { exportCanvasAsImage } from '~/utils/canvas';
 import { type ToolType } from '~/types/canvas';
-import { button } from '~/variants';
+import { button, menu } from '~/variants';
 
 export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const {
@@ -65,10 +65,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   };
 
   return (
-    <div
-      className="animate-fade animate-duration-300 animate-once shadow-base absolute top-2 left-1/2 mt-2 flex -translate-x-1/2 items-center justify-center gap-2 rounded-lg bg-white p-1.5"
-      role="menu"
-    >
+    <div className={menu()} role="menu">
       <button
         className={button({ isSelected: selectedTool === 'pen' })}
         onClick={() => {
