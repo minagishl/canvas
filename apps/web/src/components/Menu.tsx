@@ -11,17 +11,8 @@ import { useCanvasContext } from '~/contexts/CanvasContext';
 import { Popover } from './Popover';
 import { useAlertContext } from '~/contexts/AlertContext';
 import { exportCanvasAsImage } from '~/utils/canvas';
-import { tv } from 'tailwind-variants';
 import { type ToolType } from '~/types/canvas';
-
-const button = tv({
-  base: 'cursor-pointer rounded-sm p-2.5 transition-colors hover:bg-gray-100',
-  variants: {
-    isSelected: {
-      true: 'bg-indigo-100 text-indigo-600',
-    },
-  },
-});
+import { button } from '~/variants';
 
 export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const {

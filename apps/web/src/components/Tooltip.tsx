@@ -28,6 +28,7 @@ import { textEdit, textToggleItalic } from '~/utils/text';
 import { imageToggleCircle, imageToggleSpoiler } from '~/utils/image';
 import { COLORS } from '~/utils/constants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
+import { button } from '~/variants';
 
 const popup = tv({
   base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
@@ -37,10 +38,6 @@ const popup = tv({
       false: 'top-full mt-2',
     },
   },
-});
-
-const button = tv({
-  base: 'rounded-sm p-2.5 transition-colors hover:bg-gray-100 cursor-pointer',
 });
 
 const fontSizeArray: fontSize[] = [

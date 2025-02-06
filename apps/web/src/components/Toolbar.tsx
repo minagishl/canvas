@@ -23,15 +23,7 @@ import { tv } from 'tailwind-variants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
 import { useAIContext } from '~/contexts/AIContext';
 import { Sparkles } from './Sparkles';
-
-const button = tv({
-  base: 'cursor-pointer rounded-sm p-2.5 transition-colors hover:bg-gray-100',
-  variants: {
-    isSelected: {
-      true: 'bg-indigo-100 text-indigo-600',
-    },
-  },
-});
+import { button } from '~/variants';
 
 const container = tv({
   base: 'fixed flex flex-row top-4 left-1/2 z-40 -translate-x-1/2 select-none',
@@ -373,7 +365,11 @@ export function Toolbar(): React.ReactElement {
               className="relative"
               onDoubleClick={() => setHiddedDevIcon(true)}
             >
-              <div className="rounded-sm p-2.5 text-green-500 transition-colors hover:bg-gray-100">
+              <div
+                className={button({
+                  className: 'cursor-default text-green-500',
+                })}
+              >
                 <BugPlay
                   className={`h-5 w-5 ${
                     rotation

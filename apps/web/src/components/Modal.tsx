@@ -11,6 +11,7 @@ import {
   Earth,
 } from 'lucide-react';
 import { Popover } from './Popover';
+import { button } from '~/variants';
 
 const navigateToUrl = (url: string) => {
   window.location.href = url;
@@ -79,7 +80,7 @@ export function Modal({
         {items.map((item, index) => (
           <div key={index} className="group relative">
             <button
-              className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
+              className={button()}
               onClick={item.close ? close : item.onClick}
               aria-label="Menu"
             >
@@ -113,7 +114,7 @@ export function Modal({
                   {import.meta.env.VITE_MENU_TWITTER && (
                     <div className="group/menu relative">
                       <button
-                        className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
+                        className={button()}
                         onClick={() => {
                           navigateToUrl(import.meta.env.VITE_MENU_TWITTER);
                         }}
@@ -137,7 +138,7 @@ export function Modal({
                   {import.meta.env.VITE_MENU_WEBSITE && (
                     <div className="group/menu relative">
                       <button
-                        className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
+                        className={button()}
                         onClick={() => {
                           navigateToUrl(import.meta.env.VITE_MENU_WEBSITE);
                         }}
