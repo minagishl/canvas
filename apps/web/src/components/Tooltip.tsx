@@ -28,7 +28,7 @@ import { textEdit, textToggleItalic } from '~/utils/text';
 import { imageToggleCircle, imageToggleSpoiler } from '~/utils/image';
 import { COLORS } from '~/utils/constants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
-import { button } from '~/variants';
+import { button, frame } from '~/variants';
 
 const fontSizeArray: fontSize[] = [
   12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128,
@@ -234,7 +234,7 @@ export function Tooltip({
 
   return (
     <div
-      className="shadow-base absolute z-10 flex items-center gap-2 rounded-lg bg-white p-1.5 select-none"
+      className={frame({ className: 'absolute z-10 select-none' })}
       id="tooltip"
       style={{
         top: position.y,
