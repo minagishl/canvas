@@ -21,21 +21,6 @@ export const addToHistory = (
   setCurrentHistoryIndex((prev) => prev + 1);
 };
 
-export const handleUndo = (
-  currentHistoryIndex: number,
-  history: HistoryState[],
-  setObjects: (objects: CanvasObject[]) => void,
-  setSelectedObjectId: (id: string | null) => void,
-  setCurrentHistoryIndex: (callback: (prev: number) => number) => void
-) => {
-  if (currentHistoryIndex > 0) {
-    const previousState = history[currentHistoryIndex - 1];
-    setObjects(previousState.objects);
-    setSelectedObjectId(previousState.selectedObjectId);
-    setCurrentHistoryIndex((prev) => prev - 1);
-  }
-};
-
 export const handleAddObject = async (
   newObject: CanvasObject,
   setObjects: (callback: (prev: CanvasObject[]) => CanvasObject[]) => void,
