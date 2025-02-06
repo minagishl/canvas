@@ -11,7 +11,7 @@ import {
   Earth,
 } from 'lucide-react';
 import { Popover } from './Popover';
-import { button } from '~/variants';
+import { button, frame } from '~/variants';
 
 const navigateToUrl = (url: string) => {
   window.location.href = url;
@@ -76,7 +76,12 @@ export function Modal({
         className="fixed top-0 left-0 z-50 size-full bg-black opacity-50"
         onClick={close}
       />
-      <div className="fixed top-1/2 left-1/2 z-50 flex -translate-x-1/2 -translate-y-1/2 transform gap-2 rounded-lg bg-white p-1.5">
+      <div
+        className={frame({
+          className:
+            'fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
+        })}
+      >
         {items.map((item, index) => (
           <div key={index} className="group relative">
             <button
