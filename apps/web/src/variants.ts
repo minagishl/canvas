@@ -69,3 +69,12 @@ export const popup = tv({
     },
   },
 });
+
+export const text = tv({
+  base: 'absolute outline-none hover:border-2 hover:border-indigo-600',
+  variants: {
+    isSelected: {
+      true: 'border-2 border-indigo-600',
+    },
+  },
+});
