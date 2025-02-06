@@ -27,3 +27,12 @@ export const alert = tv({
     },
   },
 });
+
+export const loading = tv({
+  base: 'fixed top-4 right-4 z-40 flex select-none items-center rounded-lg bg-white p-1.5 shadow-base',
+  variants: {
+    hidden: {
+      true: 'hidden',
+    },
+  },
+});
