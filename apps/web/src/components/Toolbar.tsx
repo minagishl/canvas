@@ -23,11 +23,7 @@ import { tv } from 'tailwind-variants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
 import { useAIContext } from '~/contexts/AIContext';
 import { Sparkles } from './Sparkles';
-import { button } from '~/variants';
-
-const container = tv({
-  base: 'fixed flex flex-row top-4 left-1/2 z-40 -translate-x-1/2 select-none',
-});
+import { button, container } from '~/variants';
 
 const containerInner = tv({
   base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-base',
@@ -273,7 +269,7 @@ export function Toolbar(): React.ReactElement {
   return (
     <>
       <Loading hidden={!isLoading} />
-      <div className={container()}>
+      <div className={container({ top: true })}>
         <div className={containerInner()}>
           {tools
             .filter(
