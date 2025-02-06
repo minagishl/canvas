@@ -546,6 +546,7 @@ export const Canvas = () => {
       setOffset,
       currentLine,
       initialPositions,
+      initialLinePoints,
     ]
   );
 
