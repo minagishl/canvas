@@ -337,9 +337,8 @@ app.post('/generate', async (c) => {
   }
 
   try {
-    // Instruct the JSON schema with a system message (without any extra text, always return valid JSON)
-    const systemPrompt = `You are an excellent assistant to generate canvas objects.
-Based on the user's instructions, create a canvas object that strictly follows the JSON schema below.`;
+    const systemPrompt =
+      'Please create a simple diagram. In principle, you are not allowed to use arrows.';
 
     const messages = [
       { role: 'system' as const, content: systemPrompt },
