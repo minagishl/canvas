@@ -17,6 +17,10 @@ const navigateToUrl = (url: string) => {
   window.location.href = url;
 };
 
+const openLinkInNewTab = (url: string) => {
+  window.open(url, '_blank');
+};
+
 type Items = {
   icon: React.ReactNode;
   text?: string;
@@ -121,7 +125,7 @@ export function Modal({
                       <button
                         className={button()}
                         onClick={() => {
-                          navigateToUrl(import.meta.env.VITE_MENU_TWITTER);
+                          openLinkInNewTab(import.meta.env.VITE_MENU_TWITTER);
                         }}
                         aria-label={
                           import.meta.env.VITE_MENU_TWITTER_TEXT ?? 'Twitter'
@@ -145,7 +149,7 @@ export function Modal({
                       <button
                         className={button()}
                         onClick={() => {
-                          navigateToUrl(import.meta.env.VITE_MENU_WEBSITE);
+                          openLinkInNewTab(import.meta.env.VITE_MENU_WEBSITE);
                         }}
                         aria-label={
                           import.meta.env.VITE_MENU_WEBSITE_TEXT ?? 'Website'
