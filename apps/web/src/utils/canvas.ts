@@ -8,7 +8,7 @@ import { COLORS } from './constants';
 export const setupAndRenderCanvas = (
   canvas: HTMLCanvasElement,
   objects: CanvasObject[],
-  selectedObjectId: string | null,
+  selectedObjectIds: string[],
   previewObject: CanvasObject | null,
   selectedTool: string,
   offset: { x: number; y: number },
@@ -47,13 +47,13 @@ export const setupAndRenderCanvas = (
         obj.type !== 'text' && obj.type !== 'image' && obj.type !== 'embed'
     )
     .forEach((object) => {
-      drawObject(ctx, object, selectedObjectId, scale);
+      drawObject(ctx, object, selectedObjectIds, scale);
     });
 
   // Draw preview object
   if (previewObject && selectedTool !== 'select') {
     ctx.globalAlpha = 0.6;
-    drawObject(ctx, previewObject, null, scale);
+    drawObject(ctx, previewObject, [], scale);
     ctx.globalAlpha = 1;
   }
 
@@ -63,11 +63,13 @@ export const setupAndRenderCanvas = (
 export const drawObject = (
   ctx: CanvasRenderingContext2D,
   object: CanvasObject,
-  selectedObjectId: string | null,
+  selectedObjectIds: string[],
   scale: number
 ): void => {
   // Save the current context state
   ctx.save();
+
+  const isSelected = selectedObjectIds.includes(object.id);
 
   // Move to the center of the object and rotate
   ctx.translate(
@@ -120,7 +122,7 @@ export const drawObject = (
         ctx.stroke();
 
         // Display the boundary box when selected
-        if (object.id === selectedObjectId) {
+        if (isSelected) {
           const padding = 8 / scale;
           ctx.strokeStyle = '#4f46e5';
           ctx.lineWidth = 2 / scale;
@@ -166,7 +168,7 @@ export const drawObject = (
   }
 
   // Draw selection border if selected
-  if (object.id === selectedObjectId) {
+  if (isSelected) {
     const padding = 8 / scale;
     ctx.strokeStyle = '#4f46e5';
     ctx.lineWidth = 2 / scale;
@@ -301,11 +303,11 @@ export const drawRotationHandle = (
 
 export const exportCanvasAsImage = (
   objects: CanvasObject[],
-  setSelectedObjectId: (id: string | null) => void,
+  setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>,
   setAlert: React.Dispatch<React.SetStateAction<string>>
 ): void => {
   // Deselect the object
-  setSelectedObjectId(null);
+  setSelectedObjectIds([]);
 
   if (objects.length === 0) {
     showTemporaryAlert('Canvas is empty!', setAlert);
@@ -352,15 +354,11 @@ export const exportCanvasAsImage = (
   }, 100);
 };
 
-interface ShareCanvasOptions {
-  setIsLoading: (loading: boolean) => void;
-  setSelectedObjectId: (id: string | null) => void;
-  setAlert: React.Dispatch<React.SetStateAction<string>>;
-}
-
 export const shareCanvasAsURL = async (
   objects: CanvasObject[],
-  { setIsLoading, setSelectedObjectId, setAlert }: ShareCanvasOptions
+  setIsLoading: (loading: boolean) => void,
+  setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>,
+  setAlert: React.Dispatch<React.SetStateAction<string>>
 ): Promise<void> => {
   setIsLoading(true);
 
@@ -380,7 +378,7 @@ export const shareCanvasAsURL = async (
       return;
     }
 
-    setSelectedObjectId(null);
+    setSelectedObjectIds([]);
 
     const apiUrl = new URL(import.meta.env.VITE_API_URL);
     const response = await fetch(`${apiUrl.href}`, {

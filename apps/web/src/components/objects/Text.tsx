@@ -5,7 +5,7 @@ import { isMobile } from 'react-device-detect';
 
 interface TextObjectProps {
   selectedTool: string;
-  selectedObjectId: string | null;
+  selectedObjectIds: string[];
   scale: number;
   offset: { x: number; y: number };
   obj: CanvasObject & { type: 'text' };
@@ -20,7 +20,7 @@ interface TextObjectProps {
 export const TextObject = React.memo(
   ({
     selectedTool,
-    selectedObjectId,
+    selectedObjectIds,
     scale,
     offset,
     obj,
@@ -83,9 +83,9 @@ export const TextObject = React.memo(
 
     useEffect(() => {
       obj.text = elementRef.current?.textContent || '';
-    }, [selectedObjectId, obj]);
+    }, [selectedObjectIds, obj]);
 
-    const isSelected = selectedObjectId === obj.id;
+    const isSelected = selectedObjectIds.includes(obj.id);
 
     return (
       <div
@@ -143,7 +143,7 @@ export const TextObject = React.memo(
       prevProps.scale === nextProps.scale &&
       prevProps.offset.x === nextProps.offset.x &&
       prevProps.offset.y === nextProps.offset.y &&
-      prevProps.selectedObjectId === nextProps.selectedObjectId &&
+      prevProps.selectedObjectIds === nextProps.selectedObjectIds &&
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.selectedTool === nextProps.selectedTool &&
       prevProps.obj.text === nextProps.obj.text &&

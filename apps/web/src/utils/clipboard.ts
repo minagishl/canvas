@@ -12,9 +12,9 @@ export const handlePaste = async (
   offset: Point,
   scale: number,
   addObject: (object: CanvasObject) => void,
-  setSelectedObjectId: (value: React.SetStateAction<string | null>) => void,
+  setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>,
   objects: CanvasObject[],
-  copyObjectId: string | null,
+  copyObjectIds: string[],
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
@@ -62,13 +62,13 @@ export const handlePaste = async (
     const text = await navigator.clipboard.readText();
     if (text && /^[^{].*/.test(text)) {
       // Processing of existing text and YouTube URLs
-      handleTextPaste(text, position, addObject, setSelectedObjectId);
-    } else if (copyObjectId) {
+      handleTextPaste(text, position, addObject, setSelectedObjectIds);
+    } else if (copyObjectIds.length > 0) {
       copyObject(
         objects,
-        copyObjectId,
+        copyObjectIds,
         setObjects,
-        setSelectedObjectId,
+        setSelectedObjectIds,
         setHistory,
         setCurrentHistoryIndex,
         currentHistoryIndex
@@ -83,7 +83,7 @@ const handleTextPaste = (
   text: string,
   position: Point,
   addObject: (object: CanvasObject) => void,
-  setSelectedObjectId: (value: React.SetStateAction<string | null>) => void
+  setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
   const id = Math.random().toString(36).slice(2, 11);
   const embedUrl = convertYouTubeUrlToEmbed(text);
@@ -110,7 +110,8 @@ const handleTextPaste = (
       weight: 400,
     });
   }
-  setSelectedObjectId(id);
+
+  setSelectedObjectIds([id]);
 };
 
 export const handleCopy = async (value: string): Promise<void> => {

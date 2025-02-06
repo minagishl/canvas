@@ -3,7 +3,7 @@ import { CanvasObject } from '~/types/canvas';
 import { isMobile } from 'react-device-detect';
 
 interface ImageObjectProps {
-  selectedObjectId: string | null;
+  selectedObjectIds: string[];
   scale: number;
   offset: { x: number; y: number };
   obj: CanvasObject & { type: 'image' };
@@ -16,7 +16,7 @@ interface ImageObjectProps {
 
 export const ImageObject = React.memo(
   ({
-    selectedObjectId,
+    selectedObjectIds,
     scale,
     offset,
     obj,
@@ -58,7 +58,7 @@ export const ImageObject = React.memo(
       offset.y,
     ]);
 
-    const isSelected = selectedObjectId === obj.id;
+    const isSelected = selectedObjectIds.includes(obj.id);
     const isOriginal = obj.originalUrl !== undefined;
 
     if (isOriginal) {
@@ -185,7 +185,7 @@ export const ImageObject = React.memo(
       prevProps.scale === nextProps.scale &&
       prevProps.offset.x === nextProps.offset.x &&
       prevProps.offset.y === nextProps.offset.y &&
-      prevProps.selectedObjectId === nextProps.selectedObjectId &&
+      prevProps.selectedObjectIds === nextProps.selectedObjectIds &&
       prevProps.isResizing === nextProps.isResizing &&
       prevProps.isDragging === nextProps.isDragging &&
       prevProps.isMoving === nextProps.isMoving &&

@@ -60,8 +60,8 @@ export const Canvas = () => {
   const {
     setSelectedTool,
     selectedTool,
-    setSelectedObjectId,
-    selectedObjectId,
+    setSelectedObjectIds,
+    selectedObjectIds,
     setScale,
     scale,
     setOffset,
@@ -84,12 +84,11 @@ export const Canvas = () => {
   const [panStart, setPanStart] = useState<Point | null>(null);
   const [resizing, setResizing] = useState<ResizeHandle>(null);
   const [previewObject, setPreviewObject] = useState<CanvasObject | null>(null);
-  const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 });
   const [imageCache, setImageCache] = useState<{ [key: string]: string }>({});
   const [currentLine, setCurrentLine] = useState<LinePoint[]>([]);
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [lastTouchDistance, setLastTouchDistance] = useState<number>(0);
-  const [copyObjectId, setCopyObjectId] = useState<string | null>(null);
+  const [copyObjectIds, setCopyObjectIds] = useState<string[]>([]);
   const [snapToGridEnabled, setSnapToGridEnabled] = useState<boolean>(false);
   const [tooltipPosition, setTooltipPosition] = useState<{
     x: number;
@@ -106,6 +105,14 @@ export const Canvas = () => {
   } | null>(null);
   const [isFileDragging, setIsFileDragging] = useState(false);
   const [isMoving, setIsMoving] = useState<boolean>(false);
+
+  // Object Position
+  const [initialPositions, setInitialPositions] = useState<{
+    [id: string]: Point;
+  }>({});
+  const [initialLinePoints, setInitialLinePoints] = useState<{
+    [id: string]: LinePoint[];
+  }>({});
 
   // AI
   const [isAIGenerating, setIsAIGenerating] = useState(false);
@@ -150,11 +157,15 @@ export const Canvas = () => {
         // If there is a history, return to the previous state
         const previousState = history[targetIndex];
         setObjects(previousState.objects);
-        setSelectedObjectId(previousState.selectedObjectId);
+
+        // If the selected object is not in the previous state, clear the selection
+        if (!previousState.selectedObjectId) return;
+
+        setSelectedObjectIds([previousState.selectedObjectId]);
       } else {
         // If the index is less than 0, return to the initial state
         setObjects([]);
-        setSelectedObjectId(null);
+        setSelectedObjectIds([]);
       }
 
       setCurrentHistoryIndex(targetIndex);
@@ -164,7 +175,7 @@ export const Canvas = () => {
     history,
     setCurrentHistoryIndex,
     setObjects,
-    setSelectedObjectId,
+    setSelectedObjectIds,
   ]);
 
   // Confirm reload / tab deletion.
@@ -190,7 +201,7 @@ export const Canvas = () => {
       setupAndRenderCanvas(
         canvas,
         objects,
-        selectedObjectId,
+        selectedObjectIds,
         previewObject,
         selectedTool,
         offset,
@@ -204,10 +215,30 @@ export const Canvas = () => {
     objects,
     previewObject,
     selectedTool,
-    selectedObjectId,
+    selectedObjectIds,
     width,
     height,
   ]);
+
+  useEffect(() => {
+    if (selectedObjectIds.length > 0) {
+      const newInitialPositions: { [id: string]: Point } = {};
+      const newInitialLinePoints: { [id: string]: LinePoint[] } = {};
+      selectedObjectIds.forEach((id) => {
+        const obj = objects.find((o) => o.id === id);
+        if (obj) {
+          newInitialPositions[id] = { ...obj.position };
+          if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
+            // Record a copy of each point
+            newInitialLinePoints[id] = obj.points.map((p) => ({ ...p }));
+          }
+        }
+      });
+      setInitialPositions(newInitialPositions);
+      setInitialLinePoints(newInitialLinePoints);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedObjectIds]);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent, resizeHandle?: ResizeHandle) => {
@@ -218,51 +249,20 @@ export const Canvas = () => {
 
       const point = getCanvasPoint(e, canvasRef, offset, scale);
 
-      if (resizeHandle && selectedObjectId) {
+      if (resizeHandle && selectedObjectIds.length > 0) {
         // If the resize handle is clicked
         setResizing(resizeHandle);
         setStartPoint(point);
         return;
       }
 
-      if (selectedTool === 'gif') {
-        e.preventDefault();
-        e.stopPropagation();
-        const point = getCanvasPoint(e, canvasRef, offset, scale);
-        setImagePosition(point);
-        fetchRandomGif(
-          point,
-          setAlert,
-          setImagePosition,
-          setSelectedTool,
-          setObjects,
-          setHistory,
-          setCurrentHistoryIndex,
-          currentHistoryIndex
-        );
-        return;
-      }
-
-      if (selectedTool === 'arrow') {
-        setCurrentLine([point]);
-        setIsDragging(true);
-        return;
-      }
-
-      if (selectedTool === 'pen') {
-        const point = getCanvasPoint(e, canvasRef, offset, scale);
-        setCurrentLine([point]);
-        setIsDragging(true);
-        return;
-      }
-
+      // Detect resize handle on the canvas (if there is one selected object and it is resizable)
       if (
         (selectedTool === 'select' || selectedTool === 'presentation') &&
-        selectedObjectId
+        selectedObjectIds.length === 1
       ) {
-        // Resize handle detection
         const selectedObject = objects.find(
-          (obj) => obj.id === selectedObjectId
+          (obj) => obj.id === selectedObjectIds[0]
         );
         if (
           selectedObject &&
@@ -271,8 +271,7 @@ export const Canvas = () => {
         ) {
           const handleSize = 8 / scale;
           const padding = 8 / scale;
-
-          const handles = {
+          const handles: { [key in NonNullable<ResizeHandle>]: Point } = {
             'top-left': {
               x: selectedObject.position.x - padding,
               y: selectedObject.position.y - padding,
@@ -306,50 +305,82 @@ export const Canvas = () => {
         }
       }
 
+      // Normal click processing for each tool
+      if (selectedTool === 'gif') {
+        e.preventDefault();
+        e.stopPropagation();
+        const point = getCanvasPoint(e, canvasRef, offset, scale);
+        setImagePosition(point);
+        fetchRandomGif(
+          point,
+          setAlert,
+          setImagePosition,
+          setSelectedTool,
+          setObjects,
+          setHistory,
+          setCurrentHistoryIndex,
+          currentHistoryIndex
+        );
+        return;
+      }
+
+      if (selectedTool === 'arrow') {
+        setCurrentLine([point]);
+        setIsDragging(true);
+        return;
+      }
+
+      if (selectedTool === 'pen') {
+        const point = getCanvasPoint(e, canvasRef, offset, scale);
+        setCurrentLine([point]);
+        setIsDragging(true);
+        return;
+      }
+
       if (selectedTool === 'select' || selectedTool === 'presentation') {
         setIsEditingId('');
-        // Clicking on a text or image object
+        // If the clicked element is an HTML element (text or image)
         const clickedHTMLObject = e.target as HTMLElement;
         const isHTMLObject =
           clickedHTMLObject.tagName === 'DIV' ||
           clickedHTMLObject.tagName === 'IMG';
-
         if (isHTMLObject) {
-          // When an HTML element (text or image) is clicked
           const objectId = clickedHTMLObject
             .closest('[data-object-id]')
             ?.getAttribute('data-object-id');
           if (objectId && !isMobile) {
             e.preventDefault(); // Prevent text selection
             e.stopPropagation(); // Prevent event propagation to canvas
-            setSelectedObjectId(objectId);
+            setSelectedObjectIds((prev) => {
+              const newSelected = e.shiftKey
+                ? prev.includes(objectId)
+                  ? prev
+                  : [...prev, objectId]
+                : [objectId];
+              return newSelected;
+            });
             setIsDragging(true);
             setStartPoint(point);
-
-            const clickedObject = objects.find((obj) => obj.id === objectId);
-            if (clickedObject) {
-              setDragOffset({
-                x: point.x - clickedObject.position.x,
-                y: point.y - clickedObject.position.y,
-              });
-            }
             return;
           }
         }
 
-        // When an object on the canvas is clicked
+        // If an object on the canvas is clicked
         const clickedCanvasObject = findClickedObject(point, objects);
-
         if (clickedCanvasObject) {
-          setSelectedObjectId(clickedCanvasObject.id);
+          setSelectedObjectIds((prev) => {
+            const newSelected = e.shiftKey
+              ? prev.includes(clickedCanvasObject.id)
+                ? prev
+                : [...prev, clickedCanvasObject.id]
+              : [clickedCanvasObject.id];
+            return newSelected;
+          });
           setIsDragging(true);
           setStartPoint(point);
-          setDragOffset({
-            x: point.x - clickedCanvasObject.position.x,
-            y: point.y - clickedCanvasObject.position.y,
-          });
+          return;
         } else {
-          setSelectedObjectId(null);
+          setSelectedObjectIds([]);
 
           // Left click does nothing (current status)
           if (!isDragging && e.buttons === 1) {
@@ -367,7 +398,7 @@ export const Canvas = () => {
     [
       offset,
       scale,
-      selectedObjectId,
+      selectedObjectIds,
       selectedTool,
       setAlert,
       setSelectedTool,
@@ -376,26 +407,51 @@ export const Canvas = () => {
       setCurrentHistoryIndex,
       currentHistoryIndex,
       objects,
-      setSelectedObjectId,
+      setSelectedObjectIds,
       isDragging,
     ]
   );
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
+      // Resize processing
+      if (resizing && selectedObjectIds.length === 1 && startPoint) {
+        const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
+        const selectedObject = objects.find(
+          (obj) => obj.id === selectedObjectIds[0]
+        );
+        if (selectedObject?.locked) return;
+        if (selectedObject) {
+          const resizedObject = handleObjectResize({
+            selectedObject,
+            startPoint,
+            currentPoint,
+            resizeHandle: resizing,
+            isShiftPressed: e.shiftKey,
+            snapToGridEnabled: snapToGridEnabled,
+          });
+          const updatedObjects = objects.map((obj) =>
+            obj.id === selectedObject.id ? { ...obj, ...resizedObject } : obj
+          );
+          setObjects(updatedObjects);
+          setStartPoint(currentPoint);
+        }
+        return;
+      }
+
+      // Panning processing
       if (isPanning && panStart && (e.buttons === 2 || e.buttons === 4)) {
         const deltaX = e.clientX - panStart.x;
         const deltaY = e.clientY - panStart.y;
-
         setOffset({
           x: offset.x + deltaX,
           y: offset.y + deltaY,
         });
-
         setPanStart({ x: e.clientX, y: e.clientY });
         return;
       }
 
+      // Pen / arrow drawing process
       const isPen = selectedTool === 'pen';
       if (isDragging && (isPen || selectedTool === 'arrow')) {
         const point = getCanvasPoint(e, canvasRef, offset, scale);
@@ -418,158 +474,79 @@ export const Canvas = () => {
         return;
       }
 
-      if (resizing && selectedObjectId && startPoint) {
+      // Drag movement processing
+      if (
+        (selectedTool === 'select' || selectedTool === 'presentation') &&
+        selectedObjectIds.length > 0 &&
+        startPoint
+      ) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
-        const selectedObject = objects.find(
-          (obj) => obj.id === selectedObjectId
-        );
-
-        // Prevent resizing of locked objects
-        if (selectedObject?.locked) return;
-
-        if (selectedObject) {
-          const resizedObject = handleObjectResize({
-            selectedObject,
-            startPoint,
-            currentPoint,
-            resizeHandle: resizing,
-            isShiftPressed: e.shiftKey,
-            snapToGridEnabled:
-              import.meta.env.VITE_ENABLED_RESIZES_NAP === 'true' &&
-              snapToGridEnabled,
-          });
-
-          const updatedObjects = objects.map((obj) =>
-            obj.id === selectedObjectId ? { ...obj, ...resizedObject } : obj
-          );
-
-          setObjects(updatedObjects);
-          setStartPoint(currentPoint);
-        }
-      }
-
-      if (isDragging) {
-        const selectedObject = objects.find(
-          (obj) => obj.id === selectedObjectId
-        );
-
-        // Prevent movement of locked objects
-        if (selectedObject?.locked) return;
-
-        if (
-          (selectedTool === 'select' || selectedTool === 'presentation') &&
-          selectedObjectId &&
-          startPoint &&
-          e.buttons === 1
-        ) {
-          const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
-
-          // Special processing for line and arrow objects
-          if (
-            (selectedObject?.type === 'line' ||
-              selectedObject?.type === 'arrow') &&
-            selectedObject.points
-          ) {
-            // Calculate the amount of movement
-            const dx =
-              currentPoint.x - dragOffset.x - selectedObject.position.x;
-            const dy =
-              currentPoint.y - dragOffset.y - selectedObject.position.y;
-
-            const updatedObjects = objects.map((obj) => {
-              if (obj.id === selectedObjectId) {
-                // Move all points
-                const newPoints = obj.points!.map((point) => ({
-                  x: point.x + dx,
-                  y: point.y + dy,
-                }));
-
-                // Calculate the new bounding box
-                const minX = Math.min(...newPoints.map((p) => p.x));
-                const maxX = Math.max(...newPoints.map((p) => p.x));
-                const minY = Math.min(...newPoints.map((p) => p.y));
-                const maxY = Math.max(...newPoints.map((p) => p.y));
-
-                return {
-                  ...obj,
-                  position: { x: minX, y: minY },
-                  width: maxX - minX,
-                  height: maxY - minY,
-                  points: newPoints,
-                };
-              }
-              return obj;
-            });
-
-            setObjects(updatedObjects);
-            // Update the reference point for the next movement
-            setStartPoint(currentPoint);
-          } else {
-            if (snapToGridEnabled) {
-              // Calculate the new position of the object
-              const newPosition = {
-                x: currentPoint.x - dragOffset.x,
-                y: currentPoint.y - dragOffset.y,
+        const deltaX = currentPoint.x - startPoint.x;
+        const deltaY = currentPoint.y - startPoint.y;
+        const updatedObjects = objects.map((obj) => {
+          if (selectedObjectIds.includes(obj.id) && initialPositions[obj.id]) {
+            if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
+              const initPoints = initialLinePoints[obj.id] || obj.points;
+              const newPoints = initPoints.map((p) => ({
+                x: p.x + deltaX,
+                y: p.y + deltaY,
+              }));
+              const minX = Math.min(...newPoints.map((p) => p.x));
+              const maxX = Math.max(...newPoints.map((p) => p.x));
+              const minY = Math.min(...newPoints.map((p) => p.y));
+              const maxY = Math.max(...newPoints.map((p) => p.y));
+              return {
+                ...obj,
+                position: { x: minX, y: minY },
+                width: maxX - minX,
+                height: maxY - minY,
+                points: newPoints,
               };
-
-              // nap the position to the grid
-              const snappedPosition = snapToGrid(newPosition);
-
-              const updatedObjects = objects.map((obj) =>
-                obj.id === selectedObjectId
-                  ? { ...obj, position: snappedPosition }
-                  : obj
-              );
-
-              setObjects(updatedObjects);
             } else {
-              // If grid snap is disabled, process as usual
-              const newX = currentPoint.x - dragOffset.x;
-              const newY = currentPoint.y - dragOffset.y;
-
-              const updatedObjects = objects.map((obj) =>
-                obj.id === selectedObjectId
-                  ? { ...obj, position: { x: newX, y: newY } }
-                  : obj
-              );
-
-              setObjects(updatedObjects);
+              let newPos = {
+                x: initialPositions[obj.id].x + deltaX,
+                y: initialPositions[obj.id].y + deltaY,
+              };
+              if (snapToGridEnabled) {
+                newPos = snapToGrid(newPos);
+              }
+              return { ...obj, position: newPos };
             }
           }
-        } else if (startPoint && selectedTool !== 'image') {
-          const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
-
-          const snappedPoint = snapToGridEnabled
-            ? snapToGrid(currentPoint)
-            : currentPoint;
-
-          const preview = createPreviewObject(
-            selectedTool,
-            snapToGridEnabled ? snapToGrid(startPoint) : startPoint,
-            snappedPoint,
-            e.shiftKey
-          );
-          setPreviewObject(preview);
-        }
+          return obj;
+        });
+        setObjects(updatedObjects);
+      } else if (startPoint && selectedTool !== 'image') {
+        const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
+        const snappedPoint = snapToGridEnabled
+          ? snapToGrid(currentPoint)
+          : currentPoint;
+        const preview = createPreviewObject(
+          selectedTool,
+          snapToGridEnabled ? snapToGrid(startPoint) : startPoint,
+          snappedPoint,
+          e.shiftKey
+        );
+        setPreviewObject(preview);
       }
     },
     [
-      currentLine,
-      dragOffset.x,
-      dragOffset.y,
-      isDragging,
-      isPanning,
-      objects,
-      offset,
-      panStart,
       resizing,
-      scale,
-      selectedObjectId,
+      selectedObjectIds,
+      startPoint,
+      isPanning,
+      panStart,
       selectedTool,
+      isDragging,
+      offset,
+      scale,
+      objects,
+      snapToGridEnabled,
       setObjects,
       setOffset,
-      snapToGridEnabled,
-      startPoint,
+      currentLine,
+      initialPositions,
+      initialLinePoints,
     ]
   );
 
@@ -654,7 +631,7 @@ export const Canvas = () => {
     if (isDragging) {
       setIsDragging(false);
       setStartPoint(null);
-      setDragOffset({ x: 0, y: 0 });
+      setInitialPositions({});
     }
 
     if (isPanning) {
@@ -779,15 +756,17 @@ export const Canvas = () => {
           const clickedObject = findClickedObject(point, objects);
 
           if (clickedObject && !isMobile) {
-            setSelectedObjectId(clickedObject.id);
+            setSelectedObjectIds([clickedObject.id]);
             setIsDragging(true);
             setStartPoint(point);
-            setDragOffset({
-              x: point.x - clickedObject.position.x,
-              y: point.y - clickedObject.position.y,
+            const newInitialPositions: { [id: string]: Point } = {};
+            [clickedObject.id].forEach((id) => {
+              const obj = objects.find((o) => o.id === id);
+              if (obj) newInitialPositions[id] = { ...obj.position };
             });
+            setInitialPositions(newInitialPositions);
           } else {
-            setSelectedObjectId(null);
+            setSelectedObjectIds([]);
             setIsPanning(true);
             setPanStart({ x: touch.clientX, y: touch.clientY });
           }
@@ -797,7 +776,7 @@ export const Canvas = () => {
         }
       }
     },
-    [objects, offset, scale, selectedTool, setSelectedObjectId]
+    [objects, offset, scale, selectedTool, setSelectedObjectIds]
   );
 
   const handleTouchMove = useCallback(
@@ -824,16 +803,51 @@ export const Canvas = () => {
           const isSelect = selectedTool === 'select';
           const isPresentation = selectedTool === 'presentation';
 
-          if ((isSelect || isPresentation) && selectedObjectId && startPoint) {
+          if (
+            (isSelect || isPresentation) &&
+            selectedObjectIds.length > 0 &&
+            startPoint
+          ) {
             const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
-            const newX = currentPoint.x - dragOffset.x;
-            const newY = currentPoint.y - dragOffset.y;
-
-            const updatedObjects = objects.map((obj) =>
-              obj.id === selectedObjectId
-                ? { ...obj, position: { x: newX, y: newY } }
-                : obj
-            );
+            const deltaX = currentPoint.x - startPoint.x;
+            const deltaY = currentPoint.y - startPoint.y;
+            const updatedObjects = objects.map((obj) => {
+              if (
+                selectedObjectIds.includes(obj.id) &&
+                initialPositions[obj.id]
+              ) {
+                if (
+                  (obj.type === 'line' || obj.type === 'arrow') &&
+                  obj.points
+                ) {
+                  const newPoints = obj.points.map((p) => ({
+                    x: p.x + deltaX,
+                    y: p.y + deltaY,
+                  }));
+                  const minX = Math.min(...newPoints.map((p) => p.x));
+                  const maxX = Math.max(...newPoints.map((p) => p.x));
+                  const minY = Math.min(...newPoints.map((p) => p.y));
+                  const maxY = Math.max(...newPoints.map((p) => p.y));
+                  return {
+                    ...obj,
+                    position: { x: minX, y: minY },
+                    width: maxX - minX,
+                    height: maxY - minY,
+                    points: newPoints,
+                  };
+                } else {
+                  let newPos = {
+                    x: initialPositions[obj.id].x + deltaX,
+                    y: initialPositions[obj.id].y + deltaY,
+                  };
+                  if (snapToGridEnabled) {
+                    newPos = snapToGrid(newPos);
+                  }
+                  return { ...obj, position: newPos };
+                }
+              }
+              return obj;
+            });
             setObjects(updatedObjects);
           } else if (startPoint) {
             const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
@@ -859,8 +873,7 @@ export const Canvas = () => {
       }
     },
     [
-      dragOffset.x,
-      dragOffset.y,
+      initialPositions,
       isDragging,
       isPanning,
       lastTouchDistance,
@@ -868,12 +881,13 @@ export const Canvas = () => {
       offset,
       panStart,
       scale,
-      selectedObjectId,
+      selectedObjectIds,
       selectedTool,
       setObjects,
       setOffset,
       setScale,
       startPoint,
+      snapToGridEnabled,
     ]
   );
 
@@ -884,7 +898,7 @@ export const Canvas = () => {
       if (isDragging) {
         setIsDragging(false);
         setStartPoint(null);
-        setDragOffset({ x: 0, y: 0 });
+        setInitialPositions({});
       }
 
       if (isPanning) {
@@ -933,7 +947,6 @@ export const Canvas = () => {
 
     return () => {
       canvas.removeEventListener('wheel', handleWheel);
-
       canvas.removeEventListener('touchstart', touchStartHandler);
       canvas.removeEventListener('touchmove', touchMoveHandler);
       canvas.removeEventListener('touchend', touchEndHandler);
@@ -962,6 +975,9 @@ export const Canvas = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditingId !== '') return;
 
+      const isSelected = selectedObjectIds.length > 0;
+      const isOneSelected = selectedObjectIds.length === 1;
+
       if (e.key === 'Escape' && selectedTool !== 'select') {
         setSelectedTool('select');
         return;
@@ -974,9 +990,9 @@ export const Canvas = () => {
       if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteObject(
           objects,
-          selectedObjectId,
+          selectedObjectIds,
           setObjects,
-          setSelectedObjectId,
+          setSelectedObjectIds,
           setHistory,
           setCurrentHistoryIndex,
           currentHistoryIndex
@@ -984,7 +1000,7 @@ export const Canvas = () => {
       }
 
       if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
-        setCopyObjectId(selectedObjectId);
+        setCopyObjectIds(selectedObjectIds);
         // Clear the clipboard
         navigator.clipboard.writeText('').catch((error) => {
           console.error('Error clearing clipboard:', error);
@@ -997,13 +1013,13 @@ export const Canvas = () => {
       }
 
       // Italicize text with Cmd/Ctrl + I
-      if (e.key === 'i' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
-        textToggleItalic(objects, selectedObjectId, setObjects);
+      if (e.key === 'i' && (e.metaKey || e.ctrlKey) && isOneSelected) {
+        textToggleItalic(objects, selectedObjectIds[0], setObjects);
       }
 
       // Bold text with Cmd/Ctrl + B
-      if (e.key === 'b' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
-        textToggleBold(objects, selectedObjectId, setObjects);
+      if (e.key === 'b' && (e.metaKey || e.ctrlKey) && isOneSelected) {
+        textToggleBold(objects, selectedObjectIds[0], setObjects);
       }
 
       if (e.key === 'v' && (e.metaKey || e.ctrlKey) && !showAIInput) {
@@ -1014,9 +1030,9 @@ export const Canvas = () => {
           offset,
           scale,
           addObject,
-          setSelectedObjectId,
+          setSelectedObjectIds,
           objects,
-          copyObjectId,
+          copyObjectIds,
           setObjects,
           setHistory,
           setCurrentHistoryIndex,
@@ -1024,15 +1040,20 @@ export const Canvas = () => {
         );
       }
       // Lock object with Cmd/Ctrl + Shift + L
-      if (e.key === 'l' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+      if (
+        e.key === 'l' &&
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        isSelected
+      ) {
         e.preventDefault();
-        lockObject(selectedObjectId, setObjects);
+        lockObject(selectedObjectIds[0], setObjects);
       }
 
       // Export canvas as image with Cmd/Ctrl + E
       if (e.key === 'e' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        exportCanvasAsImage(objects, setSelectedObjectId, setAlert);
+        exportCanvasAsImage(objects, setSelectedObjectIds, setAlert);
       }
 
       // Duplicate object with Cmd/Ctrl + D
@@ -1040,9 +1061,9 @@ export const Canvas = () => {
         e.preventDefault();
         copyObject(
           objects,
-          selectedObjectId,
+          selectedObjectIds,
           setObjects,
-          setSelectedObjectId,
+          setSelectedObjectIds,
           setHistory,
           setCurrentHistoryIndex,
           currentHistoryIndex
@@ -1070,31 +1091,27 @@ export const Canvas = () => {
 
       if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        shareCanvasAsURL(objects, {
-          setIsLoading,
-          setSelectedObjectId,
-          setAlert,
-        });
+        shareCanvasAsURL(objects, setIsLoading, setSelectedObjectIds, setAlert);
       }
 
-      if (e.key === 'ArrowUp' && selectedObjectId) {
+      if (e.key === 'ArrowUp' && isSelected) {
         e.preventDefault();
-        upObject(objects, selectedObjectId, setObjects);
+        upObject(selectedObjectIds, setObjects);
       }
 
-      if (e.key === 'ArrowDown' && selectedObjectId) {
+      if (e.key === 'ArrowDown' && isSelected) {
         e.preventDefault();
-        downObject(objects, selectedObjectId, setObjects);
+        downObject(selectedObjectIds, setObjects);
       }
 
-      if (e.key === 'ArrowLeft' && selectedObjectId) {
+      if (e.key === 'ArrowLeft' && isSelected) {
         e.preventDefault();
-        leftObject(objects, selectedObjectId, setObjects);
+        leftObject(selectedObjectIds, setObjects);
       }
 
-      if (e.key === 'ArrowRight' && selectedObjectId) {
+      if (e.key === 'ArrowRight' && isSelected) {
         e.preventDefault();
-        rightObject(objects, selectedObjectId, setObjects);
+        rightObject(selectedObjectIds, setObjects);
       }
     };
 
@@ -1105,11 +1122,9 @@ export const Canvas = () => {
   }, [
     isEditingId,
     objects,
-    selectedObjectId,
     setObjects,
-    setSelectedObjectId,
     addObject,
-    copyObjectId,
+    copyObjectIds,
     width,
     height,
     offset,
@@ -1125,15 +1140,19 @@ export const Canvas = () => {
     currentHistoryIndex,
     selectedTool,
     showAIInput,
+    selectedObjectIds,
+    setSelectedObjectIds,
   ]);
 
   useEffect(() => {
-    if (selectedObjectId) {
-      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    if (selectedObjectIds.length === 1) {
+      const selectedObject = objects.find(
+        (obj) => obj.id === selectedObjectIds[0]
+      );
       if (selectedObject) {
         const position = calculateTooltipPosition({
           selectedObject,
-          selectedObjectId,
+          selectedObjectId: selectedObjectIds[0],
           scale,
           offset,
         });
@@ -1142,7 +1161,7 @@ export const Canvas = () => {
     } else {
       setTooltipPosition(null);
     }
-  }, [selectedObjectId, objects, scale, offset]);
+  }, [selectedObjectIds, objects, scale, offset]);
 
   const handleDeleteParms = (params: URLSearchParams) => {
     // Remove the id parameter from URL without page reload
@@ -1196,11 +1215,15 @@ export const Canvas = () => {
   }, []);
 
   const onTextChange = () => {
-    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-    if (selectedObject && selectedObjectId && selectedObject.type === 'text') {
+    if (selectedObjectIds.length !== 1) return;
+
+    const selectedObject = objects.find(
+      (obj) => obj.id === selectedObjectIds[0]
+    );
+    if (selectedObject && selectedObject.type === 'text') {
       const position = calculateTooltipPosition({
         selectedObject,
-        selectedObjectId,
+        selectedObjectId: selectedObjectIds[0],
         scale,
         offset,
       });
@@ -1220,11 +1243,7 @@ export const Canvas = () => {
               title: data.modal.title,
               body: data.modal.body,
             };
-
-            // Set the content of the text modal
             setTextModalContent(content);
-
-            // Show the text modal
             setShowTextModal(true);
           }
         })
@@ -1348,7 +1367,7 @@ export const Canvas = () => {
         }}
       />
 
-      {selectedObjectId && !isMobile && (
+      {selectedObjectIds && !isMobile && (
         <Tooltip
           position={tooltipPosition}
           isDragging={isDragging}
@@ -1380,7 +1399,7 @@ export const Canvas = () => {
                 offset={offset}
                 obj={obj as CanvasObject & { type: 'image' }}
                 key={obj.id}
-                selectedObjectId={selectedObjectId}
+                selectedObjectIds={selectedObjectIds}
                 isResizing={resizing !== null}
                 isDragging={isDragging}
                 isMoving={isMoving}
@@ -1400,7 +1419,7 @@ export const Canvas = () => {
                 offset={offset}
                 obj={obj as CanvasObject & { type: 'text' }}
                 key={obj.id}
-                selectedObjectId={selectedObjectId}
+                selectedObjectIds={selectedObjectIds}
                 isResizing={resizing !== null}
                 isEditingId={isEditingId}
                 isDragging={isDragging}
@@ -1422,7 +1441,7 @@ export const Canvas = () => {
                 offset={offset}
                 obj={obj as CanvasObject & { type: 'embed' }}
                 key={obj.id}
-                selectedObjectId={selectedObjectId}
+                selectedObjectIds={selectedObjectIds}
                 isResizing={resizing !== null}
                 isMoving={isMoving}
                 isDragging={isDragging}

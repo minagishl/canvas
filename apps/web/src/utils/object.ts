@@ -3,71 +3,77 @@ import { HistoryState } from '~/types/history';
 
 export const copyObject = (
   objects: CanvasObject[],
-  selectedObjectId: string | null,
+  selectedObjectIds: string[],
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
-  setSelectedObjectId: (value: React.SetStateAction<string | null>) => void,
+  setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
   currentHistoryIndex: number
 ): void => {
-  if (!selectedObjectId) return;
+  if (selectedObjectIds.length === 0) return;
 
-  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  if (!selectedObject) return;
+  for (const id of selectedObjectIds) {
+    const selectedObject = objects.find((obj) => (obj.id === id ? obj : null));
 
-  const id = Math.random().toString(36).slice(2, 11);
+    if (!selectedObject) return;
 
-  setObjects((prevObjects) => [
-    ...prevObjects,
-    {
-      ...selectedObject,
-      id,
-      position: {
-        x: selectedObject.position.x + 40,
-        y: selectedObject.position.y + 40,
-      },
-    },
-  ]);
+    const newId = Math.random().toString(36).slice(2, 11);
 
-  // Add to history if history management is enabled
-  setHistory((prev) => {
-    const newHistory = prev.slice(0, currentHistoryIndex + 1);
-    return [
-      ...newHistory,
+    setObjects((prevObjects) => [
+      ...prevObjects,
       {
-        type: 'copy',
-        objects: [
-          ...objects,
-          {
-            ...selectedObject,
-            id,
-            position: {
-              x: selectedObject.position.x + 40,
-              y: selectedObject.position.y + 40,
-            },
-          },
-        ],
-        selectedObjectId: id,
+        ...selectedObject,
+        id: newId,
+        position: {
+          x: selectedObject.position.x + 40,
+          y: selectedObject.position.y + 40,
+        },
       },
-    ];
-  });
-  setCurrentHistoryIndex(currentHistoryIndex + 1);
+    ]);
 
-  setSelectedObjectId(id);
+    // Add to history if history management is enabled
+    setHistory((prev) => {
+      const newHistory = prev.slice(0, currentHistoryIndex + 1);
+      return [
+        ...newHistory,
+        {
+          type: 'copy',
+          objects: [
+            ...objects,
+            {
+              ...selectedObject,
+              id,
+              position: {
+                x: selectedObject.position.x + 40,
+                y: selectedObject.position.y + 40,
+              },
+            },
+          ],
+          selectedObjectId: id,
+        },
+      ];
+    });
+    setCurrentHistoryIndex(currentHistoryIndex + 1);
+
+    setSelectedObjectIds((prev) => [...prev, newId]);
+  }
 };
 
 export const deleteObject = (
   objects: CanvasObject[],
-  selectedObjectId: string | null,
+  selectedObjectIds: string[],
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
-  setSelectedObjectId: React.Dispatch<React.SetStateAction<string | null>>,
+  setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
   currentHistoryIndex: number
 ): void => {
-  if (!selectedObjectId) return;
+  if (selectedObjectIds.length === 0) return;
 
-  const newObjects = objects.filter((obj) => obj.id !== selectedObjectId);
+  const newObjects = objects.filter(
+    (obj) => !selectedObjectIds.includes(obj.id)
+  );
+
   setObjects(newObjects);
 
   // Add to history if history management is enabled
@@ -90,7 +96,7 @@ export const deleteObject = (
     setCurrentHistoryIndex(currentHistoryIndex + 1);
   }
 
-  setSelectedObjectId(null);
+  setSelectedObjectIds([]);
 };
 
 export const lockObject = (
@@ -150,18 +156,14 @@ export const rotateObject = (
 };
 
 export function upObject(
-  objects: CanvasObject[],
-  selectedObjectId: string | null,
+  selectedObjectIds: string[],
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
 ): void {
-  if (!selectedObjectId) return;
-
-  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  if (!selectedObject) return;
+  if (selectedObjectIds.length === 0) return;
 
   setObjects((prevObjects) =>
     prevObjects.map((obj) =>
-      obj.id === selectedObjectId
+      selectedObjectIds.includes(obj.id)
         ? {
             ...obj,
             position: {
@@ -175,18 +177,14 @@ export function upObject(
 }
 
 export function downObject(
-  objects: CanvasObject[],
-  selectedObjectId: string | null,
+  selectedObjectIds: string[],
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
 ): void {
-  if (!selectedObjectId) return;
-
-  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  if (!selectedObject) return;
+  if (selectedObjectIds.length === 0) return;
 
   setObjects((prevObjects) =>
     prevObjects.map((obj) =>
-      obj.id === selectedObjectId
+      selectedObjectIds.includes(obj.id)
         ? {
             ...obj,
             position: {
@@ -200,18 +198,14 @@ export function downObject(
 }
 
 export function leftObject(
-  objects: CanvasObject[],
-  selectedObjectId: string | null,
+  selectedObjectIds: string[],
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
 ): void {
-  if (!selectedObjectId) return;
-
-  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  if (!selectedObject) return;
+  if (selectedObjectIds.length === 0) return;
 
   setObjects((prevObjects) =>
     prevObjects.map((obj) =>
-      obj.id === selectedObjectId
+      selectedObjectIds.includes(obj.id)
         ? {
             ...obj,
             position: {
@@ -225,18 +219,14 @@ export function leftObject(
 }
 
 export function rightObject(
-  objects: CanvasObject[],
-  selectedObjectId: string | null,
+  selectedObjectIds: string[],
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
 ): void {
-  if (!selectedObjectId) return;
-
-  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  if (!selectedObject) return;
+  if (selectedObjectIds.length === 0) return;
 
   setObjects((prevObjects) =>
     prevObjects.map((obj) =>
-      obj.id === selectedObjectId
+      selectedObjectIds.includes(obj.id)
         ? {
             ...obj,
             position: {

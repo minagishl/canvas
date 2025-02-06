@@ -44,7 +44,7 @@ export function Toolbar(): React.ReactElement {
     setScale,
     selectedTool,
     setSelectedTool,
-    setSelectedObjectId,
+    setSelectedObjectIds,
   } = useCanvasContext();
   const { history } = useHistoryContext();
   const { setAlert } = useAlertContext();
@@ -182,12 +182,8 @@ export function Toolbar(): React.ReactElement {
   };
 
   const handleShareCanvas = useCallback(() => {
-    shareCanvasAsURL(objects, {
-      setIsLoading,
-      setSelectedObjectId,
-      setAlert,
-    });
-  }, [objects, setIsLoading, setSelectedObjectId, setAlert]);
+    shareCanvasAsURL(objects, setIsLoading, setSelectedObjectIds, setAlert);
+  }, [objects, setIsLoading, setSelectedObjectIds, setAlert]);
 
   React.useEffect(() => {
     return () => {
