@@ -55,7 +55,7 @@ export const copyObject = (
     });
     setCurrentHistoryIndex(currentHistoryIndex + 1);
 
-    setSelectedObjectIds((prev) => [...prev, newId]);
+    setSelectedObjectIds([newId]);
   }
 };
 
