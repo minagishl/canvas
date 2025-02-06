@@ -303,17 +303,20 @@ export const Canvas = () => {
         );
         return;
       }
+
       if (selectedTool === 'arrow') {
         setCurrentLine([point]);
         setIsDragging(true);
         return;
       }
+
       if (selectedTool === 'pen') {
         const point = getCanvasPoint(e, canvasRef, offset, scale);
         setCurrentLine([point]);
         setIsDragging(true);
         return;
       }
+
       if (selectedTool === 'select' || selectedTool === 'presentation') {
         setIsEditingId('');
         // If the clicked element is an HTML element (text or image)
