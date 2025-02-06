@@ -107,11 +107,7 @@ export function Modal({
           (import.meta.env.VITE_MENU_TWITTER ||
             import.meta.env.VITE_MENU_WEBSITE) && (
             <div className="group relative" data-testid="more">
-              <button
-                key="more"
-                className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
-                aria-label="More"
-              >
+              <button key="more" className={button()} aria-label="More">
                 <MoreHorizontal className="h-5 w-5" />
               </button>
               <div className="absolute left-1/2 hidden h-8 w-24 -translate-x-1/2 group-hover:block" />
@@ -170,11 +166,7 @@ export function Modal({
           )}
 
         <div className="group relative">
-          <button
-            className="cursor-pointer rounded-sm p-2.5 text-black transition-colors hover:bg-gray-100"
-            onClick={close}
-            aria-label="Close"
-          >
+          <button className={button()} onClick={close} aria-label="Close">
             <X className="h-5 w-5" />
           </button>
 
