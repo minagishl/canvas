@@ -59,3 +59,13 @@ export const sparkles = tv({
     },
   },
 });
+
+export const popup = tv({
+  base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
+  variants: {
+    isTextObject: {
+      true: 'bottom-full mb-2',
+      false: 'top-full mt-2',
+    },
+  },
+});

@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useCanvasContext } from '~/contexts/CanvasContext';
 import { Popover } from './Popover';
-import { tv } from 'tailwind-variants';
+import { popup } from '~/variants';
 import {
   copyObject,
   deleteObject,
@@ -29,16 +29,6 @@ import { imageToggleCircle, imageToggleSpoiler } from '~/utils/image';
 import { COLORS } from '~/utils/constants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
 import { button } from '~/variants';
-
-const popup = tv({
-  base: 'absolute hidden group-hover:block left-1/2 -translate-x-1/2',
-  variants: {
-    isTextObject: {
-      true: 'bottom-full mb-2',
-      false: 'top-full mt-2',
-    },
-  },
-});
 
 const fontSizeArray: fontSize[] = [
   12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128,
