@@ -18,7 +18,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   const {
     selectedTool,
     setSelectedTool,
-    setSelectedObjectId,
+    setSelectedObjectIds,
     setObjects,
     objects,
   } = useCanvasContext();
@@ -35,12 +35,12 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
   };
 
   const handleSaveImage = async () => {
-    exportCanvasAsImage(objects, setSelectedObjectId, setAlert);
+    exportCanvasAsImage(objects, setSelectedObjectIds, setAlert);
   };
 
   const handleClearCanvas = () => {
     setObjects([]);
-    setSelectedObjectId(null);
+    setSelectedObjectIds([]);
   };
 
   const handleStartPresentation = () => {

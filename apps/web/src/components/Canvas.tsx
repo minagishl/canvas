@@ -60,8 +60,8 @@ export const Canvas = () => {
   const {
     setSelectedTool,
     selectedTool,
-    setSelectedObjectId,
-    selectedObjectId,
+    setSelectedObjectIds,
+    selectedObjectIds,
     setScale,
     scale,
     setOffset,
@@ -89,7 +89,7 @@ export const Canvas = () => {
   const [currentLine, setCurrentLine] = useState<LinePoint[]>([]);
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [lastTouchDistance, setLastTouchDistance] = useState<number>(0);
-  const [copyObjectId, setCopyObjectId] = useState<string | null>(null);
+  const [copyObjectIds, setCopyObjectIds] = useState<string[]>([]);
   const [snapToGridEnabled, setSnapToGridEnabled] = useState<boolean>(false);
   const [tooltipPosition, setTooltipPosition] = useState<{
     x: number;
@@ -150,11 +150,15 @@ export const Canvas = () => {
         // If there is a history, return to the previous state
         const previousState = history[targetIndex];
         setObjects(previousState.objects);
-        setSelectedObjectId(previousState.selectedObjectId);
+
+        // If the selected object is not in the previous state, clear the selection
+        if (!previousState.selectedObjectId) return;
+
+        setSelectedObjectIds([previousState.selectedObjectId]);
       } else {
         // If the index is less than 0, return to the initial state
         setObjects([]);
-        setSelectedObjectId(null);
+        setSelectedObjectIds([]);
       }
 
       setCurrentHistoryIndex(targetIndex);
@@ -164,7 +168,7 @@ export const Canvas = () => {
     history,
     setCurrentHistoryIndex,
     setObjects,
-    setSelectedObjectId,
+    setSelectedObjectIds,
   ]);
 
   // Confirm reload / tab deletion.
@@ -190,7 +194,7 @@ export const Canvas = () => {
       setupAndRenderCanvas(
         canvas,
         objects,
-        selectedObjectId,
+        selectedObjectIds,
         previewObject,
         selectedTool,
         offset,
@@ -204,7 +208,7 @@ export const Canvas = () => {
     objects,
     previewObject,
     selectedTool,
-    selectedObjectId,
+    selectedObjectIds,
     width,
     height,
   ]);
@@ -218,7 +222,7 @@ export const Canvas = () => {
 
       const point = getCanvasPoint(e, canvasRef, offset, scale);
 
-      if (resizeHandle && selectedObjectId) {
+      if (resizeHandle && selectedObjectIds.length > 0) {
         // If the resize handle is clicked
         setResizing(resizeHandle);
         setStartPoint(point);
@@ -258,11 +262,11 @@ export const Canvas = () => {
 
       if (
         (selectedTool === 'select' || selectedTool === 'presentation') &&
-        selectedObjectId
+        selectedObjectIds.length > 0
       ) {
         // Resize handle detection
-        const selectedObject = objects.find(
-          (obj) => obj.id === selectedObjectId
+        const selectedObject = objects.find((obj) =>
+          selectedObjectIds.includes(obj.id)
         );
         if (
           selectedObject &&
@@ -322,7 +326,7 @@ export const Canvas = () => {
           if (objectId && !isMobile) {
             e.preventDefault(); // Prevent text selection
             e.stopPropagation(); // Prevent event propagation to canvas
-            setSelectedObjectId(objectId);
+            setSelectedObjectIds((prev) => [...prev, objectId]);
             setIsDragging(true);
             setStartPoint(point);
 
@@ -341,7 +345,7 @@ export const Canvas = () => {
         const clickedCanvasObject = findClickedObject(point, objects);
 
         if (clickedCanvasObject) {
-          setSelectedObjectId(clickedCanvasObject.id);
+          setSelectedObjectIds((prev) => [...prev, clickedCanvasObject.id]);
           setIsDragging(true);
           setStartPoint(point);
           setDragOffset({
@@ -349,7 +353,7 @@ export const Canvas = () => {
             y: point.y - clickedCanvasObject.position.y,
           });
         } else {
-          setSelectedObjectId(null);
+          setSelectedObjectIds([]);
 
           // Left click does nothing (current status)
           if (!isDragging && e.buttons === 1) {
@@ -367,7 +371,7 @@ export const Canvas = () => {
     [
       offset,
       scale,
-      selectedObjectId,
+      selectedObjectIds,
       selectedTool,
       setAlert,
       setSelectedTool,
@@ -376,7 +380,7 @@ export const Canvas = () => {
       setCurrentHistoryIndex,
       currentHistoryIndex,
       objects,
-      setSelectedObjectId,
+      setSelectedObjectIds,
       isDragging,
     ]
   );
@@ -418,10 +422,10 @@ export const Canvas = () => {
         return;
       }
 
-      if (resizing && selectedObjectId && startPoint) {
+      if (resizing && selectedObjectIds.length > 0 && startPoint) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
-        const selectedObject = objects.find(
-          (obj) => obj.id === selectedObjectId
+        const selectedObject = objects.find((obj) =>
+          selectedObjectIds.includes(obj.id)
         );
 
         // Prevent resizing of locked objects
@@ -440,7 +444,9 @@ export const Canvas = () => {
           });
 
           const updatedObjects = objects.map((obj) =>
-            obj.id === selectedObjectId ? { ...obj, ...resizedObject } : obj
+            selectedObjectIds.includes(obj.id)
+              ? { ...obj, ...resizedObject }
+              : obj
           );
 
           setObjects(updatedObjects);
@@ -449,8 +455,8 @@ export const Canvas = () => {
       }
 
       if (isDragging) {
-        const selectedObject = objects.find(
-          (obj) => obj.id === selectedObjectId
+        const selectedObject = objects.find((obj) =>
+          selectedObjectIds.includes(obj.id)
         );
 
         // Prevent movement of locked objects
@@ -458,7 +464,7 @@ export const Canvas = () => {
 
         if (
           (selectedTool === 'select' || selectedTool === 'presentation') &&
-          selectedObjectId &&
+          selectedObjectIds.length > 0 &&
           startPoint &&
           e.buttons === 1
         ) {
@@ -477,7 +483,7 @@ export const Canvas = () => {
               currentPoint.y - dragOffset.y - selectedObject.position.y;
 
             const updatedObjects = objects.map((obj) => {
-              if (obj.id === selectedObjectId) {
+              if (obj.id === selectedObjectIds[0]) {
                 // Move all points
                 const newPoints = obj.points!.map((point) => ({
                   x: point.x + dx,
@@ -516,7 +522,7 @@ export const Canvas = () => {
               const snappedPosition = snapToGrid(newPosition);
 
               const updatedObjects = objects.map((obj) =>
-                obj.id === selectedObjectId
+                obj.id === selectedObjectIds[0]
                   ? { ...obj, position: snappedPosition }
                   : obj
               );
@@ -528,7 +534,7 @@ export const Canvas = () => {
               const newY = currentPoint.y - dragOffset.y;
 
               const updatedObjects = objects.map((obj) =>
-                obj.id === selectedObjectId
+                obj.id === selectedObjectIds[0]
                   ? { ...obj, position: { x: newX, y: newY } }
                   : obj
               );
@@ -564,7 +570,7 @@ export const Canvas = () => {
       panStart,
       resizing,
       scale,
-      selectedObjectId,
+      selectedObjectIds,
       selectedTool,
       setObjects,
       setOffset,
@@ -779,7 +785,7 @@ export const Canvas = () => {
           const clickedObject = findClickedObject(point, objects);
 
           if (clickedObject && !isMobile) {
-            setSelectedObjectId(clickedObject.id);
+            setSelectedObjectIds([clickedObject.id]);
             setIsDragging(true);
             setStartPoint(point);
             setDragOffset({
@@ -787,7 +793,7 @@ export const Canvas = () => {
               y: point.y - clickedObject.position.y,
             });
           } else {
-            setSelectedObjectId(null);
+            setSelectedObjectIds([]);
             setIsPanning(true);
             setPanStart({ x: touch.clientX, y: touch.clientY });
           }
@@ -797,7 +803,7 @@ export const Canvas = () => {
         }
       }
     },
-    [objects, offset, scale, selectedTool, setSelectedObjectId]
+    [objects, offset, scale, selectedTool, setSelectedObjectIds]
   );
 
   const handleTouchMove = useCallback(
@@ -824,13 +830,17 @@ export const Canvas = () => {
           const isSelect = selectedTool === 'select';
           const isPresentation = selectedTool === 'presentation';
 
-          if ((isSelect || isPresentation) && selectedObjectId && startPoint) {
+          if (
+            (isSelect || isPresentation) &&
+            selectedObjectIds.length > 0 &&
+            startPoint
+          ) {
             const currentPoint = getTouchPoint(touch, canvasRef, offset, scale);
             const newX = currentPoint.x - dragOffset.x;
             const newY = currentPoint.y - dragOffset.y;
 
             const updatedObjects = objects.map((obj) =>
-              obj.id === selectedObjectId
+              selectedObjectIds.includes(obj.id)
                 ? { ...obj, position: { x: newX, y: newY } }
                 : obj
             );
@@ -868,7 +878,7 @@ export const Canvas = () => {
       offset,
       panStart,
       scale,
-      selectedObjectId,
+      selectedObjectIds,
       selectedTool,
       setObjects,
       setOffset,
@@ -962,6 +972,9 @@ export const Canvas = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditingId !== '') return;
 
+      const isSelected = selectedObjectIds.length > 0;
+      const isOneSelected = selectedObjectIds.length === 1;
+
       if (e.key === 'Escape' && selectedTool !== 'select') {
         setSelectedTool('select');
         return;
@@ -974,9 +987,9 @@ export const Canvas = () => {
       if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteObject(
           objects,
-          selectedObjectId,
+          selectedObjectIds,
           setObjects,
-          setSelectedObjectId,
+          setSelectedObjectIds,
           setHistory,
           setCurrentHistoryIndex,
           currentHistoryIndex
@@ -984,7 +997,7 @@ export const Canvas = () => {
       }
 
       if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
-        setCopyObjectId(selectedObjectId);
+        setCopyObjectIds(selectedObjectIds);
         // Clear the clipboard
         navigator.clipboard.writeText('').catch((error) => {
           console.error('Error clearing clipboard:', error);
@@ -997,13 +1010,13 @@ export const Canvas = () => {
       }
 
       // Italicize text with Cmd/Ctrl + I
-      if (e.key === 'i' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
-        textToggleItalic(objects, selectedObjectId, setObjects);
+      if (e.key === 'i' && (e.metaKey || e.ctrlKey) && isOneSelected) {
+        textToggleItalic(objects, selectedObjectIds[0], setObjects);
       }
 
       // Bold text with Cmd/Ctrl + B
-      if (e.key === 'b' && (e.metaKey || e.ctrlKey) && selectedObjectId) {
-        textToggleBold(objects, selectedObjectId, setObjects);
+      if (e.key === 'b' && (e.metaKey || e.ctrlKey) && isOneSelected) {
+        textToggleBold(objects, selectedObjectIds[0], setObjects);
       }
 
       if (e.key === 'v' && (e.metaKey || e.ctrlKey) && !showAIInput) {
@@ -1014,9 +1027,9 @@ export const Canvas = () => {
           offset,
           scale,
           addObject,
-          setSelectedObjectId,
+          setSelectedObjectIds,
           objects,
-          copyObjectId,
+          copyObjectIds,
           setObjects,
           setHistory,
           setCurrentHistoryIndex,
@@ -1024,15 +1037,20 @@ export const Canvas = () => {
         );
       }
       // Lock object with Cmd/Ctrl + Shift + L
-      if (e.key === 'l' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+      if (
+        e.key === 'l' &&
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        isSelected
+      ) {
         e.preventDefault();
-        lockObject(selectedObjectId, setObjects);
+        lockObject(selectedObjectIds[0], setObjects);
       }
 
       // Export canvas as image with Cmd/Ctrl + E
       if (e.key === 'e' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        exportCanvasAsImage(objects, setSelectedObjectId, setAlert);
+        exportCanvasAsImage(objects, setSelectedObjectIds, setAlert);
       }
 
       // Duplicate object with Cmd/Ctrl + D
@@ -1040,9 +1058,9 @@ export const Canvas = () => {
         e.preventDefault();
         copyObject(
           objects,
-          selectedObjectId,
+          selectedObjectIds,
           setObjects,
-          setSelectedObjectId,
+          setSelectedObjectIds,
           setHistory,
           setCurrentHistoryIndex,
           currentHistoryIndex
@@ -1070,31 +1088,27 @@ export const Canvas = () => {
 
       if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        shareCanvasAsURL(objects, {
-          setIsLoading,
-          setSelectedObjectId,
-          setAlert,
-        });
+        shareCanvasAsURL(objects, setIsLoading, setSelectedObjectIds, setAlert);
       }
 
-      if (e.key === 'ArrowUp' && selectedObjectId) {
+      if (e.key === 'ArrowUp' && isSelected) {
         e.preventDefault();
-        upObject(objects, selectedObjectId, setObjects);
+        upObject(selectedObjectIds, setObjects);
       }
 
-      if (e.key === 'ArrowDown' && selectedObjectId) {
+      if (e.key === 'ArrowDown' && isSelected) {
         e.preventDefault();
-        downObject(objects, selectedObjectId, setObjects);
+        downObject(selectedObjectIds, setObjects);
       }
 
-      if (e.key === 'ArrowLeft' && selectedObjectId) {
+      if (e.key === 'ArrowLeft' && isSelected) {
         e.preventDefault();
-        leftObject(objects, selectedObjectId, setObjects);
+        leftObject(selectedObjectIds, setObjects);
       }
 
-      if (e.key === 'ArrowRight' && selectedObjectId) {
+      if (e.key === 'ArrowRight' && isSelected) {
         e.preventDefault();
-        rightObject(objects, selectedObjectId, setObjects);
+        rightObject(selectedObjectIds, setObjects);
       }
     };
 
@@ -1105,11 +1119,9 @@ export const Canvas = () => {
   }, [
     isEditingId,
     objects,
-    selectedObjectId,
     setObjects,
-    setSelectedObjectId,
     addObject,
-    copyObjectId,
+    copyObjectIds,
     width,
     height,
     offset,
@@ -1125,15 +1137,19 @@ export const Canvas = () => {
     currentHistoryIndex,
     selectedTool,
     showAIInput,
+    selectedObjectIds,
+    setSelectedObjectIds,
   ]);
 
   useEffect(() => {
-    if (selectedObjectId) {
-      const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    if (selectedObjectIds.length === 1) {
+      const selectedObject = objects.find(
+        (obj) => obj.id === selectedObjectIds[0]
+      );
       if (selectedObject) {
         const position = calculateTooltipPosition({
           selectedObject,
-          selectedObjectId,
+          selectedObjectId: selectedObjectIds[0],
           scale,
           offset,
         });
@@ -1142,7 +1158,7 @@ export const Canvas = () => {
     } else {
       setTooltipPosition(null);
     }
-  }, [selectedObjectId, objects, scale, offset]);
+  }, [selectedObjectIds, objects, scale, offset]);
 
   const handleDeleteParms = (params: URLSearchParams) => {
     // Remove the id parameter from URL without page reload
@@ -1196,11 +1212,15 @@ export const Canvas = () => {
   }, []);
 
   const onTextChange = () => {
-    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-    if (selectedObject && selectedObjectId && selectedObject.type === 'text') {
+    if (selectedObjectIds.length !== 1) return;
+
+    const selectedObject = objects.find(
+      (obj) => obj.id === selectedObjectIds[0]
+    );
+    if (selectedObject && selectedObject.type === 'text') {
       const position = calculateTooltipPosition({
         selectedObject,
-        selectedObjectId,
+        selectedObjectId: selectedObjectIds[0],
         scale,
         offset,
       });
@@ -1348,7 +1368,7 @@ export const Canvas = () => {
         }}
       />
 
-      {selectedObjectId && !isMobile && (
+      {selectedObjectIds && !isMobile && (
         <Tooltip
           position={tooltipPosition}
           isDragging={isDragging}
@@ -1380,7 +1400,7 @@ export const Canvas = () => {
                 offset={offset}
                 obj={obj as CanvasObject & { type: 'image' }}
                 key={obj.id}
-                selectedObjectId={selectedObjectId}
+                selectedObjectIds={selectedObjectIds}
                 isResizing={resizing !== null}
                 isDragging={isDragging}
                 isMoving={isMoving}
@@ -1400,7 +1420,7 @@ export const Canvas = () => {
                 offset={offset}
                 obj={obj as CanvasObject & { type: 'text' }}
                 key={obj.id}
-                selectedObjectId={selectedObjectId}
+                selectedObjectIds={selectedObjectIds}
                 isResizing={resizing !== null}
                 isEditingId={isEditingId}
                 isDragging={isDragging}
@@ -1422,7 +1442,7 @@ export const Canvas = () => {
                 offset={offset}
                 obj={obj as CanvasObject & { type: 'embed' }}
                 key={obj.id}
-                selectedObjectId={selectedObjectId}
+                selectedObjectIds={selectedObjectIds}
                 isResizing={resizing !== null}
                 isMoving={isMoving}
                 isDragging={isDragging}

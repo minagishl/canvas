@@ -45,19 +45,20 @@ export function Tooltip({
   isDragging,
   setIsEditingId,
 }: TooltipProps): React.ReactElement | null {
-  const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
+  const { objects, setObjects, selectedObjectIds, setSelectedObjectIds } =
     useCanvasContext();
   const { setHistory, setCurrentHistoryIndex, currentHistoryIndex } =
     useHistoryContext();
   const [isRotating, setIsRotating] = React.useState(false);
 
   const handleColorChange = () => {
-    if (!selectedObjectId) return;
+    if (selectedObjectIds.length !== 1) return;
 
     setObjects((prevObjects) => {
       const selectedObject = prevObjects.find(
-        (obj) => obj.id === selectedObjectId
+        (obj) => obj.id === selectedObjectIds[0]
       );
+
       if (!selectedObject) return prevObjects;
 
       const availableColors =
@@ -69,7 +70,7 @@ export function Tooltip({
       const nextColorIndex = (currentColorIndex + 1) % availableColors.length;
 
       return prevObjects.map((obj) =>
-        obj.id === selectedObjectId
+        obj.id === selectedObjectIds[0]
           ? { ...obj, fill: availableColors[nextColorIndex] }
           : obj
       );
@@ -77,17 +78,18 @@ export function Tooltip({
   };
 
   const handleItalicChange = () => {
-    if (!selectedObjectId) return;
-    textToggleItalic(objects, selectedObjectId, setObjects);
+    if (selectedObjectIds.length !== 1) return;
+    textToggleItalic(objects, selectedObjectIds[0], setObjects);
   };
 
   const handleWeightChange = () => {
-    if (!selectedObjectId) return;
+    if (selectedObjectIds.length === 0) return;
 
     setObjects((prevObjects) => {
-      const selectedObject = prevObjects.find(
-        (obj) => obj.id === selectedObjectId
+      const selectedObject = prevObjects.find((obj) =>
+        selectedObjectIds.includes(obj.id)
       );
+
       if (!selectedObject) return prevObjects;
 
       const currentWeight = selectedObject.weight || 100;
@@ -106,23 +108,28 @@ export function Tooltip({
               | 900);
 
       return prevObjects.map((obj) =>
-        obj.id === selectedObjectId ? { ...obj, weight: nextWeight } : obj
+        selectedObjectIds.includes(obj.id)
+          ? { ...obj, weight: nextWeight }
+          : obj
       );
     });
   };
 
   const handleTextEdit = () => {
-    textEdit(selectedObjectId, objects, setIsEditingId);
+    if (selectedObjectIds.length !== 1) return;
+    textEdit(selectedObjectIds[0], objects, setIsEditingId);
   };
 
   const handleMoveDown = () => {
-    if (!selectedObjectId) return;
+    if (selectedObjectIds.length !== 1) return;
 
-    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    const selectedObject = objects.find(
+      (obj) => obj.id === selectedObjectIds[0]
+    );
     if (!selectedObject) return;
 
     const selectedObjectIndex = objects.findIndex(
-      (obj) => obj.id === selectedObjectId
+      (obj) => obj.id === selectedObjectIds[0]
     );
 
     setObjects((prevObjects) => {
@@ -135,14 +142,16 @@ export function Tooltip({
   };
 
   const handleChangeFontSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!selectedObjectId) return;
+    if (!selectedObjectIds.length) return;
 
-    const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+    const selectedObject = objects.find(
+      (obj) => obj.id === selectedObjectIds[0]
+    );
     if (!selectedObject || selectedObject.type !== 'text') return;
 
     setObjects((prevObjects) =>
       prevObjects.map((obj) =>
-        obj.id === selectedObjectId
+        obj.id === selectedObjectIds[0]
           ? { ...obj, fontSize: parseInt(e.target.value, 10) as fontSize }
           : obj
       )
@@ -150,16 +159,16 @@ export function Tooltip({
   };
 
   const handleChangeLocked = () => {
-    if (!selectedObjectId) return;
-    lockObject(selectedObjectId, setObjects);
+    if (!selectedObjectIds.length) return;
+    lockObject(selectedObjectIds[0], setObjects);
   };
 
   const handleLineWidthChange = () => {
-    if (!selectedObjectId) return;
+    if (selectedObjectIds.length !== 1) return;
 
     setObjects((prevObjects) => {
       const selectedObject = prevObjects.find(
-        (obj) => obj.id === selectedObjectId
+        (obj) => obj.id === selectedObjectIds[0]
       );
       if (
         !selectedObject ||
@@ -173,16 +182,18 @@ export function Tooltip({
       const nextWidth = widths[(currentIndex + 1) % widths.length];
 
       return prevObjects.map((obj) =>
-        obj.id === selectedObjectId ? { ...obj, lineWidth: nextWidth } : obj
+        obj.id === selectedObjectIds[0] ? { ...obj, lineWidth: nextWidth } : obj
       );
     });
   };
 
   const handleRotate = () => {
-    const object = objects.find((obj) => obj.id === selectedObjectId);
+    if (selectedObjectIds.length !== 1) return;
+
+    const object = objects.find((obj) => obj.id === selectedObjectIds[0]);
     if (object?.locked === true) return;
     rotateObject(
-      selectedObjectId,
+      selectedObjectIds[0],
       objects,
       setObjects,
       isRotating,
@@ -193,9 +204,9 @@ export function Tooltip({
   const handleDuplicateObject = () => {
     copyObject(
       objects,
-      selectedObjectId,
+      selectedObjectIds,
       setObjects,
-      setSelectedObjectId,
+      setSelectedObjectIds,
       setHistory,
       setCurrentHistoryIndex,
       currentHistoryIndex
@@ -205,9 +216,9 @@ export function Tooltip({
   const handleDeleteObject = () => {
     deleteObject(
       objects,
-      selectedObjectId,
+      selectedObjectIds,
       setObjects,
-      setSelectedObjectId,
+      setSelectedObjectIds,
       setHistory,
       setCurrentHistoryIndex,
       currentHistoryIndex
@@ -215,22 +226,27 @@ export function Tooltip({
   };
 
   const handleToggleCircle = () => {
-    if (!selectedObjectId) return;
-    imageToggleCircle(objects, selectedObjectId, setObjects);
+    if (selectedObjectIds.length !== 1) return;
+
+    imageToggleCircle(objects, selectedObjectIds[0], setObjects);
   };
 
   const handleToggleSpoiler = () => {
-    if (!selectedObjectId) return;
-    imageToggleSpoiler(objects, selectedObjectId, setObjects);
+    if (selectedObjectIds.length !== 1) return;
+
+    imageToggleSpoiler(objects, selectedObjectIds[0], setObjects);
   };
 
   if (!position) return null;
 
-  const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
+  const selectedObject = objects.find((obj) =>
+    selectedObjectIds.includes(obj.id)
+  );
   const isTextObject = selectedObject?.type === 'text';
   const isImageObject = selectedObject?.type === 'image';
   const isOriginalUrl = selectedObject?.originalUrl;
   const isEmbedObject = selectedObject?.type === 'embed';
+  const isMultipleSelection = selectedObjectIds.length > 1;
 
   return (
     <div
@@ -244,173 +260,185 @@ export function Tooltip({
         pointerEvents: isDragging ? 'none' : 'auto',
       }}
     >
-      {!isImageObject && !isEmbedObject && (
+      {!isMultipleSelection && (
         <>
-          <button
-            className={button()}
-            onClick={handleColorChange}
-            aria-label="Color"
-          >
-            <Circle
-              className="h-5 w-5"
-              fill={
-                objects.find((obj) => obj.id === selectedObjectId)?.fill ||
-                COLORS[0]
-              }
-              stroke="none"
-            />
-          </button>
-          {(selectedObject?.type === 'line' ||
-            selectedObject?.type === 'arrow') && (
+          {!isImageObject && !isEmbedObject && (
+            <>
+              <button
+                className={button()}
+                onClick={handleColorChange}
+                aria-label="Color"
+              >
+                <Circle
+                  className="h-5 w-5"
+                  fill={
+                    objects.find((obj) => obj.id === selectedObjectIds[0])
+                      ?.fill || COLORS[0]
+                  }
+                  stroke="none"
+                />
+              </button>
+              {(selectedObject?.type === 'line' ||
+                selectedObject?.type === 'arrow') && (
+                <>
+                  <div className="group relative">
+                    <button
+                      className={button({
+                        className: 'flex size-9 items-center justify-center',
+                      })}
+                      onClick={handleLineWidthChange}
+                      aria-label="Line width"
+                    >
+                      <div
+                        className="flex w-5 items-center justify-center"
+                        style={{
+                          height: selectedObject.lineWidth || 2,
+                          backgroundColor: selectedObject.fill,
+                          minHeight: '2px',
+                        }}
+                      />
+                    </button>
+                    <div className={popup({ isTextObject })}>
+                      <Popover text="Change line width" upper={isTextObject} />
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+          <div className="group relative">
+            <button
+              className={button()}
+              onClick={handleMoveDown}
+              aria-label="Move"
+            >
+              <Layers2 className="h-5 w-5 rotate-180" />
+            </button>
+            <div className={popup({ isTextObject })}>
+              <Popover text="Move object down" upper={isTextObject} />
+            </div>
+          </div>
+          {isTextObject && (
             <>
               <div className="group relative">
                 <button
-                  className={button({
-                    className: 'flex size-9 items-center justify-center',
-                  })}
-                  onClick={handleLineWidthChange}
-                  aria-label="Line width"
+                  className={button()}
+                  onClick={handleWeightChange}
+                  aria-label="Weight"
                 >
-                  <div
-                    className="flex w-5 items-center justify-center"
-                    style={{
-                      height: selectedObject.lineWidth || 2,
-                      backgroundColor: selectedObject.fill,
-                      minHeight: '2px',
-                    }}
-                  />
+                  <Bold className="h-5 w-5" />
                 </button>
                 <div className={popup({ isTextObject })}>
-                  <Popover text="Change line width" upper={isTextObject} />
+                  <Popover
+                    text="Change font weight"
+                    upper={isTextObject}
+                    command="B"
+                  />
+                </div>
+              </div>
+              <div className="group relative">
+                <button
+                  className={button()}
+                  onClick={handleItalicChange}
+                  aria-label="Italic"
+                >
+                  <Italic className="h-5 w-5" />
+                </button>
+                <div className={popup({ isTextObject })}>
+                  <Popover
+                    text="Change font style"
+                    upper={isTextObject}
+                    command="I"
+                  />
+                </div>
+              </div>
+              <button
+                className={button()}
+                onClick={handleTextEdit}
+                aria-label="Edit"
+              >
+                <TextCursorInput className="h-5 w-5" />
+              </button>
+              <select
+                className="h-9 appearance-none rounded-sm p-2 text-center leading-tight transition-colors hover:bg-gray-100"
+                value={selectedObject?.fontSize || 24}
+                onChange={handleChangeFontSize}
+              >
+                {fontSizeArray.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+          {isImageObject && !isOriginalUrl && (
+            <>
+              <div className="group relative">
+                <button
+                  className={button()}
+                  onClick={handleToggleCircle}
+                  aria-label="Circle"
+                >
+                  {selectedObject?.circle ? (
+                    <CircleOff className="h-5 w-5 scale-x-[-1]" />
+                  ) : (
+                    <Circle className="h-5 w-5" />
+                  )}
+                </button>
+                <div className={popup({ isTextObject })}>
+                  <Popover text="Toggle circle" upper={isTextObject} />
+                </div>
+              </div>
+              <div className="group relative">
+                <button
+                  className={button()}
+                  onClick={handleToggleSpoiler}
+                  aria-label="Spoiler"
+                >
+                  {selectedObject?.spoiler ? (
+                    <EyeOff className="h-5 w-5 scale-x-[-1]" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+                <div className={popup({ isTextObject })}>
+                  <Popover text="Toggle spoiler" upper={isTextObject} />
                 </div>
               </div>
             </>
           )}
-        </>
-      )}
-      <div className="group relative">
-        <button className={button()} onClick={handleMoveDown} aria-label="Move">
-          <Layers2 className="h-5 w-5 rotate-180" />
-        </button>
-        <div className={popup({ isTextObject })}>
-          <Popover text="Move object down" upper={isTextObject} />
-        </div>
-      </div>
-      {isTextObject && (
-        <>
           <div className="group relative">
             <button
               className={button()}
-              onClick={handleWeightChange}
-              aria-label="Weight"
+              onClick={handleRotate}
+              aria-label="Rotate"
             >
-              <Bold className="h-5 w-5" />
+              <RefreshCw className="h-5 w-5" />
             </button>
             <div className={popup({ isTextObject })}>
-              <Popover
-                text="Change font weight"
-                upper={isTextObject}
-                command="B"
-              />
+              <Popover text="Rotate object" upper={isTextObject} />
             </div>
           </div>
+          <div className="mx-2 h-6 w-px bg-gray-200" />
           <div className="group relative">
             <button
               className={button()}
-              onClick={handleItalicChange}
-              aria-label="Italic"
+              onClick={handleChangeLocked}
+              aria-label="Lock"
             >
-              <Italic className="h-5 w-5" />
-            </button>
-            <div className={popup({ isTextObject })}>
-              <Popover
-                text="Change font style"
-                upper={isTextObject}
-                command="I"
-              />
-            </div>
-          </div>
-          <button
-            className={button()}
-            onClick={handleTextEdit}
-            aria-label="Edit"
-          >
-            <TextCursorInput className="h-5 w-5" />
-          </button>
-          <select
-            className="h-9 appearance-none rounded-sm p-2 text-center leading-tight transition-colors hover:bg-gray-100"
-            value={selectedObject?.fontSize || 24}
-            onChange={handleChangeFontSize}
-          >
-            {fontSizeArray.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-        </>
-      )}
-      {isImageObject && !isOriginalUrl && (
-        <>
-          <div className="group relative">
-            <button
-              className={button()}
-              onClick={handleToggleCircle}
-              aria-label="Circle"
-            >
-              {selectedObject?.circle ? (
-                <CircleOff className="h-5 w-5 scale-x-[-1]" />
+              {selectedObject?.locked ? (
+                <LockKeyhole className="h-5 w-5" />
               ) : (
-                <Circle className="h-5 w-5" />
+                <UnlockKeyhole className="h-5 w-5" />
               )}
             </button>
             <div className={popup({ isTextObject })}>
-              <Popover text="Toggle circle" upper={isTextObject} />
-            </div>
-          </div>
-          <div className="group relative">
-            <button
-              className={button()}
-              onClick={handleToggleSpoiler}
-              aria-label="Spoiler"
-            >
-              {selectedObject?.spoiler ? (
-                <EyeOff className="h-5 w-5 scale-x-[-1]" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </button>
-            <div className={popup({ isTextObject })}>
-              <Popover text="Toggle spoiler" upper={isTextObject} />
+              <Popover text="Lock object" upper={isTextObject} />
             </div>
           </div>
         </>
       )}
-      <div className="group relative">
-        <button className={button()} onClick={handleRotate} aria-label="Rotate">
-          <RefreshCw className="h-5 w-5" />
-        </button>
-        <div className={popup({ isTextObject })}>
-          <Popover text="Rotate object" upper={isTextObject} />
-        </div>
-      </div>
-      <div className="mx-2 h-6 w-px bg-gray-200" />
-      <div className="group relative">
-        <button
-          className={button()}
-          onClick={handleChangeLocked}
-          aria-label="Lock"
-        >
-          {selectedObject?.locked ? (
-            <LockKeyhole className="h-5 w-5" />
-          ) : (
-            <UnlockKeyhole className="h-5 w-5" />
-          )}
-        </button>
-        <div className={popup({ isTextObject })}>
-          <Popover text="Lock object" upper={isTextObject} />
-        </div>
-      </div>
       <div className="group relative">
         <button
           className={button()}
