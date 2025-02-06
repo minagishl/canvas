@@ -220,6 +220,26 @@ export const Canvas = () => {
     height,
   ]);
 
+  useEffect(() => {
+    if (selectedObjectIds.length > 0) {
+      const newInitialPositions: { [id: string]: Point } = {};
+      const newInitialLinePoints: { [id: string]: LinePoint[] } = {};
+      selectedObjectIds.forEach((id) => {
+        const obj = objects.find((o) => o.id === id);
+        if (obj) {
+          newInitialPositions[id] = { ...obj.position };
+          if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
+            // Record a copy of each point
+            newInitialLinePoints[id] = obj.points.map((p) => ({ ...p }));
+          }
+        }
+      });
+      setInitialPositions(newInitialPositions);
+      setInitialLinePoints(newInitialLinePoints);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedObjectIds]);
+
   const handleMouseDown = useCallback(
     (e: React.MouseEvent, resizeHandle?: ResizeHandle) => {
       // Prevent the context menu from appearing
@@ -337,12 +357,6 @@ export const Canvas = () => {
                   ? prev
                   : [...prev, objectId]
                 : [objectId];
-              const newInitialPositions: { [id: string]: Point } = {};
-              newSelected.forEach((id) => {
-                const obj = objects.find((o) => o.id === id);
-                if (obj) newInitialPositions[id] = { ...obj.position };
-              });
-              setInitialPositions(newInitialPositions);
               return newSelected;
             });
             setIsDragging(true);
@@ -360,23 +374,6 @@ export const Canvas = () => {
                 ? prev
                 : [...prev, clickedCanvasObject.id]
               : [clickedCanvasObject.id];
-            const newInitialPositions: { [id: string]: Point } = {};
-            const newInitialLinePoints: { [id: string]: LinePoint[] } = {};
-            newSelected.forEach((id) => {
-              const obj = objects.find((o) => o.id === id);
-              if (obj) {
-                newInitialPositions[id] = { ...obj.position };
-                if (
-                  (obj.type === 'line' || obj.type === 'arrow') &&
-                  obj.points
-                ) {
-                  // Record a copy of each point
-                  newInitialLinePoints[id] = obj.points.map((p) => ({ ...p }));
-                }
-              }
-            });
-            setInitialPositions(newInitialPositions);
-            setInitialLinePoints(newInitialLinePoints);
             return newSelected;
           });
           setIsDragging(true);
