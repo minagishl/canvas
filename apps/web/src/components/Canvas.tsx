@@ -105,11 +105,15 @@ export const Canvas = () => {
     body: string;
   } | null>(null);
   const [isFileDragging, setIsFileDragging] = useState(false);
+  const [isMoving, setIsMoving] = useState<boolean>(false);
 
   // AI
   const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [aiInputText, setAIInputText] = useState('');
   const { showAIInput, setShowAIInput } = useAIContext();
+
+  // Moving
+  const movingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Event listener for the container element
@@ -709,6 +713,17 @@ export const Canvas = () => {
     (e: WheelEvent) => {
       e.preventDefault();
 
+      // Processing related to movement
+      if (movingTimeoutRef.current !== null) {
+        clearTimeout(movingTimeoutRef.current);
+      }
+
+      setIsMoving(true);
+
+      movingTimeoutRef.current = setTimeout(() => {
+        setIsMoving(false);
+      }, 100);
+
       if (!e.ctrlKey) {
         setOffset((prev) => ({
           x: prev.x - e.deltaX,
@@ -745,7 +760,7 @@ export const Canvas = () => {
         }));
       }
     },
-    [scale, offset, setScale, setOffset]
+    [scale, offset.x, offset.y, setScale, setOffset]
   );
 
   const handleTouchStart = useCallback(
@@ -1316,6 +1331,7 @@ export const Canvas = () => {
           setStartPoint(null);
           setPreviewObject(null);
           setIsPanning(false);
+          setIsMoving(false);
           setPanStart(null);
         }}
       />
@@ -1355,6 +1371,7 @@ export const Canvas = () => {
                 selectedObjectId={selectedObjectId}
                 isResizing={resizing !== null}
                 isDragging={isDragging}
+                isMoving={isMoving}
                 imageCache={imageCache}
                 handleMouseDown={(e, handle) =>
                   handleMouseDown(e, handle as ResizeHandle)
@@ -1375,6 +1392,7 @@ export const Canvas = () => {
                 isResizing={resizing !== null}
                 isEditingId={isEditingId}
                 isDragging={isDragging}
+                isMoving={isMoving}
                 onTextChange={onTextChange}
                 onMouseDown={(e) => {
                   if (selectedTool === 'select') {
@@ -1394,6 +1412,7 @@ export const Canvas = () => {
                 key={obj.id}
                 selectedObjectId={selectedObjectId}
                 isResizing={resizing !== null}
+                isMoving={isMoving}
                 isDragging={isDragging}
                 handleMouseDown={(e, handle) =>
                   handleMouseDown(e, handle as ResizeHandle)

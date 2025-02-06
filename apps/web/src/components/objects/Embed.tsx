@@ -9,6 +9,7 @@ interface EmbedObjectProps {
   obj: CanvasObject & { type: 'embed' };
   isResizing: boolean;
   isDragging: boolean;
+  isMoving: boolean;
   handleMouseDown: (e: React.MouseEvent, handle?: string) => void;
 }
 
@@ -20,6 +21,7 @@ export const EmbedObject = React.memo(
     obj,
     isResizing,
     isDragging,
+    isMoving,
     handleMouseDown,
   }: EmbedObjectProps) => {
     const elementRef = useRef<HTMLDivElement>(null);
@@ -68,7 +70,9 @@ export const EmbedObject = React.memo(
                 ? 'none'
                 : isResizing
                   ? 'none'
-                  : 'auto'
+                  : isMoving
+                    ? 'none'
+                    : 'auto'
               : 'auto',
         }}
         onMouseDown={handleMouseDown}
@@ -138,6 +142,7 @@ export const EmbedObject = React.memo(
       prevProps.selectedObjectId === nextProps.selectedObjectId &&
       prevProps.isResizing === nextProps.isResizing &&
       prevProps.isDragging === nextProps.isDragging &&
+      prevProps.isMoving === nextProps.isMoving &&
       prevProps.obj.rotation === nextProps.obj.rotation &&
       prevProps.obj.embedUrl === nextProps.obj.embedUrl
     );

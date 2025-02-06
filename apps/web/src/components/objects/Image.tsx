@@ -9,6 +9,7 @@ interface ImageObjectProps {
   obj: CanvasObject & { type: 'image' };
   isResizing: boolean;
   isDragging: boolean;
+  isMoving: boolean;
   imageCache: Record<string, string>;
   handleMouseDown: (e: React.MouseEvent, handle?: string) => void;
 }
@@ -22,6 +23,7 @@ export const ImageObject = React.memo(
     isResizing,
     isDragging,
     imageCache,
+    isMoving,
     handleMouseDown,
   }: ImageObjectProps) => {
     const [isSpoiler, setIsSpoiler] = useState(true);
@@ -85,7 +87,9 @@ export const ImageObject = React.memo(
               ? 'none'
               : isResizing
                 ? 'none'
-                : 'auto',
+                : isMoving
+                  ? 'none'
+                  : 'auto',
         }}
         onMouseDown={handleMouseDown}
       >
@@ -184,6 +188,7 @@ export const ImageObject = React.memo(
       prevProps.selectedObjectId === nextProps.selectedObjectId &&
       prevProps.isResizing === nextProps.isResizing &&
       prevProps.isDragging === nextProps.isDragging &&
+      prevProps.isMoving === nextProps.isMoving &&
       prevProps.imageCache === nextProps.imageCache &&
       prevProps.obj.rotation === nextProps.obj.rotation &&
       prevProps.obj.circle === nextProps.obj.circle &&

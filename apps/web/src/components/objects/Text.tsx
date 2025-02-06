@@ -12,6 +12,7 @@ interface TextObjectProps {
   isResizing: boolean;
   isEditingId: string;
   isDragging: boolean;
+  isMoving: boolean;
   onTextChange: () => void;
   onMouseDown: (e: React.MouseEvent) => void;
 }
@@ -26,6 +27,7 @@ export const TextObject = React.memo(
     isResizing,
     isEditingId,
     isDragging,
+    isMoving,
     onTextChange,
     onMouseDown,
   }: TextObjectProps) => {
@@ -107,7 +109,9 @@ export const TextObject = React.memo(
               ? 'none'
               : isResizing
                 ? 'none'
-                : 'auto',
+                : isMoving
+                  ? 'none'
+                  : 'auto',
           cursor: selectedTool === 'select' ? 'move' : 'default',
           fontWeight: obj.weight,
           lineHeight: getLineHeight(scale),
@@ -146,6 +150,7 @@ export const TextObject = React.memo(
       prevProps.obj.weight === nextProps.obj.weight &&
       prevProps.isEditingId === nextProps.isEditingId &&
       prevProps.isResizing === nextProps.isResizing &&
+      prevProps.isMoving === nextProps.isMoving &&
       prevProps.onMouseDown === nextProps.onMouseDown &&
       prevProps.obj.fill === nextProps.obj.fill &&
       prevProps.obj.fontSize === nextProps.obj.fontSize &&
