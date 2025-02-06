@@ -317,8 +317,7 @@ export const Canvas = () => {
           setSelectedTool,
           setObjects,
           setHistory,
-          setCurrentHistoryIndex,
-          currentHistoryIndex
+          setCurrentHistoryIndex
         );
         return;
       }
@@ -403,7 +402,6 @@ export const Canvas = () => {
       setObjects,
       setHistory,
       setCurrentHistoryIndex,
-      currentHistoryIndex,
       setSelectedObjectIds,
       initDragPositions,
       isDragging,
@@ -579,8 +577,7 @@ export const Canvas = () => {
           newArrow,
           setObjects,
           setHistory,
-          setCurrentHistoryIndex,
-          currentHistoryIndex
+          setCurrentHistoryIndex
         );
       } else {
         setCurrentLine([point]);
@@ -610,13 +607,7 @@ export const Canvas = () => {
       setCurrentLine([]);
       setPreviewObject(null);
       setIsDragging(false);
-      handleAddObject(
-        newLine,
-        setObjects,
-        setHistory,
-        setCurrentHistoryIndex,
-        currentHistoryIndex
-      );
+      handleAddObject(newLine, setObjects, setHistory, setCurrentHistoryIndex);
       return;
     }
 
@@ -679,8 +670,7 @@ export const Canvas = () => {
         newObject,
         setObjects,
         setHistory,
-        setCurrentHistoryIndex,
-        currentHistoryIndex
+        setCurrentHistoryIndex
       );
     }
   };
@@ -963,7 +953,6 @@ export const Canvas = () => {
       setObjects,
       setHistory,
       setCurrentHistoryIndex,
-      currentHistoryIndex,
     });
     fileInputRef.current!.value = '';
   };
@@ -1290,7 +1279,6 @@ export const Canvas = () => {
         setObjects,
         setHistory,
         setCurrentHistoryIndex,
-        currentHistoryIndex,
       });
     },
     [
@@ -1302,7 +1290,6 @@ export const Canvas = () => {
       setObjects,
       setHistory,
       setCurrentHistoryIndex,
-      currentHistoryIndex,
     ]
   );
 
@@ -1314,8 +1301,7 @@ export const Canvas = () => {
       setIsAIGenerating,
       setObjects,
       setHistory,
-      setCurrentHistoryIndex,
-      currentHistoryIndex
+      setCurrentHistoryIndex
     );
   };
 

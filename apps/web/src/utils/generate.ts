@@ -12,8 +12,7 @@ export const aIGenerate = async (
   setIsAIGenerating: (value: boolean) => void,
   setObjects: (callback: (prev: CanvasObject[]) => CanvasObject[]) => void,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
-  setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
-  currentHistoryIndex: number
+  setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>
 ) => {
   if (aiInputText.trim() === '') {
     showTemporaryAlert('Please enter a description', setAlert);
@@ -43,13 +42,7 @@ export const aIGenerate = async (
       const result = await parseAsync(CanvasAIDaraSchema, data);
       // Add each generated object
       result.forEach((object) => {
-        handleAddObject(
-          object,
-          setObjects,
-          setHistory,
-          setCurrentHistoryIndex,
-          currentHistoryIndex
-        );
+        handleAddObject(object, setObjects, setHistory, setCurrentHistoryIndex);
       });
       showTemporaryAlert('AI generated content added', setAlert);
     }

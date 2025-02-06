@@ -53,7 +53,6 @@ export const handlePaste = async (
           setObjects,
           setHistory,
           setCurrentHistoryIndex,
-          currentHistoryIndex,
         });
       }
     }

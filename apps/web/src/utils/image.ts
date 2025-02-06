@@ -11,8 +11,7 @@ export const fetchRandomGif = async (
   setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>,
   setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
-  setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
-  currentHistoryIndex: number
+  setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>
 ): Promise<void> => {
   try {
     const gifUrl = await randomGif(imagePosition, setAlert);
@@ -42,13 +41,7 @@ export const fetchRandomGif = async (
       originalUrl: gifUrl,
     };
 
-    handleAddObject(
-      gifObject,
-      setObjects,
-      setHistory,
-      setCurrentHistoryIndex,
-      currentHistoryIndex
-    );
+    handleAddObject(gifObject, setObjects, setHistory, setCurrentHistoryIndex);
 
     setImagePosition(null);
     setSelectedTool('select');
@@ -151,7 +144,6 @@ interface HandleFileChangeProps {
   setObjects: (value: React.SetStateAction<CanvasObject[]>) => void;
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>;
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
-  currentHistoryIndex: number;
 }
 
 export const handleFileChange = async ({
@@ -164,7 +156,6 @@ export const handleFileChange = async ({
   setObjects,
   setHistory,
   setCurrentHistoryIndex,
-  currentHistoryIndex,
 }: HandleFileChangeProps): Promise<void> => {
   if (!file || !imagePosition) return;
 
@@ -213,8 +204,7 @@ export const handleFileChange = async ({
       },
       setObjects,
       setHistory,
-      setCurrentHistoryIndex,
-      currentHistoryIndex
+      setCurrentHistoryIndex
     );
 
     setImagePosition(null);
