@@ -1,15 +1,5 @@
-import { tv } from 'tailwind-variants';
+import { popover } from '~/variants';
 import { Command } from 'lucide-react';
-
-const popover = tv({
-  base: 'absolute bg-white rounded-sm shadow-base flex items-center justify-center left-1/2 -translate-x-1/2 animate-fade animate-once animate-duration-300',
-  variants: {
-    upper: {
-      true: 'bottom-2',
-      false: 'top-2',
-    },
-  },
-});
 
 export function Popover({
   text,
