@@ -18,8 +18,9 @@ export const copyObject = (
     if (!selectedObject) return;
 
     const newId = Math.random().toString(36).slice(2, 11);
-    let offsetX = 40;
-    let offsetY = 40;
+    const defaultOffset = 40;
+    let offsetX = defaultOffset;
+    let offsetY = defaultOffset;
 
     while (
       selectedObjectIds.length === 1 &&
@@ -29,8 +30,8 @@ export const copyObject = (
           obj.position.y === selectedObject.position.y + offsetY
       )
     ) {
-      offsetX += offsetX;
-      offsetY += offsetY;
+      offsetX += defaultOffset;
+      offsetY += defaultOffset;
     }
 
     const newObject = {
