@@ -271,14 +271,16 @@ export function Tooltip({
               )}
             </>
           )}
-          <PopoverButton
-            onClick={handleMoveDown}
-            ariaLabel="Move"
-            isTextObject={!!isTextObject}
-            popoverText="Move object down"
-          >
-            <Layers2 className="h-5 w-5 rotate-180" />
-          </PopoverButton>
+          {!isTextObject && (
+            <PopoverButton
+              onClick={handleMoveDown}
+              ariaLabel="Move"
+              isTextObject={!!isTextObject}
+              popoverText="Move object down"
+            >
+              <Layers2 className="h-5 w-5 rotate-180" />
+            </PopoverButton>
+          )}
           {isTextObject && (
             <>
               <PopoverButton
@@ -306,17 +308,6 @@ export function Tooltip({
               >
                 <TextCursorInput className="h-5 w-5" />
               </button>
-              <select
-                className="h-9 appearance-none rounded-sm p-2 text-center leading-tight transition-colors hover:bg-gray-100"
-                value={selectedObject?.fontSize || 24}
-                onChange={handleChangeFontSize}
-              >
-                {fontSizeArray.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </select>
             </>
           )}
           {isImageObject && !isOriginalUrl && (
@@ -355,6 +346,22 @@ export function Tooltip({
           >
             <RefreshCw className="h-5 w-5" />
           </PopoverButton>
+          {isTextObject && (
+            <>
+              <div className="mx-2 h-6 w-px bg-gray-200" />
+              <select
+                className="h-9 appearance-none rounded-sm p-2 text-center leading-tight transition-colors hover:bg-gray-100"
+                value={selectedObject?.fontSize || 24}
+                onChange={handleChangeFontSize}
+              >
+                {fontSizeArray.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
           <div className="mx-2 h-6 w-px bg-gray-200" />
           <PopoverButton
             onClick={handleChangeLocked}
