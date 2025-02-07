@@ -411,6 +411,7 @@ export const Canvas = () => {
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
+      console.log('handleMouseMove');
       // Resize processing
       if (resizing && selectedObjectIds.length === 1 && startPoint) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
@@ -482,6 +483,7 @@ export const Canvas = () => {
         const deltaY = currentPoint.y - startPoint.y;
         const updatedObjects = objects.map((obj) => {
           if (selectedObjectIds.includes(obj.id) && initialPositions[obj.id]) {
+            if (obj.locked) return obj;
             if ((obj.type === 'line' || obj.type === 'arrow') && obj.points) {
               const initPoints = initialLinePoints[obj.id] || obj.points;
               const newPoints = initPoints.map((p) => ({
