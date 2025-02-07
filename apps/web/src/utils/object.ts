@@ -29,8 +29,8 @@ export const copyObject = (
           obj.position.y === selectedObject.position.y + offsetY
       )
     ) {
-      offsetX += 40;
-      offsetY += 40;
+      offsetX += offsetX;
+      offsetY += offsetY;
     }
 
     const newObject = {
