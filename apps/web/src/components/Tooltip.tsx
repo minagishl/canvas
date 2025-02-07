@@ -40,6 +40,39 @@ interface TooltipProps {
   setIsEditingId: React.Dispatch<React.SetStateAction<string>>;
 }
 
+interface PopoverButtonProps {
+  onClick: () => void;
+  ariaLabel: string;
+  children: React.ReactNode;
+  popoverText: string;
+  command?: string;
+  extraButtonClassName?: string;
+  isTextObject: boolean;
+}
+
+const PopoverButton: React.FC<PopoverButtonProps> = ({
+  onClick,
+  ariaLabel,
+  children,
+  popoverText,
+  command,
+  extraButtonClassName,
+  isTextObject,
+}) => (
+  <div className="group relative">
+    <button
+      className={button({ className: extraButtonClassName })}
+      onClick={onClick}
+      aria-label={ariaLabel}
+    >
+      {children}
+    </button>
+    <div className={popup({ isTextObject })}>
+      <Popover text={popoverText} upper={isTextObject} command={command} />
+    </div>
+  </div>
+);
+
 export function Tooltip({
   position,
   isDragging,
@@ -51,45 +84,34 @@ export function Tooltip({
     useHistoryContext();
   const [isRotating, setIsRotating] = React.useState(false);
 
+  // Do not display if not a single selection
   if (selectedObjectIds.length !== 1) return null;
+  const selectedId = selectedObjectIds[0];
 
   const handleColorChange = () => {
     setObjects((prevObjects) => {
-      const selectedObject = prevObjects.find(
-        (obj) => obj.id === selectedObjectIds[0]
-      );
-
-      if (!selectedObject) return prevObjects;
-
+      const obj = prevObjects.find((item) => item.id === selectedId);
+      if (!obj) return prevObjects;
       const availableColors =
-        selectedObject.type === 'text' ? [...COLORS, '#fafafa'] : COLORS;
-
-      const currentColorIndex = availableColors.indexOf(
-        selectedObject.fill || COLORS[0]
-      );
-      const nextColorIndex = (currentColorIndex + 1) % availableColors.length;
-
-      return prevObjects.map((obj) =>
-        obj.id === selectedObjectIds[0]
-          ? { ...obj, fill: availableColors[nextColorIndex] }
-          : obj
+        obj.type === 'text' ? [...COLORS, '#fafafa'] : COLORS;
+      const currentIndex = availableColors.indexOf(obj.fill || COLORS[0]);
+      const nextColor =
+        availableColors[(currentIndex + 1) % availableColors.length];
+      return prevObjects.map((item) =>
+        item.id === selectedId ? { ...item, fill: nextColor } : item
       );
     });
   };
 
   const handleItalicChange = () => {
-    textToggleItalic(objects, selectedObjectIds[0], setObjects);
+    textToggleItalic(objects, selectedId, setObjects);
   };
 
   const handleWeightChange = () => {
     setObjects((prevObjects) => {
-      const selectedObject = prevObjects.find((obj) =>
-        selectedObjectIds.includes(obj.id)
-      );
-
-      if (!selectedObject) return prevObjects;
-
-      const currentWeight = selectedObject.weight || 100;
+      const obj = prevObjects.find((item) => item.id === selectedId);
+      if (!obj) return prevObjects;
+      const currentWeight = obj.weight || 100;
       const nextWeight =
         currentWeight >= 900
           ? 100
@@ -103,87 +125,61 @@ export function Tooltip({
               | 700
               | 800
               | 900);
-
-      return prevObjects.map((obj) =>
-        obj.id === selectedObjectIds[0] ? { ...obj, weight: nextWeight } : obj
+      return prevObjects.map((item) =>
+        item.id === selectedId ? { ...item, weight: nextWeight } : item
       );
     });
   };
 
   const handleTextEdit = () => {
-    textEdit(selectedObjectIds[0], objects, setIsEditingId);
+    textEdit(selectedId, objects, setIsEditingId);
   };
 
   const handleMoveDown = () => {
-    const selectedObject = objects.find(
-      (obj) => obj.id === selectedObjectIds[0]
-    );
-    if (!selectedObject) return;
-
-    const selectedObjectIndex = objects.findIndex(
-      (obj) => obj.id === selectedObjectIds[0]
-    );
-
     setObjects((prevObjects) => {
-      const nextObjects = [...prevObjects];
-      nextObjects.splice(selectedObjectIndex, 1);
-      nextObjects.splice(selectedObjectIndex - 1, 0, selectedObject);
-
-      return nextObjects;
+      const index = prevObjects.findIndex((item) => item.id === selectedId);
+      if (index <= 0) return prevObjects;
+      const newObjects = [...prevObjects];
+      const [movedItem] = newObjects.splice(index, 1);
+      newObjects.splice(index - 1, 0, movedItem);
+      return newObjects;
     });
   };
 
   const handleChangeFontSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedObject = objects.find(
-      (obj) => obj.id === selectedObjectIds[0]
-    );
-    if (!selectedObject || selectedObject.type !== 'text') return;
-
+    const newSize = parseInt(e.target.value, 10) as fontSize;
     setObjects((prevObjects) =>
-      prevObjects.map((obj) =>
-        obj.id === selectedObjectIds[0]
-          ? { ...obj, fontSize: parseInt(e.target.value, 10) as fontSize }
-          : obj
+      prevObjects.map((item) =>
+        item.id === selectedId && item.type === 'text'
+          ? { ...item, fontSize: newSize }
+          : item
       )
     );
   };
 
   const handleChangeLocked = () => {
-    lockObject(selectedObjectIds[0], setObjects);
+    lockObject(selectedId, setObjects);
   };
 
   const handleLineWidthChange = () => {
     setObjects((prevObjects) => {
-      const selectedObject = prevObjects.find(
-        (obj) => obj.id === selectedObjectIds[0]
-      );
-      if (
-        !selectedObject ||
-        (selectedObject.type !== 'line' && selectedObject.type !== 'arrow')
-      )
+      const obj = prevObjects.find((item) => item.id === selectedId);
+      if (!obj || (obj.type !== 'line' && obj.type !== 'arrow'))
         return prevObjects;
-
       const widths = [2, 4, 6, 8, 10];
-      const currentWidth = selectedObject.lineWidth || 2;
+      const currentWidth = obj.lineWidth || 2;
       const currentIndex = widths.indexOf(currentWidth);
       const nextWidth = widths[(currentIndex + 1) % widths.length];
-
-      return prevObjects.map((obj) =>
-        obj.id === selectedObjectIds[0] ? { ...obj, lineWidth: nextWidth } : obj
+      return prevObjects.map((item) =>
+        item.id === selectedId ? { ...item, lineWidth: nextWidth } : item
       );
     });
   };
 
   const handleRotate = () => {
-    const object = objects.find((obj) => obj.id === selectedObjectIds[0]);
-    if (object?.locked === true) return;
-    rotateObject(
-      selectedObjectIds[0],
-      objects,
-      setObjects,
-      isRotating,
-      setIsRotating
-    );
+    const obj = objects.find((item) => item.id === selectedId);
+    if (obj?.locked) return;
+    rotateObject(selectedId, objects, setObjects, isRotating, setIsRotating);
   };
 
   const handleDuplicateObject = () => {
@@ -211,16 +207,16 @@ export function Tooltip({
   };
 
   const handleToggleCircle = () => {
-    imageToggleCircle(objects, selectedObjectIds[0], setObjects);
+    imageToggleCircle(objects, selectedId, setObjects);
   };
 
   const handleToggleSpoiler = () => {
-    imageToggleSpoiler(objects, selectedObjectIds[0], setObjects);
+    imageToggleSpoiler(objects, selectedId, setObjects);
   };
 
   if (!position) return null;
 
-  const selectedObject = objects.find((obj) => obj.id === selectedObjectIds[0]);
+  const selectedObject = objects.find((item) => item.id === selectedId);
   const isTextObject = selectedObject?.type === 'text';
   const isImageObject = selectedObject?.type === 'image';
   const isOriginalUrl = selectedObject?.originalUrl;
@@ -250,87 +246,59 @@ export function Tooltip({
               >
                 <Circle
                   className="h-5 w-5"
-                  fill={
-                    objects.find((obj) => obj.id === selectedObjectIds[0])
-                      ?.fill || COLORS[0]
-                  }
+                  fill={selectedObject?.fill || COLORS[0]}
                   stroke="none"
                 />
               </button>
               {(selectedObject?.type === 'line' ||
                 selectedObject?.type === 'arrow') && (
-                <>
-                  <div className="group relative">
-                    <button
-                      className={button({
-                        className: 'flex size-9 items-center justify-center',
-                      })}
-                      onClick={handleLineWidthChange}
-                      aria-label="Line width"
-                    >
-                      <div
-                        className="flex w-5 items-center justify-center"
-                        style={{
-                          height: selectedObject.lineWidth || 2,
-                          backgroundColor: selectedObject.fill,
-                          minHeight: '2px',
-                        }}
-                      />
-                    </button>
-                    <div className={popup({ isTextObject })}>
-                      <Popover text="Change line width" upper={isTextObject} />
-                    </div>
-                  </div>
-                </>
+                <PopoverButton
+                  onClick={handleLineWidthChange}
+                  ariaLabel="Line width"
+                  extraButtonClassName="flex size-9 items-center justify-center"
+                  isTextObject={!!isTextObject}
+                  popoverText="Change line width"
+                >
+                  <div
+                    className="flex w-5 items-center justify-center"
+                    style={{
+                      height: selectedObject.lineWidth || 2,
+                      backgroundColor: selectedObject.fill,
+                      minHeight: '2px',
+                    }}
+                  />
+                </PopoverButton>
               )}
             </>
           )}
-          <div className="group relative">
-            <button
-              className={button()}
-              onClick={handleMoveDown}
-              aria-label="Move"
-            >
-              <Layers2 className="h-5 w-5 rotate-180" />
-            </button>
-            <div className={popup({ isTextObject })}>
-              <Popover text="Move object down" upper={isTextObject} />
-            </div>
-          </div>
+          <PopoverButton
+            onClick={handleMoveDown}
+            ariaLabel="Move"
+            isTextObject={!!isTextObject}
+            popoverText="Move object down"
+          >
+            <Layers2 className="h-5 w-5 rotate-180" />
+          </PopoverButton>
           {isTextObject && (
             <>
-              <div className="group relative">
-                <button
-                  className={button()}
-                  onClick={handleWeightChange}
-                  aria-label="Weight"
-                >
-                  <Bold className="h-5 w-5" />
-                </button>
-                <div className={popup({ isTextObject })}>
-                  <Popover
-                    text="Change font weight"
-                    upper={isTextObject}
-                    command="B"
-                  />
-                </div>
-              </div>
-              <div className="group relative">
-                <button
-                  className={button()}
-                  onClick={handleItalicChange}
-                  aria-label="Italic"
-                >
-                  <Italic className="h-5 w-5" />
-                </button>
-                <div className={popup({ isTextObject })}>
-                  <Popover
-                    text="Change font style"
-                    upper={isTextObject}
-                    command="I"
-                  />
-                </div>
-              </div>
+              <PopoverButton
+                onClick={handleWeightChange}
+                ariaLabel="Weight"
+                isTextObject={!!isTextObject}
+                popoverText="Change font weight"
+                command="B"
+              >
+                <Bold className="h-5 w-5" />
+              </PopoverButton>
+              <PopoverButton
+                onClick={handleItalicChange}
+                ariaLabel="Italic"
+                isTextObject={!!isTextObject}
+                popoverText="Change font style"
+                command="I"
+              >
+                <Italic className="h-5 w-5" />
+              </PopoverButton>
               <button
                 className={button()}
                 onClick={handleTextEdit}
@@ -353,95 +321,72 @@ export function Tooltip({
           )}
           {isImageObject && !isOriginalUrl && (
             <>
-              <div className="group relative">
-                <button
-                  className={button()}
-                  onClick={handleToggleCircle}
-                  aria-label="Circle"
-                >
-                  {selectedObject?.circle ? (
-                    <CircleOff className="h-5 w-5 scale-x-[-1]" />
-                  ) : (
-                    <Circle className="h-5 w-5" />
-                  )}
-                </button>
-                <div className={popup({ isTextObject })}>
-                  <Popover text="Toggle circle" upper={isTextObject} />
-                </div>
-              </div>
-              <div className="group relative">
-                <button
-                  className={button()}
-                  onClick={handleToggleSpoiler}
-                  aria-label="Spoiler"
-                >
-                  {selectedObject?.spoiler ? (
-                    <EyeOff className="h-5 w-5 scale-x-[-1]" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-                <div className={popup({ isTextObject })}>
-                  <Popover text="Toggle spoiler" upper={isTextObject} />
-                </div>
-              </div>
+              <PopoverButton
+                onClick={handleToggleCircle}
+                ariaLabel="Circle"
+                isTextObject={!!isTextObject}
+                popoverText="Toggle circle"
+              >
+                {selectedObject?.circle ? (
+                  <CircleOff className="h-5 w-5 scale-x-[-1]" />
+                ) : (
+                  <Circle className="h-5 w-5" />
+                )}
+              </PopoverButton>
+              <PopoverButton
+                onClick={handleToggleSpoiler}
+                ariaLabel="Spoiler"
+                isTextObject={!!isTextObject}
+                popoverText="Toggle spoiler"
+              >
+                {selectedObject?.spoiler ? (
+                  <EyeOff className="h-5 w-5 scale-x-[-1]" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </PopoverButton>
             </>
           )}
-          <div className="group relative">
-            <button
-              className={button()}
-              onClick={handleRotate}
-              aria-label="Rotate"
-            >
-              <RefreshCw className="h-5 w-5" />
-            </button>
-            <div className={popup({ isTextObject })}>
-              <Popover text="Rotate object" upper={isTextObject} />
-            </div>
-          </div>
+          <PopoverButton
+            onClick={handleRotate}
+            ariaLabel="Rotate"
+            isTextObject={!!isTextObject}
+            popoverText="Rotate object"
+          >
+            <RefreshCw className="h-5 w-5" />
+          </PopoverButton>
           <div className="mx-2 h-6 w-px bg-gray-200" />
-          <div className="group relative">
-            <button
-              className={button()}
-              onClick={handleChangeLocked}
-              aria-label="Lock"
-            >
-              {selectedObject?.locked ? (
-                <LockKeyhole className="h-5 w-5" />
-              ) : (
-                <UnlockKeyhole className="h-5 w-5" />
-              )}
-            </button>
-            <div className={popup({ isTextObject })}>
-              <Popover text="Lock object" upper={isTextObject} />
-            </div>
-          </div>
+          <PopoverButton
+            onClick={handleChangeLocked}
+            ariaLabel="Lock"
+            isTextObject={!!isTextObject}
+            popoverText="Lock object"
+          >
+            {selectedObject?.locked ? (
+              <LockKeyhole className="h-5 w-5" />
+            ) : (
+              <UnlockKeyhole className="h-5 w-5" />
+            )}
+          </PopoverButton>
         </>
       )}
-      <div className="group relative">
-        <button
-          className={button()}
-          onClick={handleDuplicateObject}
-          aria-label="Duplicate"
-        >
-          <Copy className="h-5 w-5" />
-        </button>
-        <div className={popup({ isTextObject })}>
-          <Popover text="Duplicate object" upper={isTextObject} command="D" />
-        </div>
-      </div>
-      <div className="group relative">
-        <button
-          className={button()}
-          onClick={handleDeleteObject}
-          aria-label="Delete"
-        >
-          <Trash2 className="h-5 w-5" />
-        </button>
-        <div className={popup({ isTextObject })}>
-          <Popover text="Delete object" upper={isTextObject} />
-        </div>
-      </div>
+      <PopoverButton
+        onClick={handleDuplicateObject}
+        ariaLabel="Duplicate"
+        isTextObject={!!isTextObject}
+        popoverText="Duplicate object"
+        command="D"
+      >
+        <Copy className="h-5 w-5" />
+      </PopoverButton>
+      <PopoverButton
+        onClick={handleDeleteObject}
+        ariaLabel="Delete"
+        isTextObject={!!isTextObject}
+        popoverText="Delete object"
+      >
+        <Trash2 className="h-5 w-5" />
+      </PopoverButton>
     </div>
   );
 }
