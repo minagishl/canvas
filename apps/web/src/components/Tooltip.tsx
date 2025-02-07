@@ -350,7 +350,7 @@ export function Tooltip({
             <>
               <div className="mx-2 h-6 w-px bg-gray-200" />
               <select
-                className="h-9 appearance-none rounded-sm p-2 text-center leading-tight transition-colors hover:bg-gray-100"
+                className="flex h-10 max-w-11 min-w-11 appearance-none rounded-sm py-2 text-center leading-tight transition-colors hover:bg-gray-100"
                 value={selectedObject?.fontSize || 24}
                 onChange={handleChangeFontSize}
               >
