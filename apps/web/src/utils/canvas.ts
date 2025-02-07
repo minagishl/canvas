@@ -414,3 +414,38 @@ export const shareCanvasAsURL = async (
     setIsLoading(false);
   }
 };
+
+export const handleZoomToPoint = (
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
+  scale: number,
+  e: WheelEvent,
+  offset: Point
+): {
+  newScale: number;
+  newOffset: Point;
+} | void => {
+  // Pinch zoom
+  const delta = -e.deltaY / 500;
+  const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
+
+  const rect = canvasRef.current?.getBoundingClientRect();
+  if (!rect) return;
+
+  // Zoom in on the cursor position
+  const centerX = e.clientX;
+  const centerY = e.clientY;
+
+  const worldX = (centerX - offset.x) / scale;
+  const worldY = (centerY - offset.y) / scale;
+
+  const newOffsetX = centerX - worldX * newScale;
+  const newOffsetY = centerY - worldY * newScale;
+
+  return {
+    newScale,
+    newOffset: {
+      x: newOffsetX,
+      y: newOffsetY,
+    },
+  };
+};

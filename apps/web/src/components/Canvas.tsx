@@ -12,6 +12,7 @@ import {
   getCanvasPoint,
   exportCanvasAsImage,
   shareCanvasAsURL,
+  handleZoomToPoint,
 } from '~/utils/canvas';
 import {
   copyObject,
@@ -700,25 +701,14 @@ export const Canvas = () => {
         return;
       }
 
-      // Pinch zoom
-      const delta = -e.deltaY / 500;
-      const newScale = Math.min(Math.max(scale + delta, 0.7), 2);
+      // Zoom processing
+      const result = handleZoomToPoint(canvasRef, scale, e, offset);
 
-      const rect = canvasRef.current?.getBoundingClientRect();
-      if (!rect) return;
-
-      // Zoom in on the cursor position
-      const centerX = e.clientX;
-      const centerY = e.clientY;
-
-      const worldX = (centerX - offset.x) / scale;
-      const worldY = (centerY - offset.y) / scale;
-
-      const newOffsetX = centerX - worldX * newScale;
-      const newOffsetY = centerY - worldY * newScale;
-
-      setScale(newScale);
-      setOffset({ x: newOffsetX, y: newOffsetY });
+      if (result) {
+        const { newScale, newOffset } = result;
+        setScale(newScale);
+        setOffset(newOffset);
+      }
 
       if (e.shiftKey) {
         // Pan operation with two fingers
@@ -728,7 +718,7 @@ export const Canvas = () => {
         }));
       }
     },
-    [scale, offset.x, offset.y, setScale, setOffset]
+    [offset, scale, setOffset, setScale]
   );
 
   const handleTouchStart = useCallback(
