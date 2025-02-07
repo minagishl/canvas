@@ -3,7 +3,7 @@ import { CanvasObject, fontWeight } from '~/types/canvas';
 export const textEdit = (
   selectedObjectId: string | null,
   objects: CanvasObject[],
-  setIsEditingId: (id: string) => void
+  setIsEditingId: React.Dispatch<React.SetStateAction<string>>
 ): void => {
   if (!selectedObjectId) return;
 
