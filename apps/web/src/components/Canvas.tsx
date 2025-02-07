@@ -976,7 +976,7 @@ export const Canvas = () => {
         e.preventDefault();
       }
 
-      if (e.key === 'Delete' || e.key === 'Backspace') {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && !showAIInput) {
         deleteObject(
           objects,
           selectedObjectIds,
