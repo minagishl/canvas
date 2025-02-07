@@ -18,18 +18,31 @@ export const copyObject = (
     if (!selectedObject) return;
 
     const newId = Math.random().toString(36).slice(2, 11);
+    let offsetX = 40;
+    let offsetY = 40;
 
-    setObjects((prevObjects) => [
-      ...prevObjects,
-      {
-        ...selectedObject,
-        id: newId,
-        position: {
-          x: selectedObject.position.x + 40,
-          y: selectedObject.position.y + 40,
-        },
+    while (
+      selectedObjectIds.length === 1 &&
+      objects.some(
+        (obj) =>
+          obj.position.x === selectedObject.position.x + offsetX &&
+          obj.position.y === selectedObject.position.y + offsetY
+      )
+    ) {
+      offsetX += 40;
+      offsetY += 40;
+    }
+
+    const newObject = {
+      ...selectedObject,
+      id: newId,
+      position: {
+        x: selectedObject.position.x + offsetX,
+        y: selectedObject.position.y + offsetY,
       },
-    ]);
+    };
+
+    setObjects((prevObjects) => [...prevObjects, newObject]);
 
     // Add to history if history management is enabled
     setHistory((prev) => {
@@ -38,17 +51,7 @@ export const copyObject = (
         ...newHistory,
         {
           type: 'copy',
-          objects: [
-            ...objects,
-            {
-              ...selectedObject,
-              id,
-              position: {
-                x: selectedObject.position.x + 40,
-                y: selectedObject.position.y + 40,
-              },
-            },
-          ],
+          objects: [...objects, newObject],
           selectedObjectId: id,
         },
       ];
