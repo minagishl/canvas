@@ -221,6 +221,7 @@ export function Tooltip({
   const isImageObject = selectedObject?.type === 'image';
   const isOriginalUrl = selectedObject?.originalUrl;
   const isEmbedObject = selectedObject?.type === 'embed';
+  const isCircleObject = selectedObject?.type === 'circle';
   const isMultipleSelection = selectedObjectIds.length > 1;
 
   return (
@@ -338,14 +339,16 @@ export function Tooltip({
               </PopoverButton>
             </>
           )}
-          <PopoverButton
-            onClick={handleRotate}
-            ariaLabel="Rotate"
-            isTextObject={!!isTextObject}
-            popoverText="Rotate object"
-          >
-            <RefreshCw className="h-5 w-5" />
-          </PopoverButton>
+          {!isCircleObject && (
+            <PopoverButton
+              onClick={handleRotate}
+              ariaLabel="Rotate"
+              isTextObject={!!isTextObject}
+              popoverText="Rotate object"
+            >
+              <RefreshCw className="h-5 w-5" />
+            </PopoverButton>
+          )}
           {isTextObject && (
             <>
               <div className="mx-2 h-6 w-px bg-gray-200" />
