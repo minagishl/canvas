@@ -7,7 +7,7 @@ import { type HistoryState } from '~/types/history';
 export const fetchRandomGif = async (
   imagePosition: Point | null,
   setAlert: React.Dispatch<React.SetStateAction<string>>,
-  setImagePosition: (position: Point | null) => void,
+  setImagePosition: React.Dispatch<React.SetStateAction<Point | null>>,
   setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>,
   setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
@@ -97,7 +97,7 @@ export const loadImage = (url: string): Promise<HTMLImageElement> => {
 export const imageToggleCircle = (
   objects: CanvasObject[],
   selectedObjectId: string | null,
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void => {
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
   if (selectedObject && selectedObject.type === 'image') {
@@ -116,7 +116,7 @@ export const imageToggleCircle = (
 export const imageToggleSpoiler = (
   objects: CanvasObject[],
   selectedObjectId: string | null,
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void => {
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
   if (selectedObject && selectedObject.type === 'image') {
@@ -138,10 +138,10 @@ interface HandleFileChangeProps {
   setImageCache: (
     value: React.SetStateAction<{ [key: string]: string }>
   ) => void;
-  setImagePosition: (value: React.SetStateAction<Point | null>) => void;
-  setSelectedTool: (value: React.SetStateAction<ToolType>) => void;
-  setAlert: (value: React.SetStateAction<string>) => void;
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void;
+  setImagePosition: React.Dispatch<React.SetStateAction<Point | null>>;
+  setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>;
+  setAlert: React.Dispatch<React.SetStateAction<string>>;
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>;
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>;
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
 }
