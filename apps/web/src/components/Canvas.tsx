@@ -426,7 +426,7 @@ export const Canvas = () => {
             currentPoint,
             resizeHandle: resizing,
             isShiftPressed: e.shiftKey,
-            snapToGridEnabled: snapToGridEnabled,
+            snapToGridEnabled,
           });
           const updatedObjects = objects.map((obj) =>
             obj.id === selectedObject.id ? { ...obj, ...resizedObject } : obj

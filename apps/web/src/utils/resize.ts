@@ -22,6 +22,9 @@ export const handleObjectResize = ({
   const dx = currentPoint.x - startPoint.x;
   const dy = currentPoint.y - startPoint.y;
 
+  const isSnapToGridEnabled =
+    snapToGridEnabled && import.meta.env.VITE_ENABLED_RESIZES_SNAP === 'true';
+
   const newPosition = { ...selectedObject.position };
   let newWidth = selectedObject.width;
   let newHeight = selectedObject.height;
@@ -94,7 +97,7 @@ export const handleObjectResize = ({
   // Minimum Size Limit
   if (newWidth >= MIN_OBJECT_SIZE && newHeight >= MIN_OBJECT_SIZE) {
     // If grid snap is enabled, snap the position and size
-    if (snapToGridEnabled) {
+    if (isSnapToGridEnabled) {
       newPosition.x = snapToGrid(newPosition).x;
       newPosition.y = snapToGrid(newPosition).y;
       newWidth = snapToGridSize(newWidth);
