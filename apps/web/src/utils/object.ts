@@ -41,6 +41,12 @@ export const copyObject = (
         x: selectedObject.position.x + offsetX,
         y: selectedObject.position.y + offsetY,
       },
+      points: selectedObject.points
+        ? selectedObject.points.map((point) => ({
+            x: point.x + offsetX,
+            y: point.y + offsetY,
+          }))
+        : undefined,
     };
 
     setObjects((prevObjects) => [...prevObjects, newObject]);
