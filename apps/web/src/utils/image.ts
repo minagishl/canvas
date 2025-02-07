@@ -135,9 +135,11 @@ export const imageToggleSpoiler = (
 interface HandleFileChangeProps {
   file: File | undefined;
   imagePosition: Point | null;
-  setImageCache: (
-    value: React.SetStateAction<{ [key: string]: string }>
-  ) => void;
+  setImageCache: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: string;
+    }>
+  >;
   setImagePosition: React.Dispatch<React.SetStateAction<Point | null>>;
   setSelectedTool: React.Dispatch<React.SetStateAction<ToolType>>;
   setAlert: React.Dispatch<React.SetStateAction<string>>;
