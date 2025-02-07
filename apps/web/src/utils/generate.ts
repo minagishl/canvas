@@ -7,9 +7,9 @@ import { HistoryState } from '~/types/history';
 
 export const aIGenerate = async (
   aiInputText: string,
-  setShowAIInput: (value: boolean) => void,
+  setShowAIInput: React.Dispatch<React.SetStateAction<boolean>>,
   setAlert: React.Dispatch<React.SetStateAction<string>>,
-  setIsAIGenerating: (value: boolean) => void,
+  setIsAIGenerating: React.Dispatch<React.SetStateAction<boolean>>,
   setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>
