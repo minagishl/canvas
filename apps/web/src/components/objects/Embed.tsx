@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { CanvasObject } from '~/types/canvas';
-import { isMobile } from 'react-device-detect';
+import { isMobile } from '~/utils/device';
 
 interface EmbedObjectProps {
   selectedObjectIds: string[];

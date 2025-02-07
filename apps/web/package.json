@@ -15,7 +15,6 @@
     "@tailwindcss/vite": "^4.0.3",
     "html-to-image": "^1.11.11",
     "lucide-react": "^0.475.0",
-    "react-device-detect": "^2.2.3",
     "tailwind-variants": "^0.3.1",
     "tailwindcss": "^4.0.1"
   },

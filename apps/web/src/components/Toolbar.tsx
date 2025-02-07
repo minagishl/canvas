@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useCanvasContext } from '~/contexts/CanvasContext';
 import { ToolType } from '~/types/canvas';
-import { isMobile } from 'react-device-detect';
+import { isMobile } from '~/utils/device';
 import { Popover } from './Popover';
 import { Menu } from './Menu';
 import { Loading } from './Loading';

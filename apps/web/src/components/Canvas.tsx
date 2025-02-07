@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Point, CanvasObject, ResizeHandle, LinePoint } from '~/types/canvas';
 import { CanvasDataSchema } from '~/schema';
 import { parseAsync } from 'valibot';
-import { isMobile } from 'react-device-detect';
 
 // Utility functions
 import { showTemporaryAlert } from '~/utils/alert';
@@ -33,6 +32,7 @@ import { handleObjectResize } from '~/utils/resize';
 import { getTouchPoint, getTouchDistance, getTouchCenter } from '~/utils/touch';
 import { handleAddObject } from '~/utils/history';
 import { aIGenerate } from '~/utils/generate';
+import { isMobile } from '~/utils/device';
 
 // Contexts
 import { useCanvasContext } from '~/contexts/CanvasContext';

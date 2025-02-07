@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { CanvasObject } from '~/types/canvas';
 import { text } from '~/variants';
-import { isMobile } from 'react-device-detect';
+import { isMobile } from '~/utils/device';
 
 interface TextObjectProps {
   selectedTool: string;
