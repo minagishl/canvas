@@ -7,7 +7,7 @@ interface ImportMetaEnv {
 
   // Environment variable to enable/disable
   readonly VITE_ENABLED_GIF: string;
-  readonly VITE_ENABLED_RESIZES_NAP: string;
+  readonly VITE_ENABLED_RESIZES_SNAP: string;
   readonly VITE_ENABLED_PRESENTATION: string;
   readonly VITE_ENABLED_AI: string;
 
