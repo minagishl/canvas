@@ -976,7 +976,23 @@ export const Canvas = () => {
         e.preventDefault();
       }
 
-      if ((e.key === 'Delete' || e.key === 'Backspace') && !showAIInput) {
+      if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
+        setCopyObjectIds(selectedObjectIds);
+        // Clear the clipboard
+        navigator.clipboard.writeText('').catch((error) => {
+          console.error('Error clearing clipboard:', error);
+        });
+      }
+
+      const keys = ['s', 'l', 'e', 'd', 'g', '/'];
+      if (keys.includes(e.key) && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+      }
+
+      // Disabled while displaying input elements
+      if (showAIInput) return;
+
+      if (e.key === 'Delete' || e.key === 'Backspace') {
         deleteObject(
           objects,
           selectedObjectIds,
@@ -988,14 +1004,7 @@ export const Canvas = () => {
         );
       }
 
-      if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
-        setCopyObjectIds(selectedObjectIds);
-        // Clear the clipboard
-        navigator.clipboard.writeText('').catch((error) => {
-          console.error('Error clearing clipboard:', error);
-        });
-      }
-
+      // Undo with Cmd/Ctrl + Z
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         handleUndo();
@@ -1011,7 +1020,8 @@ export const Canvas = () => {
         textToggleBold(objects, selectedObjectIds[0], setObjects);
       }
 
-      if (e.key === 'v' && (e.metaKey || e.ctrlKey) && !showAIInput) {
+      // Paste object with Cmd/Ctrl + V
+      if (e.key === 'v' && (e.metaKey || e.ctrlKey)) {
         handlePaste(
           width,
           height,
@@ -1028,6 +1038,7 @@ export const Canvas = () => {
           currentHistoryIndex
         );
       }
+
       // Lock object with Cmd/Ctrl + Shift + L
       if (
         e.key === 'l' &&
@@ -1035,19 +1046,16 @@ export const Canvas = () => {
         e.shiftKey &&
         isSelected
       ) {
-        e.preventDefault();
         lockObject(selectedObjectIds[0], setObjects);
       }
 
       // Export canvas as image with Cmd/Ctrl + E
       if (e.key === 'e' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
         exportCanvasAsImage(objects, setSelectedObjectIds, setAlert);
       }
 
       // Duplicate object with Cmd/Ctrl + D
       if (e.key === 'd' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
         copyObject(
           objects,
           selectedObjectIds,
@@ -1061,7 +1069,6 @@ export const Canvas = () => {
 
       // Grid snap toggle with Cmd/Ctrl + G
       if (e.key === 'g' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
         setSnapToGridEnabled((prev) => !prev);
         showTemporaryAlert(
           `Grid snap ${snapToGridEnabled ? 'disabled' : 'enabled'}`,
@@ -1070,16 +1077,11 @@ export const Canvas = () => {
       }
 
       if (e.key === '/' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-
-        if (showAIInput) return;
-
         setIsModalOpen(!isModalOpen);
         setSelectedTool('select');
       }
 
       if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
         shareCanvasAsURL(objects, setIsLoading, setSelectedObjectIds, setAlert);
       }
 
