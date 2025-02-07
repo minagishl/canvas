@@ -59,6 +59,7 @@ const allowedKeys = [
   'spoiler',
   'text',
   'weight',
+  'arrowHead',
 ] as const;
 
 app.use(
@@ -125,6 +126,7 @@ const validators = {
       rotation: 'number',
       spoiler: 'boolean',
       text: 'string',
+      arrowHead: 'boolean',
     };
 
     return typeValidations[fieldTypes[field]]?.(obj[field]) ?? false;

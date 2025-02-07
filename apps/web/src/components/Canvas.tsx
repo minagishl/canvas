@@ -468,6 +468,7 @@ export const Canvas = () => {
           fill: '#4f46e5',
           points: [...currentLine, point],
           lineWidth: 6,
+          arrowHead: !isPen,
         });
         return;
       }
@@ -570,6 +571,7 @@ export const Canvas = () => {
           fill: '#4f46e5',
           points: [...currentLine, point],
           lineWidth: 6,
+          arrowHead: true,
         };
 
         setCurrentLine([]);

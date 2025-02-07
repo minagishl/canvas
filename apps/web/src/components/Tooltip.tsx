@@ -13,6 +13,8 @@ import {
   Layers2,
   Eye,
   EyeOff,
+  ArrowRight,
+  Ban,
 } from 'lucide-react';
 import { useCanvasContext } from '~/contexts/CanvasContext';
 import { Popover } from './Popover';
@@ -176,6 +178,16 @@ export function Tooltip({
     });
   };
 
+  const handleArrowHeadChange = () => {
+    setObjects((prevObjects) => {
+      const obj = prevObjects.find((item) => item.id === selectedId);
+      if (!obj || obj.type !== 'arrow') return prevObjects;
+      return prevObjects.map((item) =>
+        item.id === selectedId ? { ...item, arrowHead: !obj.arrowHead } : item
+      );
+    });
+  };
+
   const handleRotate = () => {
     const obj = objects.find((item) => item.id === selectedId);
     if (obj?.locked) return;
@@ -223,6 +235,7 @@ export function Tooltip({
   const isEmbedObject = selectedObject?.type === 'embed';
   const isCircleObject = selectedObject?.type === 'circle';
   const isMultipleSelection = selectedObjectIds.length > 1;
+  const isArrowObject = selectedObject?.type === 'arrow';
 
   return (
     <div
@@ -280,6 +293,20 @@ export function Tooltip({
               popoverText="Move object down"
             >
               <Layers2 className="h-5 w-5 rotate-180" />
+            </PopoverButton>
+          )}
+          {isArrowObject && (
+            <PopoverButton
+              onClick={handleArrowHeadChange}
+              ariaLabel="Arrow head"
+              isTextObject={!!isTextObject}
+              popoverText="Toggle arrow head"
+            >
+              {selectedObject?.arrowHead ? (
+                <ArrowRight className="h-5 w-5" />
+              ) : (
+                <Ban className="h-5 w-5" />
+              )}
             </PopoverButton>
           )}
           {isTextObject && (

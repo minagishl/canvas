@@ -57,6 +57,7 @@ export type CanvasObject = {
   spoiler?: boolean;
   text?: string;
   weight?: fontWeight;
+  arrowHead?: boolean;
 };
 
 export type ToolType =
