@@ -411,7 +411,6 @@ export const Canvas = () => {
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      console.log('handleMouseMove');
       // Resize processing
       if (resizing && selectedObjectIds.length === 1 && startPoint) {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
