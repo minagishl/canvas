@@ -4,7 +4,7 @@ import { HistoryState } from '~/types/history';
 export const copyObject = (
   objects: CanvasObject[],
   selectedObjectIds: string[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
@@ -66,7 +66,7 @@ export const copyObject = (
 export const deleteObject = (
   objects: CanvasObject[],
   selectedObjectIds: string[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
@@ -105,7 +105,7 @@ export const deleteObject = (
 
 export const lockObject = (
   selectedObjectId: string | null,
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void => {
   if (!selectedObjectId) return;
 
@@ -119,7 +119,7 @@ export const lockObject = (
 export const rotateObject = (
   selectedObjectId: string | null,
   objects: CanvasObject[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   isRotating: boolean,
   setIsRotating: React.Dispatch<React.SetStateAction<boolean>>
 ): void => {
@@ -161,7 +161,7 @@ export const rotateObject = (
 
 export function upObject(
   selectedObjectIds: string[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void {
   if (selectedObjectIds.length === 0) return;
 
@@ -182,7 +182,7 @@ export function upObject(
 
 export function downObject(
   selectedObjectIds: string[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void {
   if (selectedObjectIds.length === 0) return;
 
@@ -203,7 +203,7 @@ export function downObject(
 
 export function leftObject(
   selectedObjectIds: string[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void {
   if (selectedObjectIds.length === 0) return;
 
@@ -224,7 +224,7 @@ export function leftObject(
 
 export function rightObject(
   selectedObjectIds: string[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void {
   if (selectedObjectIds.length === 0) return;
 

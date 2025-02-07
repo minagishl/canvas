@@ -15,7 +15,7 @@ export const handlePaste = async (
   setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>,
   objects: CanvasObject[],
   copyObjectIds: string[],
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void,
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>,
   currentHistoryIndex: number

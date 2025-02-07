@@ -10,7 +10,7 @@ export const aIGenerate = async (
   setShowAIInput: (value: boolean) => void,
   setAlert: React.Dispatch<React.SetStateAction<string>>,
   setIsAIGenerating: (value: boolean) => void,
-  setObjects: (callback: (prev: CanvasObject[]) => CanvasObject[]) => void,
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>
 ) => {

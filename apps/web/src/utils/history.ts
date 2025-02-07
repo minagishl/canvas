@@ -22,7 +22,7 @@ export const addToHistory = (
 
 export const handleAddObject = async (
   newObject: CanvasObject,
-  setObjects: (callback: (prev: CanvasObject[]) => CanvasObject[]) => void,
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>,
   setHistory: React.Dispatch<React.SetStateAction<HistoryState[]>>,
   setCurrentHistoryIndex: React.Dispatch<React.SetStateAction<number>>
 ) => {

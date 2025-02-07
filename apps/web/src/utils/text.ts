@@ -24,7 +24,7 @@ export const textEdit = (
 export const textToggleBold = (
   objects: CanvasObject[],
   selectedObjectId: string | null,
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void => {
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
   if (selectedObject && selectedObject.type === 'text') {
@@ -43,7 +43,7 @@ export const textToggleBold = (
 export const textToggleItalic = (
   objects: CanvasObject[],
   selectedObjectId: string | null,
-  setObjects: (value: React.SetStateAction<CanvasObject[]>) => void
+  setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void => {
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
   if (selectedObject && selectedObject.type === 'text') {
