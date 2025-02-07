@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => ({
     }),
     react(),
     tsconfigPaths(),
+    helmet(),
     htmlPlugin(loadEnv(mode, '.')),
     ViteMinifyPlugin({
       removeComments: true,
@@ -45,6 +46,31 @@ function htmlPlugin(env: ReturnType<typeof loadEnv>) {
       order: 'pre' as const,
       handler: (html: string): string =>
         html.replace(/%(.*?)%/g, (match, p1) => env[p1] ?? match),
+    },
+  };
+}
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Canvas',
+  description: 'A free canvas tool available online for building ideas.',
+  applicationCategory: 'DesignApplication',
+  operatingSystem: 'All',
+};
+
+function helmet() {
+  return {
+    name: 'helmet-transform',
+    transformIndexHtml: {
+      order: 'pre' as const,
+      handler: (html: string): string =>
+        html.replace(
+          /<head>([\s\S]*?)<\/head>/,
+          `<head>$1<script type="application/ld+json">${JSON.stringify(
+            schema
+          )}</script></head>`
+        ),
     },
   };
 }
