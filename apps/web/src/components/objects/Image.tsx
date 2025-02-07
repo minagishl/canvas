@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { CanvasObject } from '~/types/canvas';
 import { isMobile } from '~/utils/device';
-
 interface ImageObjectProps {
   selectedObjectIds: string[];
   scale: number;
@@ -140,37 +139,30 @@ export const ImageObject = React.memo(
           </div>
         )}
 
+        {/* Selection border */}
         {isSelected && (
           <>
             <div className="pointer-events-none absolute -inset-2.5 border-2 border-indigo-600" />
-            <div
-              className="absolute -top-3 -left-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                handleMouseDown(e, 'top-left');
-              }}
-            />
-            <div
-              className="absolute -top-3 -right-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                handleMouseDown(e, 'top-right');
-              }}
-            />
-            <div
-              className="absolute -bottom-3 -left-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                handleMouseDown(e, 'bottom-left');
-              }}
-            />
-            <div
-              className="absolute -right-3 -bottom-3 size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                handleMouseDown(e, 'bottom-right');
-              }}
-            />
+            {(
+              ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const
+            ).map((pos) => {
+              const posClasses: Record<string, string> = {
+                'top-left': 'absolute -top-3 -left-3',
+                'top-right': 'absolute -top-3 -right-3',
+                'bottom-left': 'absolute -bottom-3 -left-3',
+                'bottom-right': 'absolute -bottom-3 -right-3',
+              };
+              return (
+                <div
+                  key={pos}
+                  className={`${posClasses[pos]} size-2.5 rounded-full border-[1.5px] border-indigo-600 bg-white`}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    handleMouseDown(e, pos);
+                  }}
+                />
+              );
+            })}
           </>
         )}
       </div>
