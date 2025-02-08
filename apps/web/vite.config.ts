@@ -5,6 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import tailwindcss from '@tailwindcss/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import removeAttr from 'react-remove-attr';
+import sitemap from 'vite-plugin-sitemap';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -26,6 +27,9 @@ export default defineConfig(({ mode }) => ({
       removeEmptyAttributes: false,
     }),
     tailwindcss(),
+    sitemap({
+      hostname: 'https://canvas.minagishl.com',
+    }),
   ],
   build: {
     minify: 'terser',
