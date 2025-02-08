@@ -65,7 +65,6 @@ export const drawObject = (
   selectedObjectIds: string[],
   scale: number
 ): void => {
-  console.log('object', object);
   // Save the current context state
   ctx.save();
 

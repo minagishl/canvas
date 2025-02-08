@@ -525,7 +525,6 @@ export const Canvas = () => {
             width: Math.abs(currentPoint.x - startPoint.x),
             height: Math.abs(currentPoint.y - startPoint.y),
           });
-          console.log('preview-selection');
         } else {
           const snappedPoint = snapToGridEnabled
             ? snapToGrid(currentPoint)
