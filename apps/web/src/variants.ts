@@ -1,7 +1,7 @@
 import { tv } from 'tailwind-variants';
 
 export const container = tv({
-  base: 'flex flex-row z-40 -translate-x-1/2 select-none',
+  base: 'flex flex-row z-40 -translate-x-1/2 select-none print:hidden',
   variants: {
     top: {
       true: 'fixed top-4 left-1/2 -translate-x-1/2',
@@ -80,7 +80,7 @@ export const text = tv({
 });
 
 export const frame = tv({
-  base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-base',
+  base: 'flex items-center gap-2 rounded-lg p-1.5 bg-white shadow-base print:hidden',
 });
 
 export const menu = tv({
