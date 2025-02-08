@@ -1,11 +1,21 @@
 import { CanvasObject, Point, ToolType } from '~/types/canvas';
 import { MIN_OBJECT_SIZE } from './constants';
 
-export const createPreviewObject = (
+export const createObject = (
   tool: ToolType,
   startPoint: Point,
   endPoint: Point,
   isShiftPressed: boolean
+): CanvasObject => {
+  return createPreviewObject(tool, startPoint, endPoint, isShiftPressed, false);
+};
+
+export const createPreviewObject = (
+  tool: ToolType,
+  startPoint: Point,
+  endPoint: Point,
+  isShiftPressed: boolean,
+  isPreview: boolean = true
 ): CanvasObject => {
   const deltaX = endPoint.x - startPoint.x;
   const deltaY = endPoint.y - startPoint.y;
@@ -21,7 +31,7 @@ export const createPreviewObject = (
     tool === 'text' ? 'text' : tool === 'circle' ? 'circle' : 'rectangle';
 
   return {
-    id: Math.random().toString(36).slice(2, 11),
+    id: isPreview ? 'preview-' + tool : Math.random().toString(36).slice(2, 11),
     type,
     position: {
       x: Math.min(startPoint.x, endPoint.x),

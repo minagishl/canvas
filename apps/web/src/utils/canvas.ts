@@ -10,7 +10,6 @@ export const setupAndRenderCanvas = (
   objects: CanvasObject[],
   selectedObjectIds: string[],
   previewObject: CanvasObject | null,
-  selectedTool: string,
   offset: { x: number; y: number },
   scale: number,
   width: number,
@@ -51,7 +50,7 @@ export const setupAndRenderCanvas = (
     });
 
   // Draw preview object
-  if (previewObject && selectedTool !== 'select') {
+  if (previewObject && previewObject.id.includes('preview')) {
     ctx.globalAlpha = 0.6;
     drawObject(ctx, previewObject, [], scale);
     ctx.globalAlpha = 1;
@@ -66,6 +65,7 @@ export const drawObject = (
   selectedObjectIds: string[],
   scale: number
 ): void => {
+  console.log('object', object);
   // Save the current context state
   ctx.save();
 
@@ -167,6 +167,22 @@ export const drawObject = (
 
         ctx.stroke();
       }
+      break;
+    case 'selection':
+      ctx.strokeStyle = '#1f1f6e';
+      ctx.lineWidth = 2 / scale;
+      ctx.strokeRect(
+        object.position.x,
+        object.position.y,
+        object.width,
+        object.height
+      );
+      ctx.fillRect(
+        object.position.x,
+        object.position.y,
+        object.width,
+        object.height
+      );
       break;
   }
 

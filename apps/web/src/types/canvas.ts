@@ -33,6 +33,7 @@ export const ObjectTypes = [
   'line',
   'arrow',
   'embed',
+  'selection',
 ] as const;
 
 export type ObjectType = (typeof ObjectTypes)[number];

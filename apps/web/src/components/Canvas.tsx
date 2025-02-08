@@ -22,7 +22,7 @@ import {
   leftObject,
   rightObject,
 } from '~/utils/object';
-import { createPreviewObject } from '~/utils/preview';
+import { createObject, createPreviewObject } from '~/utils/preview';
 import { calculateTooltipPosition } from '~/utils/tooltip';
 import { fetchRandomGif, handleFileChange } from '~/utils/image';
 import { textToggleBold, textToggleItalic } from '~/utils/text';
@@ -205,22 +205,12 @@ export const Canvas = () => {
         objects,
         selectedObjectIds,
         previewObject,
-        selectedTool,
         offset,
         scale,
         width,
         height
       );
-  }, [
-    scale,
-    offset,
-    objects,
-    previewObject,
-    selectedTool,
-    selectedObjectIds,
-    width,
-    height,
-  ]);
+  }, [scale, offset, objects, previewObject, selectedObjectIds, width, height]);
 
   const initDragPositions = useCallback(
     (selectedIds: string[]) => {
@@ -378,15 +368,18 @@ export const Canvas = () => {
           setStartPoint(point);
           return;
         } else {
+          // If the blank area is clicked with nothing
           setSelectedObjectIds([]);
-
-          // Left click does nothing (current status)
-          if (!isDragging && e.buttons === 1) {
+          if (e.button === 0) {
+            // Start marquee selection if left-clicked
+            setStartPoint(point);
+            setIsDragging(true);
+            return;
+          } else {
+            setIsPanning(true);
+            setPanStart({ x: e.clientX, y: e.clientY });
             return;
           }
-
-          setIsPanning(true);
-          setPanStart({ x: e.clientX, y: e.clientY });
         }
       } else {
         setStartPoint(point);
@@ -406,7 +399,6 @@ export const Canvas = () => {
       setCurrentHistoryIndex,
       setSelectedObjectIds,
       initDragPositions,
-      isDragging,
     ]
   );
 
@@ -516,41 +508,104 @@ export const Canvas = () => {
           return obj;
         });
         setObjects(updatedObjects);
-      } else if (startPoint && selectedTool !== 'image') {
+      }
+
+      // If dragging and not an image tool
+      else if (startPoint && selectedTool !== 'image') {
         const currentPoint = getCanvasPoint(e, canvasRef, offset, scale);
-        const snappedPoint = snapToGridEnabled
-          ? snapToGrid(currentPoint)
-          : currentPoint;
-        const preview = createPreviewObject(
-          selectedTool,
-          snapToGridEnabled ? snapToGrid(startPoint) : startPoint,
-          snappedPoint,
-          e.shiftKey
-        );
-        setPreviewObject(preview);
+        // Create a preview for marquee selection if in "select" mode and no object is selected
+        if (selectedTool === 'select' && selectedObjectIds.length === 0) {
+          setPreviewObject({
+            id: 'preview-selection',
+            type: 'selection',
+            position: {
+              x: Math.min(startPoint.x, currentPoint.x),
+              y: Math.min(startPoint.y, currentPoint.y),
+            },
+            width: Math.abs(currentPoint.x - startPoint.x),
+            height: Math.abs(currentPoint.y - startPoint.y),
+          });
+          console.log('preview-selection');
+        } else {
+          const snappedPoint = snapToGridEnabled
+            ? snapToGrid(currentPoint)
+            : currentPoint;
+          const preview = createPreviewObject(
+            selectedTool,
+            snapToGridEnabled ? snapToGrid(startPoint) : startPoint,
+            snappedPoint,
+            e.shiftKey
+          );
+          setPreviewObject(preview);
+        }
       }
     },
     [
-      resizing,
-      selectedObjectIds,
-      startPoint,
-      isPanning,
-      panStart,
-      selectedTool,
+      currentLine,
+      initialLinePoints,
+      initialPositions,
       isDragging,
-      offset,
-      scale,
+      isPanning,
       objects,
-      snapToGridEnabled,
+      offset,
+      panStart,
+      resizing,
+      scale,
+      selectedObjectIds,
+      selectedTool,
       setObjects,
       setOffset,
-      currentLine,
-      initialPositions,
-      initialLinePoints,
+      snapToGridEnabled,
+      startPoint,
     ]
   );
 
   const handleMouseUp = (e: React.MouseEvent) => {
+    // Marquee selection processing
+    if (
+      selectedTool === 'select' &&
+      previewObject &&
+      previewObject.type === 'selection'
+    ) {
+      const selectionRect = {
+        x: previewObject.position.x,
+        y: previewObject.position.y,
+        width: previewObject.width,
+        height: previewObject.height,
+      };
+
+      // Utility function for intersection judgment of rectangles
+      const rectsIntersect = (
+        r1: { x: number; y: number; width: number; height: number },
+        r2: { x: number; y: number; width: number; height: number }
+      ) => {
+        return !(
+          r2.x > r1.x + r1.width ||
+          r2.x + r2.width < r1.x ||
+          r2.y > r1.y + r1.height ||
+          r2.y + r2.height < r1.y
+        );
+      };
+
+      const selectedIds = objects
+        .filter((obj) => {
+          const objRect = {
+            x: obj.position.x,
+            y: obj.position.y,
+            width: obj.width,
+            height: obj.height,
+          };
+          return rectsIntersect(selectionRect, objRect);
+        })
+        .map((obj) => obj.id);
+
+      setSelectedObjectIds(selectedIds);
+      setPreviewObject(null);
+      setStartPoint(null);
+      setIsDragging(false);
+      return;
+    }
+
     if (selectedTool === 'arrow' && currentLine.length > 0) {
       const point = getCanvasPoint(e, canvasRef, offset, scale);
 
@@ -660,7 +715,7 @@ export const Canvas = () => {
         ? snapToGrid(endPoint)
         : endPoint;
 
-      const newObject = createPreviewObject(
+      const newObject = createObject(
         selectedTool,
         snappedStartPoint,
         snappedEndPoint,
