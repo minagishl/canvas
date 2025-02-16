@@ -197,7 +197,7 @@ function validateObject(obj: any): {
     }
   }
 
-  if (!validators.checkWeight(obj.weight)) {
+  if (obj.weight !== undefined && !validators.checkWeight(obj.weight)) {
     return { isValid: false, error: 'invalid weight' };
   }
 
