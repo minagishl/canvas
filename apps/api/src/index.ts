@@ -18,12 +18,18 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-const ObjectTypes = {
+const AIObjectTypes = {
   rectangle: 'rectangle',
   circle: 'circle',
   text: 'text',
   line: 'line',
   arrow: 'arrow',
+} as const;
+
+const ObjectTypes = {
+  ...AIObjectTypes,
+  image: 'image',
+  embed: 'embed',
 } as const;
 
 const fontWeight = {
@@ -280,7 +286,7 @@ const schema = z.object({
     .array(
       z.object({
         id: z.string().describe('9-character unique ID (alphanumeric)'),
-        type: z.nativeEnum(ObjectTypes).describe('Object type'),
+        type: z.nativeEnum(AIObjectTypes).describe('Object type'),
         position: z
           .object({
             x: z.number().describe('X coordinate'),
