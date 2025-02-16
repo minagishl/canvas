@@ -42,7 +42,13 @@ export const aIGenerate = async (
       const result = await parseAsync(CanvasAIDaraSchema, data);
       // Add each generated object
       result.forEach((object) => {
-        handleAddObject(object, setObjects, setHistory, setCurrentHistoryIndex);
+        const objectWithNewId = { ...object, id: generateRandomId() };
+        handleAddObject(
+          objectWithNewId,
+          setObjects,
+          setHistory,
+          setCurrentHistoryIndex
+        );
       });
       showTemporaryAlert('AI generated content added', setAlert);
     }
