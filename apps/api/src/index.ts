@@ -99,8 +99,7 @@ const validators = {
   },
 
   checkWeight(weight: any): boolean {
-    if (weight === undefined) return true;
-    return Object.keys(weight).includes(weight.toString());
+    return Object.keys(fontWeight).includes(weight.toString());
   },
 
   checkTypeFields(obj: any, type: string, field: string): boolean {
