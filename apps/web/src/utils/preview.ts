@@ -1,5 +1,6 @@
 import { CanvasObject, Point, ToolType } from '~/types/canvas';
 import { MIN_OBJECT_SIZE } from './constants';
+import { generateRandomId } from './generate';
 
 export const createObject = (
   tool: ToolType,
@@ -31,7 +32,7 @@ export const createPreviewObject = (
     tool === 'text' ? 'text' : tool === 'circle' ? 'circle' : 'rectangle';
 
   return {
-    id: isPreview ? 'preview-' + tool : Math.random().toString(36).slice(2, 11),
+    id: isPreview ? 'preview-' + tool : generateRandomId(),
     type,
     position: {
       x: Math.min(startPoint.x, endPoint.x),

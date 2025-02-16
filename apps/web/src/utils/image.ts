@@ -3,6 +3,7 @@ import { showTemporaryAlert, hiddenAlert } from './alert';
 import { type ToolType } from '~/types/canvas';
 import { handleAddObject } from './history';
 import { type HistoryState } from '~/types/history';
+import { generateRandomId } from './generate';
 
 export const fetchRandomGif = async (
   imagePosition: Point | null,
@@ -32,7 +33,7 @@ export const fetchRandomGif = async (
     }
 
     const gifObject: CanvasObject = {
-      id: Math.random().toString(36).slice(2, 11),
+      id: generateRandomId(),
       type: 'image',
       position: imagePosition,
       width,
@@ -191,7 +192,7 @@ export const handleFileChange = async ({
       imageData = canvas.toDataURL('image/webp');
     }
 
-    const id = Math.random().toString(36).slice(2, 11);
+    const id = generateRandomId();
     setImageCache((prev) => ({ ...prev, [id]: imageData }));
 
     handleAddObject(

@@ -1,5 +1,6 @@
 import { CanvasObject } from '~/types/canvas';
 import { HistoryState } from '~/types/history';
+import { generateRandomId } from './generate';
 
 export const copyObject = (
   objects: CanvasObject[],
@@ -17,7 +18,7 @@ export const copyObject = (
 
     if (!selectedObject) return;
 
-    const newId = Math.random().toString(36).slice(2, 11);
+    const newId = generateRandomId();
     const defaultOffset = 40;
     let offsetX = defaultOffset;
     let offsetY = defaultOffset;

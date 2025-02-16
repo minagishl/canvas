@@ -31,7 +31,7 @@ import { handlePaste } from '~/utils/clipboard';
 import { handleObjectResize } from '~/utils/resize';
 import { getTouchPoint, getTouchDistance, getTouchCenter } from '~/utils/touch';
 import { handleAddObject } from '~/utils/history';
-import { aIGenerate } from '~/utils/generate';
+import { aIGenerate, generateRandomId } from '~/utils/generate';
 import { isMobile } from '~/utils/device';
 
 // Contexts
@@ -617,7 +617,7 @@ export const Canvas = () => {
         const maxY = Math.max(start.y, point.y);
 
         const newArrow: CanvasObject = {
-          id: Math.random().toString(36).slice(2, 11),
+          id: generateRandomId(),
           type: 'arrow',
           position: { x: minX, y: minY },
           width: maxX - minX,
@@ -653,7 +653,7 @@ export const Canvas = () => {
 
       // Create a line object
       const newLine: CanvasObject = {
-        id: Math.random().toString(36).slice(2, 11),
+        id: generateRandomId(),
         type: 'line',
         position: { x: minX, y: minY },
         width: maxX - minX,

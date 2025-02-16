@@ -4,6 +4,7 @@ import { copyObject } from './object';
 import { getCanvasPoint } from './canvas';
 import { handleFileChange } from './image';
 import { HistoryState } from '~/types/history';
+import { generateRandomId } from './generate';
 
 export const handlePaste = async (
   width: number,
@@ -84,7 +85,7 @@ const handleTextPaste = (
   addObject: (object: CanvasObject) => void,
   setSelectedObjectIds: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
-  const id = Math.random().toString(36).slice(2, 11);
+  const id = generateRandomId();
   const embedUrl = convertYouTubeUrlToEmbed(text);
 
   if (embedUrl !== null) {
