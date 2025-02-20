@@ -127,7 +127,7 @@ export const Canvas = () => {
   useEffect(() => {
     // Event listener for the container element
     const container = document.querySelector(
-      '.relative.h-screen.w-screen'
+      '.relative.h-dvh.w-dvw'
     ) as HTMLElement;
     const preventZoom = (e: WheelEvent) => {
       // Cancel only if the ctrl key (cmd key on Mac) is pressed
@@ -1368,7 +1368,7 @@ export const Canvas = () => {
 
   return (
     <div
-      className="relative h-screen w-screen overflow-hidden"
+      className="relative h-dvh w-dvw overflow-hidden"
       role="main"
       onContextMenu={(e) => e.preventDefault()}
       onDragOver={handleDragOver}

@@ -15,7 +15,7 @@ function App(): React.ReactElement {
         <HistoryProvider>
           <CanvasProvider>
             <AIProvider>
-              <div className="relative h-screen w-screen overflow-hidden bg-gray-50 select-none">
+              <div className="relative h-dvh w-dvw overflow-hidden bg-gray-50 select-none">
                 <Canvas />
                 <Toolbar />
               </div>
