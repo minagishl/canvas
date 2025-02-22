@@ -10,15 +10,15 @@
     "migration:remote": "wrangler d1 migrations apply canvas --remote"
   },
   "dependencies": {
-    "drizzle-kit": "^0.30.1",
-    "drizzle-orm": "^0.38.3",
-    "hono": "^4.6.16",
-    "openai": "^4.82.0",
-    "uuid": "^11.0.4",
-    "zod": "^3.24.1"
+    "drizzle-kit": "^0.30.4",
+    "drizzle-orm": "^0.39.3",
+    "hono": "^4.7.2",
+    "openai": "^4.85.3",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241230.0",
-    "wrangler": "^3.99.0"
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "wrangler": "^3.109.2"
   }
 }
