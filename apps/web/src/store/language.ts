@@ -16,6 +16,60 @@ const translations: Translation = {
     en: 'Guide',
     ja: 'ガイド',
   },
+  // Toolbar actions
+  more: {
+    en: 'More',
+    ja: 'その他',
+  },
+  zoomIn: {
+    en: 'Zoom in',
+    ja: '拡大',
+  },
+  zoomOut: {
+    en: 'Zoom out',
+    ja: '縮小',
+  },
+  stopPresentation: {
+    en: 'Stop presentation',
+    ja: 'プレゼンテーションを終了',
+  },
+  askAI: {
+    en: 'Ask the Canvas AI',
+    ja: 'Canvas AIに質問',
+  },
+  // Menu tools
+  pen: {
+    en: 'Pen',
+    ja: 'ペン',
+  },
+  arrow: {
+    en: 'Arrow',
+    ja: '矢印',
+  },
+  gif: {
+    en: 'GIF',
+    ja: 'GIF',
+  },
+  addRandomGIF: {
+    en: 'Add random GIF',
+    ja: 'ランダムGIFを追加',
+  },
+  exportImage: {
+    en: 'Export as image',
+    ja: '画像として保存',
+  },
+  shareCanvas: {
+    en: 'Share canvas',
+    ja: 'キャンバスを共有',
+  },
+  startPresentation: {
+    en: 'Start presentation',
+    ja: 'プレゼンテーションを開始',
+  },
+  deleteAllObjects: {
+    en: 'Delete all objects',
+    ja: 'すべてのオブジェクトを削除',
+  },
   termsAndPrivacy: {
     en: 'Terms & Privacy',
     ja: '利用規約とプライバシー',

@@ -10,6 +10,9 @@ import {
 import { useCanvasContext } from '~/contexts/CanvasContext';
 import { Popover } from './Popover';
 import { useAlertContext } from '~/contexts/AlertContext';
+import { getInitialLanguage, translate } from '~/store/language';
+import { useState } from 'react';
+import type { Language } from '~/store/language';
 import { exportCanvasAsImage } from '~/utils/canvas';
 import { type ToolType } from '~/types/canvas';
 import { button, menu } from '~/variants';
@@ -23,6 +26,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
     objects,
   } = useCanvasContext();
   const { setAlert } = useAlertContext();
+  const [currentLang] = useState<Language>(getInitialLanguage());
 
   const handleToolSelect = (tool: ToolType) => {
     setSelectedTool(tool);
@@ -71,7 +75,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         onClick={() => {
           handleToolSelect('pen');
         }}
-        aria-label="Pen"
+        aria-label={String(translate('pen', currentLang))}
       >
         <Pencil className="h-5 w-5" />
       </button>
@@ -80,7 +84,7 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         onClick={() => {
           handleToolSelect('arrow');
         }}
-        aria-label="Arrow"
+        aria-label={String(translate('arrow', currentLang))}
       >
         <MoveUpRight className="h-5 w-5" />
       </button>
@@ -92,12 +96,15 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
               onClick={() => {
                 handleToolSelect('gif');
               }}
-              aria-label="GIF"
+              aria-label={String(translate('gif', currentLang))}
             >
               <Film className="h-5 w-5" />
             </button>
             <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-              <Popover text="Add random GIF" upper={false} />
+              <Popover
+                text={String(translate('addRandomGIF', currentLang))}
+                upper={false}
+              />
             </div>
           </div>
         )}
@@ -106,12 +113,16 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         <button
           className={button({ isSelected: selectedTool === 'save' })}
           onClick={handleSaveImage}
-          aria-label="Export as image"
+          aria-label={String(translate('exportImage', currentLang))}
         >
           <ImageDown className="h-5 w-5" />
         </button>
         <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-          <Popover text="Export as image" upper={false} command="E" />
+          <Popover
+            text={String(translate('exportImage', currentLang))}
+            upper={false}
+            command="E"
+          />
         </div>
       </div>
       {import.meta.env.VITE_API_URL && (
@@ -119,12 +130,16 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
           <button
             className={button()}
             onClick={handleShareCanvas}
-            aria-label="Share canvas"
+            aria-label={String(translate('shareCanvas', currentLang))}
           >
             <Share className="h-5 w-5" />
           </button>
           <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-            <Popover text="Share canvas" upper={false} command="S" />
+            <Popover
+              text={String(translate('shareCanvas', currentLang))}
+              upper={false}
+              command="S"
+            />
           </div>
         </div>
       )}
@@ -133,12 +148,15 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
           <button
             className={button({ isSelected: selectedTool === 'presentation' })}
             onClick={handleStartPresentation}
-            aria-label="Start presentation"
+            aria-label={String(translate('startPresentation', currentLang))}
           >
             <Presentation className="h-5 w-5" />
           </button>
           <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-            <Popover text="Start presentation" upper={false} />
+            <Popover
+              text={String(translate('startPresentation', currentLang))}
+              upper={false}
+            />
           </div>
         </div>
       )}
@@ -146,12 +164,15 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         <button
           className={button()}
           onClick={handleClearCanvas}
-          aria-label="Clear canvas"
+          aria-label={String(translate('deleteAllObjects', currentLang))}
         >
           <Trash2 className="h-5 w-5" />
         </button>
         <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-          <Popover text="Delete all objects" upper={false} />
+          <Popover
+            text={String(translate('deleteAllObjects', currentLang))}
+            upper={false}
+          />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import {
   MousePointer2,
   Square,
@@ -23,6 +23,8 @@ import { useHistoryContext } from '~/contexts/HistoryContext';
 import { useAIContext } from '~/contexts/AIContext';
 import { Sparkles } from './Sparkles';
 import { button, container, frame } from '~/variants';
+import { getInitialLanguage, translate } from '~/store/language';
+import type { Language } from '~/store/language';
 
 const tools: {
   icon: typeof MousePointer2;
@@ -51,6 +53,7 @@ export function Toolbar(): React.ReactElement {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isZooming, setIsZooming] = React.useState(false);
   const animationRef = useRef<number | null>(null);
+  const [currentLang] = useState<Language>(getInitialLanguage());
 
   // Debug
   const [popoverText, setPopoverText] = React.useState('');
@@ -281,9 +284,7 @@ export function Toolbar(): React.ReactElement {
                   })}
                   onClick={() => handleToolSelect(Tool.name)}
                   onKeyDown={handleOnKeyDown}
-                  aria-label={
-                    Tool.name.charAt(0).toUpperCase() + Tool.name.slice(1)
-                  }
+                  aria-label={String(translate(Tool.name, currentLang))}
                 >
                   <Tool.icon className="h-5 w-5" />
                 </button>
@@ -291,7 +292,11 @@ export function Toolbar(): React.ReactElement {
             ))}
           {!isMobile && !isPresentation && (
             <div className="group relative" data-testid="more">
-              <button key="more" className={button()} aria-label="More">
+              <button
+                key="more"
+                className={button()}
+                aria-label={String(translate('more', currentLang))}
+              >
                 <MoreHorizontal className="h-5 w-5" />
               </button>
               <div className="absolute left-1/2 hidden h-8 w-24 -translate-x-1/2 group-hover:block" />
@@ -308,12 +313,15 @@ export function Toolbar(): React.ReactElement {
                 onClick={() => {
                   handleToolSelect('select');
                 }}
-                aria-label="Stop presentation"
+                aria-label={String(translate('stopPresentation', currentLang))}
               >
                 <Presentation className="h-5 w-5" />
               </button>
               <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
-                <Popover text="Stop presentation" upper={false} />
+                <Popover
+                  text={String(translate('stopPresentation', currentLang))}
+                  upper={false}
+                />
               </div>
             </div>
           )}
@@ -326,12 +334,15 @@ export function Toolbar(): React.ReactElement {
               onClick={handleZoomOut}
               className={button()}
               disabled={isZooming || scale <= 0.7}
-              aria-label="Zoom out"
+              aria-label={String(translate('zoomOut', currentLang))}
             >
               <ZoomOut className="h-5 w-5" />
             </button>
             <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
-              <Popover text="Zoom out" upper={false} />
+              <Popover
+                text={String(translate('zoomOut', currentLang))}
+                upper={false}
+              />
             </div>
           </div>
           <div className="group relative">
@@ -339,12 +350,15 @@ export function Toolbar(): React.ReactElement {
               onClick={handleZoomIn}
               className={button()}
               disabled={isZooming || scale >= 2}
-              aria-label="Zoom in"
+              aria-label={String(translate('zoomIn', currentLang))}
             >
               <ZoomIn className="h-5 w-5" />
             </button>
             <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover:block">
-              <Popover text="Zoom in" upper={false} />
+              <Popover
+                text={String(translate('zoomIn', currentLang))}
+                upper={false}
+              />
             </div>
           </div>
           {isDevMode && !hiddedDevIcon && (
@@ -382,12 +396,15 @@ export function Toolbar(): React.ReactElement {
                 key="more"
                 className={button({ isSelected: showAIInput })}
                 onClick={handleAIClick}
-                aria-label="AI"
+                aria-label={String(translate('askAI', currentLang))}
               >
                 <Sparkles isAnimating={showAIInput} />
               </button>
               <div className="absolute top-full left-1/2 hidden -translate-x-1/2 group-hover:block">
-                <Popover text="Ask the Canvas AI" upper={false} />
+                <Popover
+                  text={String(translate('askAI', currentLang))}
+                  upper={false}
+                />
               </div>
             </div>
           )}
