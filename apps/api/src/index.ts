@@ -80,6 +80,12 @@ app.use(
   })
 );
 
+// Add X-Robots-Tag header to prevent indexing
+app.use('*', async (c, next) => {
+  await next();
+  c.res.headers.set('X-Robots-Tag', 'noindex, nofollow');
+});
+
 // Validation functions
 const validators = {
   checkId(id: string): boolean {
