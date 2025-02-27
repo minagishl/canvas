@@ -303,17 +303,30 @@ const schema = z.object({
             y: z.number().describe('Y coordinate'),
           })
           .describe('Object position'),
-        width: z.number().describe('Object width'),
-        height: z.number().describe('Object height'),
-        fill: z.string().describe('Fill color'),
+        width: z.number().describe('Object width (20-500 pixels)'),
+        height: z.number().describe('Object height (20-500 pixels)'),
+        fill: z
+          .string()
+          .describe('Fill color (hex format, e.g., #FF0000 for red)'),
         fontSize: z
           .number()
-          .refine((n) =>
-            [12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128].includes(n)
+          .optional()
+          .refine(
+            (n) =>
+              [12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128].includes(n),
+            {
+              message:
+                'Font size must be one of: 12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128',
+            }
           )
-          .describe('Font size (If not required, specify 12)'),
+          .describe(
+            'Font size (12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, or 128)'
+          ),
         italic: z.boolean().optional().describe('True if italic'),
-        lineWidth: z.number().optional().describe('Line width (default 6)'),
+        lineWidth: z
+          .number()
+          .optional()
+          .describe('Line width (1-12 pixels, default 6)'),
         points: z
           .array(
             z
@@ -354,8 +367,20 @@ app.post('/generate', async (c) => {
   }
 
   try {
-    const systemPrompt =
-      'Please create a simple diagram. In principle, you are not allowed to use arrows.';
+    const systemPrompt = `You are a skilled diagram creator. Your task is to create clear, visually appealing diagrams based on user prompts.
+
+Guidelines:
+- Create objects with appropriate sizes and positions
+- Use contrasting colors for better visibility
+- Space objects evenly for readability
+- For text objects, use appropriate font sizes (larger for headings, smaller for details)
+- Always center-align text objects, not left-aligned
+- Keep the layout balanced and organized
+- In principle, avoid using arrows unless explicitly requested
+- Position objects logically to show relationships
+- Use consistent styling across similar elements
+
+Remember to optimize the visual hierarchy and ensure the diagram effectively communicates the intended message.`;
 
     const messages = [
       { role: 'system' as const, content: systemPrompt },
@@ -365,7 +390,7 @@ app.post('/generate', async (c) => {
     const completion = await client.chat.completions.create({
       model: c.env.OPENAI_MODEL ?? 'gpt-4o-mini',
       messages,
-      temperature: 0.7,
+      temperature: 0.3,
       response_format: zodResponseFormat(schema, 'canvas'),
     });
 
@@ -375,7 +400,18 @@ app.post('/generate', async (c) => {
     }
 
     try {
-      return c.json(JSON.parse(response).canvas);
+      const parsedResponse = JSON.parse(response);
+      // Filter out fontSize: 0 by removing the property when it's 0
+      parsedResponse.canvas = parsedResponse.canvas.map(
+        (obj: { [x: string]: any; fontSize: any }) => {
+          if (obj.fontSize === 0) {
+            const { fontSize, ...rest } = obj;
+            return rest;
+          }
+          return obj;
+        }
+      );
+      return c.json(parsedResponse.canvas);
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
       return c.json({ error: 'Failed to parse JSON output.' }, 500);
