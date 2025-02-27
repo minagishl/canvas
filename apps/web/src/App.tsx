@@ -1,7 +1,6 @@
 import React from 'react';
 import { Canvas } from '~/components/Canvas';
 import { Toolbar } from '~/components/Toolbar';
-import { ReleaseNotes } from '~/components/ReleaseNotes';
 
 // Contexts
 import { AIProvider } from './contexts/AIContext';
@@ -19,7 +18,6 @@ function App(): React.ReactElement {
               <div className="relative h-dvh w-dvw overflow-hidden bg-gray-50 select-none">
                 <Canvas />
                 <Toolbar />
-                <ReleaseNotes />
               </div>
             </AIProvider>
           </CanvasProvider>
