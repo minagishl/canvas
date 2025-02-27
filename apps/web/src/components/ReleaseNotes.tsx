@@ -29,9 +29,18 @@ export function ReleaseNotes(): React.ReactElement | null {
             <span className="text-center text-xl font-semibold text-gray-900">
               Release Notes
             </span>
-            <span className="rounded-sm bg-gradient-to-r from-indigo-500 to-indigo-600 px-2 py-0.5 text-sm font-semibold text-white">
-              v1.0.0
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="rounded-sm bg-gradient-to-r from-indigo-500 to-indigo-600 px-2 py-0.5 text-sm font-semibold text-white">
+                v1.0.0
+              </span>
+              <button
+                onClick={() => setShowNotes(false)}
+                className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm bg-indigo-100 text-sm leading-none font-semibold text-indigo-600 hover:bg-gray-100"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
           </div>
           <span className="text-sm text-gray-600">
             Welcome to Canvas! We're excited to introduce our first major
