@@ -69,7 +69,7 @@ const allowedKeys = [
 ] as const;
 
 app.use(
-  '/*',
+  '*',
   cors({
     origin: (_, c) => (c.env.ALLOWED_ORIGINS ?? '*').split(','),
     allowMethods: ['GET', 'POST', 'OPTIONS'],
