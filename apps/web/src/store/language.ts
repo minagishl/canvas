@@ -37,6 +37,59 @@ const translations: Translation = {
     en: 'Ask the Canvas AI',
     ja: 'Canvas AIに質問',
   },
+  // Tooltip actions
+  color: {
+    en: 'Color',
+    ja: '色',
+  },
+  lineWidth: {
+    en: 'Change line width',
+    ja: '線の太さを変更',
+  },
+  moveDown: {
+    en: 'Move object down',
+    ja: 'オブジェクトを下に移動',
+  },
+  toggleArrowHead: {
+    en: 'Toggle arrow head',
+    ja: '矢印の先端を切り替え',
+  },
+  fontWeight: {
+    en: 'Change font weight',
+    ja: 'フォントの太さを変更',
+  },
+  fontStyle: {
+    en: 'Change font style',
+    ja: 'フォントスタイルを変更',
+  },
+  editText: {
+    en: 'Edit text',
+    ja: 'テキストを編集',
+  },
+  toggleCircle: {
+    en: 'Toggle circle',
+    ja: '円形を切り替え',
+  },
+  toggleSpoiler: {
+    en: 'Toggle spoiler',
+    ja: 'スポイラーを切り替え',
+  },
+  rotateObject: {
+    en: 'Rotate object',
+    ja: 'オブジェクトを回転',
+  },
+  lockObject: {
+    en: 'Lock object',
+    ja: 'オブジェクトをロック',
+  },
+  duplicateObject: {
+    en: 'Duplicate object',
+    ja: 'オブジェクトを複製',
+  },
+  deleteObject: {
+    en: 'Delete object',
+    ja: 'オブジェクトを削除',
+  },
   // Menu tools
   pen: {
     en: 'Pen',

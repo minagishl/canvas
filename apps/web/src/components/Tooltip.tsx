@@ -31,6 +31,9 @@ import { imageToggleCircle, imageToggleSpoiler } from '~/utils/image';
 import { COLORS } from '~/utils/constants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
 import { button, frame } from '~/variants';
+import { useState } from 'react';
+import { getInitialLanguage, translate } from '~/store/language';
+import type { Language } from '~/store/language';
 
 const fontSizeArray: fontSize[] = [
   12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128,
@@ -85,6 +88,7 @@ export function Tooltip({
   const { setHistory, setCurrentHistoryIndex, currentHistoryIndex } =
     useHistoryContext();
   const [isRotating, setIsRotating] = React.useState(false);
+  const [currentLang] = useState<Language>(getInitialLanguage());
 
   // Do not display if not a single selection
   if (selectedObjectIds.length !== 1) return null;
@@ -256,7 +260,7 @@ export function Tooltip({
               <button
                 className={button()}
                 onClick={handleColorChange}
-                aria-label="Color"
+                aria-label={String(translate('color', currentLang))}
               >
                 <Circle
                   className="h-5 w-5"
@@ -268,10 +272,10 @@ export function Tooltip({
                 selectedObject?.type === 'arrow') && (
                 <PopoverButton
                   onClick={handleLineWidthChange}
-                  ariaLabel="Line width"
+                  ariaLabel={String(translate('lineWidth', currentLang))}
                   extraButtonClassName="flex size-9 items-center justify-center"
                   isTextObject={!!isTextObject}
-                  popoverText="Change line width"
+                  popoverText={String(translate('lineWidth', currentLang))}
                 >
                   <div
                     className="flex w-5 items-center justify-center"
@@ -288,9 +292,9 @@ export function Tooltip({
           {!isTextObject && (
             <PopoverButton
               onClick={handleMoveDown}
-              ariaLabel="Move"
+              ariaLabel={String(translate('moveDown', currentLang))}
               isTextObject={!!isTextObject}
-              popoverText="Move object down"
+              popoverText={String(translate('moveDown', currentLang))}
             >
               <Layers2 className="h-5 w-5 rotate-180" />
             </PopoverButton>
@@ -298,9 +302,9 @@ export function Tooltip({
           {isArrowObject && (
             <PopoverButton
               onClick={handleArrowHeadChange}
-              ariaLabel="Arrow head"
+              ariaLabel={String(translate('toggleArrowHead', currentLang))}
               isTextObject={!!isTextObject}
-              popoverText="Toggle arrow head"
+              popoverText={String(translate('toggleArrowHead', currentLang))}
             >
               {selectedObject?.arrowHead ? (
                 <ArrowRight className="h-5 w-5" />
@@ -313,18 +317,18 @@ export function Tooltip({
             <>
               <PopoverButton
                 onClick={handleWeightChange}
-                ariaLabel="Weight"
+                ariaLabel={String(translate('fontWeight', currentLang))}
                 isTextObject={!!isTextObject}
-                popoverText="Change font weight"
+                popoverText={String(translate('fontWeight', currentLang))}
                 command="B"
               >
                 <Bold className="h-5 w-5" />
               </PopoverButton>
               <PopoverButton
                 onClick={handleItalicChange}
-                ariaLabel="Italic"
+                ariaLabel={String(translate('fontStyle', currentLang))}
                 isTextObject={!!isTextObject}
-                popoverText="Change font style"
+                popoverText={String(translate('fontStyle', currentLang))}
                 command="I"
               >
                 <Italic className="h-5 w-5" />
@@ -332,7 +336,7 @@ export function Tooltip({
               <button
                 className={button()}
                 onClick={handleTextEdit}
-                aria-label="Edit"
+                aria-label={String(translate('editText', currentLang))}
               >
                 <TextCursorInput className="h-5 w-5" />
               </button>
@@ -342,9 +346,9 @@ export function Tooltip({
             <>
               <PopoverButton
                 onClick={handleToggleCircle}
-                ariaLabel="Circle"
+                ariaLabel={String(translate('toggleCircle', currentLang))}
                 isTextObject={!!isTextObject}
-                popoverText="Toggle circle"
+                popoverText={String(translate('toggleCircle', currentLang))}
               >
                 {selectedObject?.circle ? (
                   <CircleOff className="h-5 w-5 scale-x-[-1]" />
@@ -354,9 +358,9 @@ export function Tooltip({
               </PopoverButton>
               <PopoverButton
                 onClick={handleToggleSpoiler}
-                ariaLabel="Spoiler"
+                ariaLabel={String(translate('toggleSpoiler', currentLang))}
                 isTextObject={!!isTextObject}
-                popoverText="Toggle spoiler"
+                popoverText={String(translate('toggleSpoiler', currentLang))}
               >
                 {selectedObject?.spoiler ? (
                   <EyeOff className="h-5 w-5 scale-x-[-1]" />
@@ -369,9 +373,9 @@ export function Tooltip({
           {!isCircleObject && (
             <PopoverButton
               onClick={handleRotate}
-              ariaLabel="Rotate"
+              ariaLabel={String(translate('rotateObject', currentLang))}
               isTextObject={!!isTextObject}
-              popoverText="Rotate object"
+              popoverText={String(translate('rotateObject', currentLang))}
             >
               <RefreshCw className="h-5 w-5" />
             </PopoverButton>
@@ -395,9 +399,9 @@ export function Tooltip({
           <div className="mx-2 h-6 w-px bg-gray-200" />
           <PopoverButton
             onClick={handleChangeLocked}
-            ariaLabel="Lock"
+            ariaLabel={String(translate('lockObject', currentLang))}
             isTextObject={!!isTextObject}
-            popoverText="Lock object"
+            popoverText={String(translate('lockObject', currentLang))}
           >
             {selectedObject?.locked ? (
               <LockKeyhole className="h-5 w-5" />
@@ -409,18 +413,18 @@ export function Tooltip({
       )}
       <PopoverButton
         onClick={handleDuplicateObject}
-        ariaLabel="Duplicate"
+        ariaLabel={String(translate('duplicateObject', currentLang))}
         isTextObject={!!isTextObject}
-        popoverText="Duplicate object"
+        popoverText={String(translate('duplicateObject', currentLang))}
         command="D"
       >
         <Copy className="h-5 w-5" />
       </PopoverButton>
       <PopoverButton
         onClick={handleDeleteObject}
-        ariaLabel="Delete"
+        ariaLabel={String(translate('deleteObject', currentLang))}
         isTextObject={!!isTextObject}
-        popoverText="Delete object"
+        popoverText={String(translate('deleteObject', currentLang))}
       >
         <Trash2 className="h-5 w-5" />
       </PopoverButton>
