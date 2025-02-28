@@ -32,7 +32,11 @@ export const save = async (objects: CanvasObject[]): Promise<SaveResult> => {
     if (!res.ok) {
       const error = (await res.json()) as { error: string };
       if (error.error === 'turnstile token is required') {
-        return { error: 'Human verification failed' };
+        window.turnstileToken = undefined;
+        return {
+          error:
+            'Human verification failed. Please try again in a few seconds.',
+        };
       }
       return { error: error.error || 'An error occurred while saving' };
     }
