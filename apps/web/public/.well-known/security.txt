@@ -1,0 +1,4 @@
+Canonical: https://canvas.minagishl.com/.well-known/security.txt
+Contact: mailto:minagishl@icloud.com
+Expires: 2026-01-01T12:00:00Z
+Preferred-Languages: en, ja
