@@ -5,9 +5,12 @@ interface SaveResponse {
   message: string;
 }
 
-export const save = async (
-  objects: CanvasObject[]
-): Promise<{ id: string } | undefined> => {
+interface SaveResult {
+  id?: string;
+  error?: string;
+}
+
+export const save = async (objects: CanvasObject[]): Promise<SaveResult> => {
   try {
     // Get turnstile token
     let token = window.turnstileToken;
@@ -28,13 +31,18 @@ export const save = async (
 
     if (!res.ok) {
       const error = (await res.json()) as { error: string };
-      throw new Error(error.error);
+      if (error.error === 'turnstile token is required') {
+        return { error: 'Human verification failed' };
+      }
+      return { error: error.error || 'An error occurred while saving' };
     }
 
     const data = (await res.json()) as SaveResponse;
     return { id: data.id };
   } catch (e) {
     console.error(e);
-    throw e;
+    return {
+      error: e instanceof Error ? e.message : 'An unexpected error occurred',
+    };
   }
 };

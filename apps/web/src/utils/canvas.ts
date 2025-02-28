@@ -401,7 +401,12 @@ export const shareCanvasAsURL = async (
 
     const data = await save(objects);
 
-    if (!data) {
+    if (data.error) {
+      showTemporaryAlert(data.error, setAlert);
+      return;
+    }
+
+    if (!data || !data.id) {
       throw new Error('Error sharing canvas');
     }
 
