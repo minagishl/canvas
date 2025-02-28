@@ -22,6 +22,7 @@ export const save = async (
       },
       body: JSON.stringify({
         bodies: objects,
+        token,
       }),
     });
 
