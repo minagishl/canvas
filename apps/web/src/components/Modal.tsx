@@ -152,13 +152,19 @@ export function Modal({ items, close }: ModalProps): React.ReactElement {
                           onClick={() => {
                             openLinkInNewTab(import.meta.env.VITE_MENU_TWITTER);
                           }}
-                          aria-label={String(translate('twitter', currentLang))}
+                          aria-label={
+                            import.meta.env.VITE_MENU_TWITTER_TEXT ??
+                            String(translate('twitter', currentLang))
+                          }
                         >
                           <Twitter className="h-5 w-5" />
                         </button>
                         <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
                           <Popover
-                            text={String(translate('twitter', currentLang))}
+                            text={
+                              import.meta.env.VITE_MENU_TWITTER_TEXT ??
+                              String(translate('twitter', currentLang))
+                            }
                             upper={false}
                           />
                         </div>
@@ -172,13 +178,19 @@ export function Modal({ items, close }: ModalProps): React.ReactElement {
                           onClick={() => {
                             openLinkInNewTab(import.meta.env.VITE_MENU_WEBSITE);
                           }}
-                          aria-label={String(translate('website', currentLang))}
+                          aria-label={
+                            import.meta.env.VITE_MENU_WEBSITE_TEXT ??
+                            String(translate('website', currentLang))
+                          }
                         >
                           <Earth className="h-5 w-5" />
                         </button>
                         <div className="absolute top-full left-1/2 mt-2 hidden -translate-x-1/2 group-hover/menu:block">
                           <Popover
-                            text={String(translate('website', currentLang))}
+                            text={
+                              import.meta.env.VITE_MENU_WEBSITE_TEXT ??
+                              String(translate('website', currentLang))
+                            }
                             upper={false}
                           />
                         </div>
