@@ -14,6 +14,7 @@ type Bindings = {
   ALLOWED_ORIGINS: string;
   OPENAI_API_KEY: string;
   OPENAI_MODEL?: string;
+  TURNSTILE_SECRET_KEY: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -115,7 +116,14 @@ const validators = {
   },
 
   checkTypeFields(obj: any, type: string, field: string): boolean {
+    // Always return true for undefined optional fields
     if (obj[field] === undefined) return true;
+
+    // For lineWidth, ensure it's a number between 1-12 if defined
+    if (field === 'lineWidth') {
+      const width = obj[field];
+      return typeof width === 'number' && width >= 1 && width <= 12;
+    }
 
     const typeValidations: Record<string, (value: any) => boolean> = {
       string: (value) => typeof value === 'string',
@@ -237,7 +245,38 @@ app.get('/gif', async (c) => {
 });
 
 app.post('/', async (c) => {
-  const bodies = await c.req.json();
+  const { bodies, token } = await c.req.json();
+
+  if (!token) {
+    return c.json({ error: 'turnstile token is required' }, 400);
+  }
+
+  // Validate turnstile token
+  const formData = new FormData();
+  formData.append('secret', c.env.TURNSTILE_SECRET_KEY);
+  formData.append('response', token);
+
+  const result = await fetch(
+    'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+    {
+      method: 'POST',
+      body: formData,
+    }
+  );
+
+  interface TurnstileResponse {
+    success: boolean;
+    challenge_ts: string;
+    hostname: string;
+    error_codes?: string[];
+    action?: string;
+    cdata?: string;
+  }
+
+  const outcome = (await result.json()) as TurnstileResponse;
+  if (!outcome.success) {
+    return c.json({ error: 'turnstile validation failed' }, 400);
+  }
 
   if (!Array.isArray(bodies)) {
     return c.json({ error: 'request body must be an array' }, 400);
@@ -313,6 +352,7 @@ const schema = z.object({
           .optional()
           .refine(
             (n) =>
+              n !== undefined &&
               [12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96, 128].includes(n),
             {
               message:
@@ -341,7 +381,10 @@ const schema = z.object({
         text: z.string().optional().describe('Text content'),
         weight: z
           .number()
-          .refine((n) => Object.keys(fontWeight).includes(n.toString()))
+          .refine(
+            (n) =>
+              n !== undefined && Object.keys(fontWeight).includes(n.toString())
+          )
           .optional()
           .describe('Font weight (100-900)'),
       })

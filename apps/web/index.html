@@ -29,12 +29,27 @@
 
     gtag('config', '%VITE_GTAG%');
   </script>
+
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+  <script>
+    window.onload = function () {
+      window.turnstile.render('#turnstile-container', {
+        sitekey: '%VITE_TURNSTILE_SITE_KEY%',
+        theme: 'light',
+        callback: function (token) {
+          window.turnstileToken = token;
+        },
+      });
+    }
+  </script>
 </head>
 
 <body>
   <div>
     <span class="absolute" style="color: #fff;">loading...</span>
   </div>
+  <div id="turnstile-container"></div>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>

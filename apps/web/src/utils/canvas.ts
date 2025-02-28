@@ -4,6 +4,7 @@ import { showTemporaryAlert } from './alert';
 import { GRID_SIZE } from './constants';
 import { handleCopy } from './clipboard';
 import { COLORS } from './constants';
+import { save } from './save';
 
 export const setupAndRenderCanvas = (
   canvas: HTMLCanvasElement,
@@ -398,20 +399,11 @@ export const shareCanvasAsURL = async (
 
     setSelectedObjectIds([]);
 
-    const apiUrl = new URL(import.meta.env.VITE_API_URL);
-    const response = await fetch(`${apiUrl.href}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(objects),
-    });
+    const data = await save(objects);
 
-    if (!response.ok) {
+    if (!data) {
       throw new Error('Error sharing canvas');
     }
-
-    const data = await response.json();
 
     if (window.gtag) {
       window.gtag('event', 'share_canvas', {
