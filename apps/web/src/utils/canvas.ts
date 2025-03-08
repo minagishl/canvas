@@ -337,7 +337,7 @@ export const exportCanvasAsImage = (
     try {
       // Get the canvas container
       const canvasContainer = document.querySelector(
-        '#root > div > div:first-child'
+        '#root > div > div > div:first-child'
       );
 
       if (!canvasContainer) {
