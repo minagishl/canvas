@@ -5,6 +5,10 @@
   overscroll-behavior: none;
 }
 
+#turnstile-container {
+  position: absolute;
+}
+
 /* Hide scrollbar */
 #root {
   -ms-overflow-style: none;
