@@ -29,6 +29,7 @@ export default defineConfig(({ mode }) => ({
     tailwindcss(),
     sitemap({
       hostname: 'https://canvas.minagishl.com',
+      generateRobotsTxt: false,
     }),
   ],
   build: {
