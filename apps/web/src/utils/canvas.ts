@@ -44,7 +44,10 @@ export const setupAndRenderCanvas = (
   objects
     .filter(
       (obj) =>
-        obj.type !== 'text' && obj.type !== 'image' && obj.type !== 'embed'
+        obj.type !== 'text' &&
+        obj.type !== 'image' &&
+        obj.type !== 'embed' &&
+        obj.type !== 'sticky'
     )
     .forEach((object) => {
       drawObject(ctx, object, selectedObjectIds, scale);

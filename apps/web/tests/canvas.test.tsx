@@ -1,4 +1,10 @@
-import { render, fireEvent, screen } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import '@testing-library/jest-dom';
 import App from '../src/App';
@@ -28,6 +34,36 @@ describe('Canvas', () => {
       dataTransfer: {
         files: [file],
       },
+    });
+  });
+
+  it('creates a sticky note when the sticky tool is used', async () => {
+    render(<App />);
+
+    const moreButton = screen.getByTestId('more');
+    fireEvent.mouseEnter(moreButton);
+
+    const menu = screen.getByRole('menu');
+    const stickyButton = within(menu).getByLabelText(/Sticky note/i);
+    fireEvent.click(stickyButton);
+
+    const canvasElement = screen
+      .getByRole('main')
+      .querySelector('canvas') as HTMLCanvasElement;
+
+    fireEvent.mouseDown(canvasElement, {
+      clientX: 200,
+      clientY: 200,
+      buttons: 1,
+    });
+    fireEvent.mouseUp(canvasElement, {
+      clientX: 200,
+      clientY: 200,
+      buttons: 1,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Write a note')).toBeInTheDocument();
     });
   });
 });

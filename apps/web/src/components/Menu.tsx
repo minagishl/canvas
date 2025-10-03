@@ -6,6 +6,7 @@ import {
   MoveUpRight,
   Film,
   Presentation,
+  StickyNote,
 } from 'lucide-react';
 import { useCanvasContext } from '~/contexts/CanvasContext';
 import { Popover } from './Popover';
@@ -78,6 +79,15 @@ export function Menu({ handleShareCanvas }: { handleShareCanvas: () => void }) {
         aria-label={String(translate('pen', currentLang))}
       >
         <Pencil className="h-5 w-5" />
+      </button>
+      <button
+        className={button({ isSelected: selectedTool === 'sticky' })}
+        onClick={() => {
+          handleToolSelect('sticky');
+        }}
+        aria-label={String(translate('sticky', currentLang))}
+      >
+        <StickyNote className="h-5 w-5" />
       </button>
       <button
         className={button({ isSelected: selectedTool === 'arrow' })}

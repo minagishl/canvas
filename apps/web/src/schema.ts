@@ -54,6 +54,7 @@ export const CanvasObjectSchema = v.object({
   circle: v.optional(v.boolean()),
   spoiler: v.optional(v.boolean()),
   embedUrl: v.optional(v.string()),
+  textColor: v.optional(v.string()),
 });
 
 export const CanvasDataSchema = v.object({

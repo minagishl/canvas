@@ -28,7 +28,7 @@ import {
 import { fontSize } from '~/types/canvas';
 import { textEdit, textToggleItalic } from '~/utils/text';
 import { imageToggleCircle, imageToggleSpoiler } from '~/utils/image';
-import { COLORS } from '~/utils/constants';
+import { COLORS, NOTE_COLORS } from '~/utils/constants';
 import { useHistoryContext } from '~/contexts/HistoryContext';
 import { button, frame } from '~/variants';
 import { useState } from 'react';
@@ -90,6 +90,16 @@ export function Tooltip({
   const [isRotating, setIsRotating] = React.useState(false);
   const [currentLang] = useState<Language>(getInitialLanguage());
 
+  const getStickyTextColor = (hexColor: string): string => {
+    const normalized = hexColor.replace('#', '');
+    if (normalized.length !== 6) return '#1f2937';
+    const r = parseInt(normalized.slice(0, 2), 16);
+    const g = parseInt(normalized.slice(2, 4), 16);
+    const b = parseInt(normalized.slice(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.6 ? '#1f2937' : '#f9fafb';
+  };
+
   // Do not display if not a single selection
   if (selectedObjectIds.length !== 1) return null;
   const selectedId = selectedObjectIds[0];
@@ -99,12 +109,24 @@ export function Tooltip({
       const obj = prevObjects.find((item) => item.id === selectedId);
       if (!obj) return prevObjects;
       const availableColors =
-        obj.type === 'text' ? [...COLORS, '#fafafa'] : COLORS;
+        obj.type === 'text'
+          ? [...COLORS, '#fafafa']
+          : obj.type === 'sticky'
+            ? NOTE_COLORS
+            : COLORS;
       const currentIndex = availableColors.indexOf(obj.fill || COLORS[0]);
       const nextColor =
         availableColors[(currentIndex + 1) % availableColors.length];
       return prevObjects.map((item) =>
-        item.id === selectedId ? { ...item, fill: nextColor } : item
+        item.id === selectedId
+          ? {
+              ...item,
+              fill: nextColor,
+              ...(item.type === 'sticky'
+                ? { textColor: getStickyTextColor(nextColor) }
+                : {}),
+            }
+          : item
       );
     });
   };
@@ -156,7 +178,8 @@ export function Tooltip({
     const newSize = parseInt(e.target.value, 10) as fontSize;
     setObjects((prevObjects) =>
       prevObjects.map((item) =>
-        item.id === selectedId && item.type === 'text'
+        item.id === selectedId &&
+        (item.type === 'text' || item.type === 'sticky')
           ? { ...item, fontSize: newSize }
           : item
       )
@@ -233,7 +256,8 @@ export function Tooltip({
   if (!position) return null;
 
   const selectedObject = objects.find((item) => item.id === selectedId);
-  const isTextObject = selectedObject?.type === 'text';
+  const isTextObject =
+    selectedObject?.type === 'text' || selectedObject?.type === 'sticky';
   const isImageObject = selectedObject?.type === 'image';
   const isOriginalUrl = selectedObject?.originalUrl;
   const isEmbedObject = selectedObject?.type === 'embed';

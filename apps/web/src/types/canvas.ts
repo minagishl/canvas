@@ -33,6 +33,7 @@ export const ObjectTypes = [
   'line',
   'arrow',
   'embed',
+  'sticky',
   'selection',
 ] as const;
 
@@ -59,6 +60,7 @@ export type CanvasObject = {
   text?: string;
   weight?: fontWeight;
   arrowHead?: boolean;
+  textColor?: string;
 };
 
 export type ToolType =
@@ -66,6 +68,7 @@ export type ToolType =
   | 'rectangle'
   | 'circle'
   | 'text'
+  | 'sticky'
   | 'image'
   | 'pen'
   | 'save'

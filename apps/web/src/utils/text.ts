@@ -8,7 +8,11 @@ export const textEdit = (
   if (!selectedObjectId) return;
 
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  if (!selectedObject || selectedObject.type !== 'text') return;
+  if (
+    !selectedObject ||
+    (selectedObject.type !== 'text' && selectedObject.type !== 'sticky')
+  )
+    return;
 
   const textElement = document.querySelector(
     `[data-object-id="${selectedObjectId}"]`
@@ -27,7 +31,10 @@ export const textToggleBold = (
   setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void => {
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  if (selectedObject && selectedObject.type === 'text') {
+  if (
+    selectedObject &&
+    (selectedObject.type === 'text' || selectedObject.type === 'sticky')
+  ) {
     const newObjects = objects.map((obj) =>
       obj.id === selectedObjectId
         ? {
@@ -46,7 +53,10 @@ export const textToggleItalic = (
   setObjects: React.Dispatch<React.SetStateAction<CanvasObject[]>>
 ): void => {
   const selectedObject = objects.find((obj) => obj.id === selectedObjectId);
-  if (selectedObject && selectedObject.type === 'text') {
+  if (
+    selectedObject &&
+    (selectedObject.type === 'text' || selectedObject.type === 'sticky')
+  ) {
     const newObjects = objects.map((obj) =>
       obj.id === selectedObjectId
         ? {

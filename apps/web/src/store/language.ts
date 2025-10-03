@@ -95,6 +95,10 @@ const translations: Translation = {
     en: 'Pen',
     ja: 'ペン',
   },
+  sticky: {
+    en: 'Sticky note',
+    ja: '付箋',
+  },
   arrow: {
     en: 'Arrow',
     ja: '矢印',

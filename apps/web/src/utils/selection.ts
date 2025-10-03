@@ -62,7 +62,12 @@ export const findClickedObject = (
         return isInBounds || (obj.points && isPointNearLine(point, obj.points));
       }
 
-      if (obj.type === 'image' || obj.type === 'text' || obj.type === 'embed') {
+      if (
+        obj.type === 'image' ||
+        obj.type === 'text' ||
+        obj.type === 'embed' ||
+        obj.type === 'sticky'
+      ) {
         return false;
       }
 

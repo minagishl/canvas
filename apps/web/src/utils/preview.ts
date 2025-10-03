@@ -1,5 +1,5 @@
 import { CanvasObject, Point, ToolType } from '~/types/canvas';
-import { MIN_OBJECT_SIZE } from './constants';
+import { MIN_OBJECT_SIZE, NOTE_COLORS } from './constants';
 import { generateRandomId } from './generate';
 
 export const createObject = (
@@ -28,20 +28,36 @@ export const createPreviewObject = (
     width = height = Math.min(width, height);
   }
 
-  const type =
-    tool === 'text' ? 'text' : tool === 'circle' ? 'circle' : 'rectangle';
+  const defaultStickyColor = NOTE_COLORS[0];
+
+  let computedWidth = Math.max(MIN_OBJECT_SIZE, width);
+  let computedHeight = Math.max(MIN_OBJECT_SIZE, height);
+
+  if (tool === 'sticky' && width === 0 && height === 0) {
+    computedWidth = 200;
+    computedHeight = 200;
+  }
+
+  const resolvedType = (() => {
+    if (tool === 'text') return 'text';
+    if (tool === 'circle') return 'circle';
+    if (tool === 'sticky') return isPreview ? 'rectangle' : 'sticky';
+    return 'rectangle';
+  })();
 
   return {
     id: isPreview ? 'preview-' + tool : generateRandomId(),
-    type,
+    type: resolvedType,
     position: {
       x: Math.min(startPoint.x, endPoint.x),
       y: Math.min(startPoint.y, endPoint.y),
     },
-    width: Math.max(MIN_OBJECT_SIZE, width),
-    height: Math.max(MIN_OBJECT_SIZE, height),
-    fill: '#4f46e5',
-    text: tool === 'text' ? '' : undefined,
-    weight: 400,
+    width: computedWidth,
+    height: computedHeight,
+    fill: tool === 'sticky' ? defaultStickyColor : '#4f46e5',
+    text: tool === 'text' || tool === 'sticky' ? '' : undefined,
+    weight: tool === 'sticky' ? 500 : 400,
+    textColor: tool === 'sticky' ? '#1f2937' : undefined,
+    fontSize: tool === 'sticky' ? 18 : undefined,
   };
 };

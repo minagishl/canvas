@@ -44,6 +44,7 @@ import { useAIContext } from '~/contexts/AIContext';
 import { EmbedObject } from './objects/Embed';
 import { TextObject } from './objects/Text';
 import { ImageObject } from './objects/Image';
+import { StickyNoteObject } from './objects/StickyNote';
 
 // Components
 import { Tooltip } from './Tooltip';
@@ -1257,7 +1258,10 @@ export const Canvas = () => {
     const selectedObject = objects.find(
       (obj) => obj.id === selectedObjectIds[0]
     );
-    if (selectedObject && selectedObject.type === 'text') {
+    if (
+      selectedObject &&
+      (selectedObject.type === 'text' || selectedObject.type === 'sticky')
+    ) {
       const position = calculateTooltipPosition({
         selectedObject,
         selectedObjectId: selectedObjectIds[0],
@@ -1423,7 +1427,10 @@ export const Canvas = () => {
       {objects
         .filter(
           (obj) =>
-            obj.type === 'text' || obj.type === 'image' || obj.type === 'embed'
+            obj.type === 'text' ||
+            obj.type === 'image' ||
+            obj.type === 'embed' ||
+            obj.type === 'sticky'
         )
         .map((obj) => {
           if (obj.type === 'image') {
@@ -1464,6 +1471,25 @@ export const Canvas = () => {
                     handleMouseDown(e);
                   }
                 }}
+              />
+            );
+          }
+
+          if (obj.type === 'sticky') {
+            return (
+              <StickyNoteObject
+                selectedTool={selectedTool}
+                scale={scale}
+                offset={offset}
+                obj={obj as CanvasObject & { type: 'sticky' }}
+                key={obj.id}
+                selectedObjectIds={selectedObjectIds}
+                isResizing={resizing !== null}
+                isEditingId={isEditingId}
+                isDragging={isDragging}
+                isMoving={isMoving}
+                onTextChange={onTextChange}
+                onMouseDown={(e, handle) => handleMouseDown(e, handle)}
               />
             );
           }

@@ -28,7 +28,8 @@ export const calculateTooltipPosition = ({
 
   // Determine position based on object type
   switch (object.type) {
-    case 'text': {
+    case 'text':
+    case 'sticky': {
       const textElement = document.querySelector(
         `[data-object-id="${selectedObjectId}"]`
       ) as HTMLElement;
