@@ -25,6 +25,7 @@ const AIObjectTypes = {
   text: 'text',
   line: 'line',
   arrow: 'arrow',
+  sticky: 'sticky',
 } as const;
 
 const ObjectTypes = {
@@ -67,6 +68,7 @@ const allowedKeys = [
   'text',
   'weight',
   'arrowHead',
+  'textColor',
 ] as const;
 
 app.use(
@@ -146,6 +148,7 @@ const validators = {
       spoiler: 'boolean',
       text: 'string',
       arrowHead: 'boolean',
+      textColor: 'string',
     };
 
     return typeValidations[fieldTypes[field]]?.(obj[field]) ?? false;
@@ -203,6 +206,7 @@ function validateObject(obj: any): {
     'points',
     'embedUrl',
     'originalUrl',
+    'textColor',
   ];
 
   for (const field of fieldsToValidate) {
